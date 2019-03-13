@@ -33,10 +33,10 @@ bin_param = 2
 # %%
 for nl in noise_levels:
     data_path, _ = nn.make_map_path(pix, phantom, angles, src_rad,
-                                             ['Gaussian', nl],
+                                             ['Poisson', nl],
                                              nTrain, nTD, nVal, nVD,
                                              Exp_bin, bin_param)
     
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad,
-                                     ['Gaussian', nl], nTrain, nTD, nVal, nVD,
+                                     ['Poisson', nl], nTrain, nTD, nVal, nVD,
                                      Exp_bin, bin_param)
