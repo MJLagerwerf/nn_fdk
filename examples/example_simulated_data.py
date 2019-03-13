@@ -1,0 +1,102 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar 11 13:53:20 2019
+
+@author: lagerwer
+"""
+import numpy as np
+import ddf_fdk as ddf
+import nn_fdk as nn
+import time
+import pylab
+t = time.time()
+# %%
+pix = 128
+# Specific phantom
+phantom = 'Fourshape'
+# Number of angles
+angles = 64
+# Source radius
+src_rad = 10
+det_rad = 0
+# Noise specifics
+noise = None
+# Number of voxels used for training, number of datasets used for training
+nTrain, nTD = 1e5, 10
+# Number of voxels used for validation, number of datasets used for validation
+nVal, nVD = 1e5, 10
+
+# Specifics for the expansion operator
+Exp_bin = 'linear'
+bin_param = 2
+
+# %%
+t1 = time.time()
+nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
+                                  nTrain, nTD, nVal, nVD, Exp_bin, bin_param)#,
+#                                  shuffle_TD_VD=True)
+print('Creating training and validation datasets took', time.time() - t1,
+      'seconds')
+data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
+                                             noise, nTrain, nTD, nVal, nVD,
+                                             Exp_bin, bin_param)
+# %% Create a test phantom
+voxels = [pix, pix, pix]
+# Create a data object
+t2 = time.time()
+data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)#, load_data=f_load_path)
+#data_obj = aff.phantom(voxels, phantom)
+print('Making phantom and mask took', time.time() -t2, 'seconds')
+# The amount of projection angles in the measurements
+# Source to center of rotation radius
+
+
+t3 = time.time()
+# %% Create the circular cone beam CT class
+case = ddf.CCB_CT(data_obj)#, angles, src_rad, det_rad, noise)
+print('Making data and operators took', time.time()-t3, 'seconds')
+# Initialize the algorithms (FDK, SIRT)
+t4 = time.time()
+case.init_algo()
+
+# %% Create NN-FDK algorithm setup
+# Create binned filter space and expansion operator
+spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
+                                                     case.filter_space,
+                                                     interp=Exp_bin)
+# Create the FDK binned operator
+case.FDK_bin_nn = case.FDK_op * Exp_op
+
+# Create the NN-FDK object
+case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
+                             bin_param)
+case.rec_methods += [case.NNFDK]
+print('Initializing algorithms took', time.time() - t4, 'seconds')
+# %%
+#for i in range(1):
+t2 = time.time()
+case.NNFDK.train(4, retrain=True)
+print('Training network took', time.time() - t2, 'seconds')
+case.NNFDK.do()
+case.FDK.do('Ram-Lak')
+case.FDK.do('Hann')
+#case.SIRT.do([10, 20, 30])
+
+
+
+# %%
+pylab.figure()
+
+pylab.plot(case.NNFDK.network[0]['l_tE'][5:], label= 'training error')
+pylab.plot(case.NNFDK.network[0]['l_vE'][5:], label= 'validation error')
+#pylab.ylim([-0.00000001, 0.0001])
+pylab.legend()
+#NW_full = h5py.File(full_path + 'network_' + str(1) + '.hdf5', 'r')
+#NW = h5py.File(case.WV_path +  'network_' + str(1) + '.hdf5', 'w')
+#
+#NW_full.copy(str(case.NNFDK.network[-1]['nNW']), NW, name='NW')
+#
+## %%
+#case.FDK.do('Hann')
+case.table()

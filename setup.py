@@ -16,6 +16,9 @@ with open(os.path.join('nn_fdk','VERSION')) as version_file:
     version = version_file.read().strip()
 
 requirements = [
+	'ddf_fdk',
+	'numexpr',
+	'h5py',
     # Add your project's requirements here, e.g.,
     # 'astra-toolbox',
     # 'sacred>=0.7.2',
