@@ -78,7 +78,7 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
             if not os.path.exists(full_path):
                 os.makedirs(full_path)
             # Make pick datasets for the training and validation randomly
-            nData = np.arange (nTD + nVD)
+            nData = np.arange(nTD + nVD)
             np.random.shuffle(nData)
             idTrain = nData[:nTD]
             idVal = nData[nTD:]
