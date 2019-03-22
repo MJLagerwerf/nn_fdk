@@ -15,7 +15,7 @@ pix = 1024
 # Specific phantom
 phantom = 'Fourshape'
 # Number of angles
-ang = [128]
+ang = [8, 16, 32, 64, 128]
 # Source radius
 src_rad = 10
 # Noise specifics
