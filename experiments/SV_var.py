@@ -32,6 +32,11 @@ def cfg():
     # Number of angles
     ang = [8, 16, 32, 64, 128]
     angles = ang[it_i]
+    
+    # Load data?
+    f_load_path = None
+    g_load_path = None
+    
     # Source radius
     src_rad = 10
     # Noise specifics

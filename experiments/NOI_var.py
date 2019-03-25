@@ -37,6 +37,9 @@ def cfg():
     I0 = [2 ** 8, 2 ** 9, 2 ** 10, 2 ** 11, 2 ** 12, 2 ** 13]
     noise = ['Poisson', I0[it_i]]
     
+    # Load data?
+    f_load_path = None
+    g_load_path = None
     # Should we reshuffle the datapoints from the training sets?
     shuffle = False
     # Should we retrain the networks?
