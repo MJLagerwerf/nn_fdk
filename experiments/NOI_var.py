@@ -79,7 +79,7 @@ def Create_data(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
     else:
         nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                   nTrain, nTD, nVal, nVD, Exp_bin, bin_param)
-
+        
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
               Exp_bin, bin_param, f_load_path, g_load_path):
@@ -96,7 +96,9 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
                                det_rad, load_data_g=g_load_path)
             
     else:
-        data_obj = ddf.phantom(voxels, phantom)
+        data_obj = ddf.ddf.phantom(voxels, phantom, angles, noise, src_rad,
+                                   det_rad)
+
     CT_obj = ddf.CCB_CT(data_obj)
     CT_obj.init_algo()
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
@@ -110,6 +112,7 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
                                    Exp_op, bin_param)
     CT_obj.rec_methods += [CT_obj.NNFDK]
     return CT_obj
+
 
 # %%
 @ex.automain

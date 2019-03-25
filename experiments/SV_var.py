@@ -100,6 +100,7 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
     else:
         data_obj = ddf.ddf.phantom(voxels, phantom, angles, noise, src_rad,
                                    det_rad)
+
     CT_obj = ddf.CCB_CT(data_obj)
     CT_obj.init_algo()
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
