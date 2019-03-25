@@ -166,16 +166,16 @@ def main(specifics, retrain):
 
     # Do a SIRT reconstruction and save the results
     niter = [50, 100, 200]
-    case.SIRT.do(niter)
+    case.SIRT_NN.do(niter)
     for ni in range(len(niter)):
         np.save(case.WV_path + specifics + '_SIRT' + str(niter[ni]) + '_rec.npy',
-                case.SIRT.results.rec_axis[ni])
+                case.SIRT_NN.results.rec_axis[ni])
         ex.add_artifact(case.WV_path + specifics + '_SIRT' + str(niter[ni]) + \
                         '_rec.npy')
 
     print('Finished SIRT')
-    Q[7:10, :] = case.SIRT.results.Q
-    T_rec[7:10] = case.SIRT.results.rec_time
+    Q[7:10, :] = case.SIRT_NN.results.Q
+    T_rec[7:10] = case.SIRT_NN.results.rec_time
 
     case.table()
     latex_table = open(case.WV_path + specifics + '_latex_table.txt', 'w')

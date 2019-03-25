@@ -14,7 +14,7 @@ t = time.time()
 # %%
 pix = 128
 # Specific phantom
-phantom = 'Fourshape'
+phantom = 'Fourshape_test'
 # Number of angles
 angles = 64
 # Source radius
