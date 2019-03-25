@@ -83,17 +83,21 @@ def Create_data(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
               Exp_bin, bin_param, f_load_path, g_load_path):
+    
     voxels = [pix, pix, pix]
     det_rad = 0
-    if f_load_path is not None:
-        data_obj = ddf.phantom(voxels, phantom, load_data=f_load_path)
+    if g_load_path is not None:
+        if f_load_path is not None:
+            data_obj = ddf.ddf.phantom(voxels, phantom, angles, noise, src_rad,
+                                   det_rad, load_data_g=g_load_path,
+                                   load_data_f=f_load_path)
+        else:
+            data_obj = ddf.ddf.phantom(voxels, phantom, angles, noise, src_rad,
+                               det_rad, load_data_g=g_load_path)
+            
     else:
         data_obj = ddf.phantom(voxels, phantom)
-    if g_load_path is not None:
-        CT_obj = ddf.CCB_CT(data_obj, angles, src_rad, det_rad, noise,
-                            load_data=g_load_path)
-    else:
-        CT_obj = ddf.CCB_CT(data_obj, angles, src_rad, det_rad, noise)
+    CT_obj = ddf.CCB_CT(data_obj)
     CT_obj.init_algo()
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
                                                          CT_obj.filter_space,
