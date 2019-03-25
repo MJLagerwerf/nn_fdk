@@ -88,15 +88,15 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
     det_rad = 0
     if g_load_path is not None:
         if f_load_path is not None:
-            data_obj = ddf.ddf.phantom(voxels, phantom, angles, noise, src_rad,
+            data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad,
                                    det_rad, load_data_g=g_load_path,
                                    load_data_f=f_load_path)
         else:
-            data_obj = ddf.ddf.phantom(voxels, phantom, angles, noise, src_rad,
+            data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad,
                                det_rad, load_data_g=g_load_path)
             
     else:
-        data_obj = ddf.ddf.phantom(voxels, phantom, angles, noise, src_rad,
+        data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad,
                                    det_rad)
 
     CT_obj = ddf.CCB_CT(data_obj)
