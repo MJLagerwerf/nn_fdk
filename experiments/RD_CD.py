@@ -10,9 +10,10 @@ from sacred import Experiment
 from sacred.observers import FileStorageObserver
 import numpy as np
 import ddf_fdk as ddf
+import nn_fdk as nn
 import time
 
-from . import Create_datasets as CD
+
 # %%
 ex = Experiment()
 
@@ -39,7 +40,7 @@ def Create_dataset(dataset, meta, ang_freq, Exp_bin, bin_param):
     pix_size = meta['pix_size']
     src_rad = meta['s2o']
     det_rad = meta['o2d']   
-    return CD.Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, 
+    return nn.Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, 
                               ang_freq, Exp_bin, bin_param)
     
 # %%

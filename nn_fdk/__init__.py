@@ -20,6 +20,7 @@ __version__ = __get_version()
 #from .Create_datasets import Create_dataset_ASTRA, Create_dataset
 from .NN_FDK_class import NNFDK_class
 from .Preprocess_datasets import Create_TrainingValidationData
+from .Create_datasets import Create_dataset_ASTRA_real
 
 from .support_functions import *
 
