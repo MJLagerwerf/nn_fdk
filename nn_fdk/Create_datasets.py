@@ -11,7 +11,7 @@ import ddf_fdk as ddf
 import astra
 
 # %%
-def Create_dataset_ASTRA(pix, phantom, angles, src_rad, noise, Exp_bin,
+def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
                          bin_param):
 
     MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 10 ** 5])
@@ -49,8 +49,8 @@ def Create_dataset_ASTRA(pix, phantom, angles, src_rad, noise, Exp_bin,
                                      src_radius=src_radius,
                                      det_radius=det_radius, axis=[0, 0, 1])
 
-    minvox = geom.detector.partition.min_pt[1]
-    maxvox = geom.detector.partition.max_pt[1]
+    minvox = data_obj.reco_space.min_pt[0]
+    maxvox = data_obj.reco_space.max_pt[0]
 
 
     vol_geom = astra.create_vol_geom(voxels[0], voxels[1], voxels[2], minvox,
@@ -224,3 +224,101 @@ def Make_Smat(voxels, MaxVoxDataset, WV_path, **kwargs):
     if 'seed' in kwargs:
         np.random.set_state(seed_old)
     return Smat
+
+# %%
+def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
+                         Exp_bin, bin_param):
+    
+    # The size of the measured objects in voxels
+    data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq)
+    angles = data_obj.angles_in
+    g = np.ascontiguousarray(np.transpose(np.asarray(data_obj.g.copy()),
+                                          (2, 0, 1)))
+    voxels = data_obj.voxels
+    
+    MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 10 ** 5])
+
+    if ang_freq is not None:
+        ang = np.linspace(np.pi / angles, (2 + 1 / angles) * np.pi,
+                             angles, False)[::ang_freq]
+        angles = np.size(ang)
+    else:
+        ang = np.linspace(np.pi/angles, (2 + 1 / angles) * np.pi, angles,
+                          False)
+    Smat = Make_Smat(voxels, MaxVoxDataset, '', real_data=dataset['mask'])
+
+
+    # %% Create geometry
+    geom = data_obj.geometry
+    dpix = [voxels[0] * 2 , voxels[0]]
+    minvox = data_obj.reco_space.min_pt[0]
+    maxvox = data_obj.reco_space.max_pt[0]
+
+    vol_geom = astra.create_vol_geom(voxels[0], voxels[1], voxels[2], minvox,
+                                     maxvox, minvox, maxvox, minvox, maxvox)
+    w_du, w_dv = (geom.detector.partition.max_pt \
+                    -geom.detector.partition.min_pt)/ np.array(dpix)
+
+    proj_geom = astra.create_proj_geom('cone', w_du, w_dv, dpix[1], dpix[0],
+                                       ang, geom.src_radius, geom.det_radius)
+
+    filter_part = odl.uniform_partition(-data_obj.detecsize[0],
+                                        data_obj.detecsize[0], dpix[0])
+
+    filter_space = odl.uniform_discr_frompartition(filter_part,
+                                                   dtype='float64')
+    spf_space, Exp_op = ddf.ExpOp_builder(bin_param, filter_space,
+                                                        interp=Exp_bin)
+
+    nParam = np.size(spf_space)
+
+    fullFilterSize = int(2 ** (np.ceil(np.log2(dpix[0])) + 1))
+    halfFilterSize = fullFilterSize // 2 + 1
+
+    Resize_Op = odl.ResizingOperator(Exp_op.range, ran_shp=(fullFilterSize,))
+    # %% Create projection and reconstion objects
+    proj_id = astra.data3d.link('-proj3d', proj_geom, g)
+
+    rec = np.zeros(astra.geom_size(vol_geom), dtype=np.float32)
+    rec_id = astra.data3d.link('-vol', vol_geom, rec)
+
+    B = np.zeros((MaxVoxDataset, nParam + 1))
+
+    # %% Make the matrix columns of the matrix B
+    for nP in range(nParam):
+        unit_vec = spf_space.zero()
+        unit_vec[nP] = 1
+        filt = Exp_op(unit_vec)
+
+        rs_filt = Resize_Op(filt)
+
+        f_filt = np.real(np.fft.rfft(np.fft.ifftshift(rs_filt)))
+        filter2d = np.zeros((angles, halfFilterSize))
+        for i in range(angles):
+            filter2d[i, :] = f_filt * 4 * w_du
+
+        # %% Make a filter geometry
+        filter_geom = astra.create_proj_geom('parallel', w_du,  halfFilterSize,
+                                             ang)
+        filter_id = astra.data2d.create('-sino', filter_geom, filter2d)
+        #
+
+        cfg = astra.astra_dict('FDK_CUDA')
+        cfg['ReconstructionDataId'] = rec_id
+        cfg['ProjectionDataId'] = proj_id
+        cfg['option'] = { 'FilterSinogramId': filter_id }
+        # Create the algorithm object from the configuration structure
+        alg_id = astra.algorithm.create(cfg)
+
+        # %%
+        astra.algorithm.run(alg_id)
+        rec = np.transpose(rec, (2, 1, 0))
+        B[:, nP] = rec[Smat]
+    # %%
+    # Clean up. Note that GPU memory is tied up in the algorithm object,
+    # and main RAM in the data objects.
+    B[:, -1] = data_obj.f[Smat]
+    astra.algorithm.delete(alg_id)
+    astra.data3d.delete(rec_id)
+    astra.data3d.delete(proj_id)
+    return B

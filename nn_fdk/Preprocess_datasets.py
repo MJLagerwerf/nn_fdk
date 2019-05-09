@@ -49,8 +49,9 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
         print('Creating new datasets')
         # Make extra datasets till we have enough
         for i in range(nTD + nVD - nD):
-            Dataset = CD.Create_dataset_ASTRA(pix, phantom, angles, src_rad,
-                                              noise, Exp_bin, bin_param)
+            Dataset = CD.Create_dataset_ASTRA_sim(pix, phantom, angles,
+                                                  src_rad, noise, Exp_bin,
+                                                  bin_param)
             np.save(data_path + 'Dataset' + str(i + nD), Dataset)
             print('Finished making Dataset', str(i + nD))
             gc.collect()
