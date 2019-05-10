@@ -169,6 +169,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         if backend == 'ASTRA':
             rec, h_e = NNFDK_astra.NNFDK_astra(self.CT_obj.g, NW,
                                                self.CT_obj.geometry,
+                                               self.CT_obj.reco_space,
                                                self.Exp_op)
         else:
             # Take the network requested

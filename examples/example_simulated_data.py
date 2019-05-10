@@ -12,20 +12,20 @@ import time
 import pylab
 t = time.time()
 # %%
-pix = 128
+pix = 256
 # Specific phantom
-phantom = 'Fourshape_test'
+phantom = 'Defrise'
 # Number of angles
-angles = 64
+angles = 360
 # Source radius
-src_rad = 10
+src_rad = 1
 det_rad = 0
 # Noise specifics
-noise = None
+noise = ['Poisson', 2 ** 14]
 # Number of voxels used for training, number of datasets used for training
-nTrain, nTD = 1e5, 10
+nTrain, nTD = 1e5, 5
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e5, 10
+nVal, nVD = 1e5, 5
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -45,8 +45,7 @@ data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
 voxels = [pix, pix, pix]
 # Create a data object
 t2 = time.time()
-data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)#, load_data=f_load_path)
-#data_obj = aff.phantom(voxels, phantom)
+data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
@@ -100,3 +99,27 @@ pylab.legend()
 ## %%
 #case.FDK.do('Hann')
 case.table()
+# %%
+case.NNFDK.show()
+case.FDK.show()
+case.show_phantom()
+# %%
+defrise = ddf.phantom(voxels, 'Delta', angles, noise, src_rad, det_rad)
+
+rec, h_e = nn.NNFDK_astra_backend.NNFDK_astra(defrise.g,
+                                              case.NNFDK.network[-1],
+                                              case.geometry, 
+                                              defrise.reco_space,
+                                              Exp_op)
+# %%
+pylab.figure()
+pylab.imshow(rec[:, :, 128])
+pylab.colorbar()
+pylab.figure()
+pylab.imshow(rec[:, 128, :])
+pylab.colorbar()
+pylab.figure()
+pylab.imshow(rec[128, :, :])
+pylab.colorbar()
+
+

@@ -34,12 +34,12 @@ def Exp_op_FFT(Exp_op, h, filter2d, Resize_Op, w_du):
 
 
 # %%
-def NNFDK_astra(g, NW, geom, Exp_op, ang_freq=None):
+def NNFDK_astra(g, NW, geom, reco_space, Exp_op, ang_freq=None):
     # %% Create geometry
     # Make a circular scanning geometry
     ang, u, v = g.shape
-    minvox = geom.detector.partition.min_pt[1]
-    maxvox = geom.detector.partition.max_pt[1]
+    minvox = reco_space.min_pt[0]
+    maxvox = reco_space.max_pt[0]
     vol_geom = astra.create_vol_geom(v, v, v, minvox, maxvox, minvox, maxvox,
                                      minvox, maxvox)
 

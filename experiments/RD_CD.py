@@ -22,7 +22,7 @@ def cfg():
     dsets = ['good', 'noisy']
     path = '/export/scratch2/lagerwer/data/FleXray/walnuts_02MAY/'
     ang_freqs = [32, 16, 8]
-    sc = 8
+    sc = 1
     Exp_bin = 'linear'
     bin_param = 2
     it_i = 1
