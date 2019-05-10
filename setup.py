@@ -19,7 +19,8 @@ requirements = [
 	'ddf_fdk',
 	'numexpr',
 	'h5py',
-	'sacred'
+	'sacred',
+	'tqdm'
     # Add your project's requirements here, e.g.,
     # 'astra-toolbox',
     # 'sacred>=0.7.2',
