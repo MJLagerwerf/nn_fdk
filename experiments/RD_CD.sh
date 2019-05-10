@@ -1,10 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu May  9 15:06:18 2019
-
-@author: lagerwer
-"""
+#!/usr/bin/bash
+# limit numper of OpenMP threads
+#export OMP_NUM_THREADS=16
+# set astra gpu index: 0-3
+#export CUDA_VISIBLE_DEVICES=2,3
 
 for i in {1..21}
 do
