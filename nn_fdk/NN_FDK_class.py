@@ -163,10 +163,10 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                 self.network = [train_network(nHiddenNodes, full_path)]
 
     def do(self, nwNumber=-1, compute_results=True,
-           measures=['MSR', 'MAE', 'SSIM'], backend='ASTRA'):
+           measures=['MSR', 'MAE', 'SSIM'], astra=True):
         t = time.time()
         NW = self.network[nwNumber] # To improve readability
-        if backend == 'ASTRA':
+        if astra:
             rec, h_e = NNFDK_astra.NNFDK_astra(self.CT_obj.g, NW,
                                                self.CT_obj.geometry,
                                                self.CT_obj.reco_space,
