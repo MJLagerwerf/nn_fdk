@@ -162,7 +162,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
             else:
                 self.network = [train_network(nHiddenNodes, full_path)]
 
-    def do(self, nwNumber=-1, compute_results='yes',
+    def do(self, nwNumber=-1, compute_results=True,
            measures=['MSR', 'MAE', 'SSIM'], backend='ASTRA'):
         t = time.time()
         NW = self.network[nwNumber] # To improve readability
@@ -190,7 +190,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
             # b_o = self.network['l2'][-1]
             rec = outer_layer(F, NW['l2'][-1], NW['sc2'][0], NW['sc2'][1])
         t_rec = time.time() - t
-        if compute_results == 'yes':
+        if compute_results:
             self.comp_results(rec, measures, h_e,
                               'HiddenNodes' + str(NW['nNodes']), t_rec)
         else:
