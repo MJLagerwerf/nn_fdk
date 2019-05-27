@@ -14,10 +14,10 @@ import sys
 # %%
 
 def text_to_acronym(text):
-    PHs = ['SL', 'CS', '22El', 'C', '3S', '4S', 'HC', 'D', 'DF']
+    PHs = ['SL', 'CS', '22El', 'C', '3S', '4S', 'HC', 'D', 'DF', 'FB']
     phantoms = ['Shepp-Logan', 'Cluttered sphere', '22 Ellipses', 'Cube',
           'Threeshape', 'Fourshape', 'Hollow cube',
-          'Derenzo', 'Defrise']
+          'Derenzo', 'Defrise', 'FORBILD']
     binning = ['Full', 'constant', 'linear', 'uniform']
     EBs = ['F', 'C', 'L', 'U']
     if text == 'Fourshape_test':

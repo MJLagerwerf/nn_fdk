@@ -35,7 +35,9 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                          bin_param)
     voxTD = nTrain // nTD
     voxVD = nVal // nVD
-    voxMaxData = np.max([int(pix ** 3 * 0.005), 10 ** 5])
+    if not 'voxMaxData' in kwargs:
+        voxMaxData = np.max([int(pix ** 3 * 0.005), 10 ** 5])
+    
     if voxTD > voxMaxData or voxVD > voxMaxData:
         raise ValueError('To many voxels per dataset')
 

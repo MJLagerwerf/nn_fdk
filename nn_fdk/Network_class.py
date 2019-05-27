@@ -245,15 +245,15 @@ class Network(object):
                     bestCounter = 0
                 else:
                     bestCounter += 1
-            if bestCounter == 25:
-                print('25 times no improvement')
+            if bestCounter == 50:
+                print(str(bestCounter) + ' times no improvement')
                 break
             if(gradSize < 1e-8):
                 print('Gradsize was too small')
                 break
             tse = newtse
             self.lst_traError += [tse]
-            if i % 1 == 0:
+            if i % 10 == 0:
                 print('Validation set error: {}'.format(prevValError))
             self.allls.append([self.minl1, self.minl2])
         self.l1 = self.minl1
