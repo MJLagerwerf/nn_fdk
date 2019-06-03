@@ -245,7 +245,7 @@ class Network(object):
                     bestCounter = 0
                 else:
                     bestCounter += 1
-            if bestCounter == 50:
+            if bestCounter == 100:
                 print(str(bestCounter) + ' times no improvement')
                 break
             if(gradSize < 1e-8):

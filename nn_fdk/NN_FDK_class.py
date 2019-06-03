@@ -67,13 +67,16 @@ def train_network(nHiddenNodes, full_path, **kwargs):
             l2 = np.asarray(f[nn + 'l2'])
             sc1 = np.asarray(f[nn + 'sc1'])
             sc2 = np.asarray(f[nn + 'sc2'])
+            l_tE = np.asarray(f[nn + 'l_tE']) 
+            l_vE = np.asarray(f[nn + 'l_vE'])
             # return old network
             print('Loaded old network, network has', str(nHiddenNodes),
                   'hidden nodes')
             f.close()
 
             return {'l1' : l1, 'l2' : l2, 'sc1' : sc1, 'sc2' : sc2,
-                    'nNodes' : nHiddenNodes, 'nNW' : nNWs - 1}
+                    'nNodes' : nHiddenNodes, 'nNW' : nNWs - 1, 
+                    'l_tE' : l_tE, 'l_vE' : l_vE}
 
     # We have no network trained with this number of nodes
     else:
@@ -162,20 +165,30 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
             else:
                 self.network = [train_network(nHiddenNodes, full_path)]
 
-    def do(self, nwNumber=-1, compute_results=True,
-           measures=['MSR', 'MAE', 'SSIM'], astra=True):
+    def do(self, node_output=False, nwNumber=-1, compute_results=True,
+           measures=['MSE', 'MAE', 'SSIM'], astra=True):
         t = time.time()
         NW = self.network[nwNumber] # To improve readability
         if astra:
-            rec, h_e = NNFDK_astra.NNFDK_astra(self.CT_obj.g, NW,
-                                               self.CT_obj.geometry,
-                                               self.CT_obj.reco_space,
-                                               self.Exp_op)
+            if node_output:
+                rec, h_e, self.node_out_axis = NNFDK_astra.NNFDK_astra(
+                                                self.CT_obj.g, NW,
+                                                self.CT_obj.geometry,
+                                                self.CT_obj.reco_space,
+                                                self.Exp_op, node_output)
+            else:
+                rec, h_e, = NNFDK_astra.NNFDK_astra(self.CT_obj.g, NW,
+                                                    self.CT_obj.geometry,
+                                                    self.CT_obj.reco_space,
+                                                    self.Exp_op, node_output)
         else:
             # Take the network requested
             F = self.CT_obj.reco_space.zero()
+            mid = np.size(F, 0) // 2
             # Set a container list for the learned filters
             h_e = []
+            if node_output:
+                self.node_out_axis = []
             for i in range(NW['nNodes']):
                 # h_i = self.network['l1'][:-1, i], b_i = self.network['l1'][-1, i]
                 h = NW['l1'][:-1, i] * 2 * NW['sc1'][0, :]
@@ -185,6 +198,10 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                 # q_i = self.network['l2'][i]
                 FDK = self.CT_obj.FDK_bin_nn(h)
                 F = hidden_layer(FDK, F, NW['l2'][i], b)
+                if node_output:
+                    FDK = hidden_layer(FDK, 0, NW['l2'][i], b)
+                    self.node_out_axis += [[FDK[:, :, mid], FDK[:, mid, :],
+                                           FDK[mid, :, :]]]
             # Make a numpy array of the filter list
             h_e = np.asarray(h_e)
             # b_o = self.network['l2'][-1]
@@ -196,23 +213,57 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         else:
             return rec
 
-    def plot_filt(self, h, fontsize=20):
-        fig, (ax1, ax2) = pylab.subplots(1, 2, figsize=[15, 6])
-        xf = np.asarray(self.CT_obj.fourier_filter_space.grid)
-        x = np.asarray(self.CT_obj.filter_space.grid)
-        for i in range(self.network['nNodes']):
-            hf = np.real(np.asarray(self.CT_obj.pd_FFT(h[i, :])))
-            ax1.plot(x, h[i, :])
-            ax2.plot(xf, hf)
-        ax1.set_title('Filter', fontsize=fontsize)
-        ax1.set_ylabel('$h(u)$', fontsize=fontsize)
-        ax1.set_xlabel('$u$', fontsize=fontsize)
-        ax2.set_title('Fourier transformed filter', fontsize=fontsize)
-        ax2.set_ylabel('$\hat{h}(\omega)$', fontsize=fontsize)
-        ax2.set_xlabel('$\omega$', fontsize=fontsize)
+    def show_filters(self, nwNumber=-1, fontsize=30):
+        h_e = self.results.var[nwNumber]
+        fig = pylab.figure(figsize=[15, 13])
+        for i in range(self.network[nwNumber]['nNodes']):
+            h = self.Exp_op(h_e[i, :])
+            hf = np.real(np.asarray(self.CT_obj.pd_FFT(h)))
+            pylab.plot(hf, label='Node ' + str(i), lw=3)
+
+        pylab.title('Fourier transformed filter', fontsize=fontsize)
+        pylab.ylabel('$\hat{h}(\omega)$', fontsize=fontsize)
+        pylab.xlabel('$\omega$', fontsize=fontsize)
         fig.show()
 
-    def show_filt(self, nwNumber=-1):
-        self.plot_filt(self.results.var[nwNumber])
+    # ! ! ! only can show the output of the last one ! ! !
+    def show_node_output(self, nwNumber=-1, clim=None, fontsize=20):
+        if not hasattr(self, 'node_out_axis'):
+            raise ValueError('Did not save the node output, redo the ' + \
+                             'reconstruction with node_output=True.')
+        space = self.CT_obj.reco_space
+        for i in range(self.network[nwNumber]['nNodes']):
+            xy, xz, yz = self.node_out_axis[i]
+            fig, (ax1, ax2, ax3) = pylab.subplots(1, 3, figsize=[20, 6])
+            fig.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
+            ima = ax1.imshow(np.rot90(xy), clim=clim, extent=[space.min_pt[0],
+                             space.max_pt[0],space.min_pt[1], space.max_pt[1]])
+            fig.colorbar(ima, ax=(ax1))
+            ax1.set_xticks([],[])
+            ax1.set_yticks([],[])
+            ax1.set_xlabel('x', fontsize=fontsize)
+            ax1.set_ylabel('y', fontsize=fontsize)
+            ima = ax2.imshow(np.rot90(xz), clim=clim, extent=[space.min_pt[0],
+                             space.max_pt[0],space.min_pt[2], space.max_pt[2]])
+            fig.colorbar(ima, ax=(ax2))
+            ax2.set_xticks([],[])
+            ax2.set_yticks([],[])
+            ax2.set_xlabel('x', fontsize=fontsize)
+            ax2.set_ylabel('z', fontsize=fontsize)
+            ima = ax3.imshow(np.rot90(yz), clim=clim, extent=[space.min_pt[1],
+                             space.max_pt[1],space.min_pt[2], space.max_pt[2]])
+            ax3.set_xlabel('y', fontsize=fontsize)
+            ax3.set_ylabel('z', fontsize=fontsize)
+            ax3.set_xticks([],[])
+            ax3.set_yticks([],[])
+            fig.colorbar(ima, ax=(ax3))
+    
+            fig.suptitle('Output of node ' + str(i), fontsize=fontsize+2)
+            fig.show()
 
 
+    def show_TrVaErr(self, nwNumber=-1):
+        print('{:20}'.format('Training error: ') + '{:.4e}'.format(
+                self.network[nwNumber]['l_tE'][-1]))
+        print('{:20}'.format('Validation error: ') + '{:.4e}'.format(
+                self.network[nwNumber]['l_vE'][-1]))

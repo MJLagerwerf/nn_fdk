@@ -12,7 +12,6 @@ from itertools import compress
 import sys
 
 # %%
-
 def text_to_acronym(text):
     PHs = ['SL', 'CS', '22El', 'C', '3S', '4S', 'HC', 'D', 'DF', 'FB']
     phantoms = ['Shepp-Logan', 'Cluttered sphere', '22 Ellipses', 'Cube',

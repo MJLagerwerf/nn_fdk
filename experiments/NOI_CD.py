@@ -20,7 +20,7 @@ angles = 360
 src_rad = 10
 # Noise specifics
 
-noise_levels = [2 ** 13]
+noise_levels = [2 ** 8, 2 ** 9, 2 ** 10, 2 ** 11, 2 ** 12, 2 ** 13]
 
 nTrain, nTD, nVal, nVD = 1e6, 100, 1e6, 100
 

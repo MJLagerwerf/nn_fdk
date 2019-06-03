@@ -34,7 +34,7 @@ def Exp_op_FFT(Exp_op, h, filter2d, Resize_Op, w_du):
 
 
 # %%
-def NNFDK_astra(g, NW, geom, reco_space, Exp_op, ang_freq=None):
+def NNFDK_astra(g, NW, geom, reco_space, Exp_op, node_output, ang_freq=None):
     # %% Create geometry
     # Make a circular scanning geometry
     ang, u, v = g.shape
@@ -83,6 +83,10 @@ def NNFDK_astra(g, NW, geom, reco_space, Exp_op, ang_freq=None):
     # %%
     # Set a container list for the learned filters
     h_e = []
+    if node_output:
+        mid = v // 2
+        node_output_axis = []
+        
     for i in range(NW['nNodes']):
         h = NW['l1'][:-1, i] * 2 * NW['sc1'][0, :]
         h_e += [h]
@@ -95,6 +99,11 @@ def NNFDK_astra(g, NW, geom, reco_space, Exp_op, ang_freq=None):
         alg_id = astra.algorithm.create(cfg)
         astra.algorithm.run(alg_id)
         rec_tot = hidden_layer(rec, rec_tot, NW['l2'][i], b)
+        if node_output:
+            rec = hidden_layer(rec, 0, NW['l2'][i], b)
+            node_output_axis += [rec[:, :, mid], rec[:, mid, :],
+                                 rec[mid, :, :]]
+        
     # Make a numpy array of the filter list
     h_e = np.asarray(h_e)
     # b_o = self.network['l2'][-1]
@@ -111,4 +120,7 @@ def NNFDK_astra(g, NW, geom, reco_space, Exp_op, ang_freq=None):
     astra.algorithm.delete(alg_id)
     astra.data3d.delete(rec_id)
     astra.data3d.delete(proj_id)
-    return rec_tot, h_e
+    if node_output:
+        return rec_tot, h_e, node_output_axis
+    else:
+        return rec_tot, h_e
