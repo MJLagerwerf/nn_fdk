@@ -8,6 +8,7 @@ Created on Wed Mar 13 10:52:56 2019
 
 import numpy as np
 import ddf_fdk as ddf
+ddf.import_astra_GPU()
 import nn_fdk as nn
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
@@ -30,7 +31,7 @@ def cfg():
     # Specific phantom
     phantom = 'Fourshape_test'
     # Number of angles
-    ang = [8, 16, 32, 64, 128]
+    ang = [8, 16, 32, 64, 128, 256]
     angles = ang[it_i]
     
     # Load data?
