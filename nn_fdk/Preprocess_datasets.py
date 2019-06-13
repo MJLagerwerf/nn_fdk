@@ -28,11 +28,13 @@ def load_dataset_adapt_voxels(data_path, idData, nVox):
 
 def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                   nTrain, nTD, nVal, nVD, Exp_bin, bin_param,
+                                  base_path='/export/scratch2/lagerwer/data/NNFDK/',
                                   **kwargs):
 
-    data_path, full_path = sup.make_map_path(pix, phantom, angles, src_rad, noise,
-                                         nTrain, nTD, nVal, nVD, Exp_bin,
-                                         bin_param)
+    data_path, full_path = sup.make_map_path(pix, phantom, angles, src_rad,
+                                             noise, nTrain, nTD, nVal, nVD,
+                                             Exp_bin, bin_param, base_path)
+    
     voxTD = nTrain // nTD
     voxVD = nVal // nVD
     if not 'voxMaxData' in kwargs:

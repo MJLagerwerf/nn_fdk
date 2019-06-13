@@ -34,7 +34,8 @@ def text_to_acronym(text):
 
 # %%
 def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-                  Exp_bin, bin_param):
+                  Exp_bin, bin_param,
+                  base_path='/export/scratch2/lagerwer/data/NNFDK/'):
     PH = text_to_acronym(phantom)
     EB = text_to_acronym(Exp_bin)
 
@@ -48,7 +49,7 @@ def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
     training_map = 'nT' + '{:.0e}'.format(nTrain) + '_nTD' + str(nTD)
     validation_map =  'nV' + '{:.0e}'.format(nVal) + '_nVD' + str(nVD) + '/'
-    data_path = '/export/scratch2/lagerwer/data/NNFDK/' + data_map + filter_map
+    data_path = base_path + data_map + filter_map
 
     full_path = data_path + training_map + validation_map
 

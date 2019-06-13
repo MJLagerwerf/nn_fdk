@@ -57,7 +57,7 @@ def cfg():
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
     nVD = 1
-    vecNodes = [2 ** i for i in range(5)]
+    vecNodes = [4, 4, 4, 4]
 
     # Specifics for the expansion operator
     Exp_bin = 'linear'

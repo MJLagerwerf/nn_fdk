@@ -131,7 +131,7 @@ def train_network(nHiddenNodes, full_path, **kwargs):
 
 class NNFDK_class(ddf.algorithm_class.algorithm_class):
     def __init__(self, CT_obj, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
-                 bin_param):
+                 bin_param, base_path='/export/scratch/lagerwer/data/NNFDK/'):
         self.CT_obj = CT_obj
         self.method = 'NN-FDK'
         self.Exp_bin = Exp_bin
@@ -141,6 +141,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         self.nTD = nTD
         self.nVal = nVal
         self.nVD = nVD
+        self.base_path = base_path
 
     def train(self, nHiddenNodes, **kwargs):
         # Create the load_path containing all specifics
@@ -151,7 +152,8 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                                                  self.CT_obj.noise,
                                                  self.nTrain, self.nTD,
                                                  self.nVal, self.nVD,
-                                                 self.Exp_bin, self.bin_param)
+                                                 self.Exp_bin, self.bin_param,
+                                                 base_path=self.base_path)
         if 'retrain' in kwargs:
             if hasattr(self, 'network'):
                 self.network += [train_network(nHiddenNodes, full_path,
