@@ -75,10 +75,10 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
 #for i in range(1):
 t2 = time.time()
-case.NNFDK.train(16)
+case.NNFDK.train(1)
 print('Training network took', time.time() - t2, 'seconds')
 case.NNFDK.do(astra=False, node_output=True)
-#case.FDK.do('Ram-Lak')
+case.FDK.do('Ram-Lak')
 case.FDK.do('Hann')
 #case.SIRT.do([10, 20, 30])
 
