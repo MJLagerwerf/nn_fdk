@@ -1,6 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
+Created on Fri Jun 14 16:10:04 2019
+
+@author: lagerwer
+"""
+
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
 Created on Wed Jun 12 13:53:15 2019
 
 @author: lagerwer
@@ -20,7 +28,7 @@ import gc
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'test_num_data'
+name_exp = 'test_cone_ang'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
@@ -31,16 +39,16 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 def cfg():
     it_i = 0
     it_j = 0
-    pix = 256
+    pix = 1024
     # Specific phantom
-    phantom = 'Fourshape'
+    phantom = 'Defrisse'
     # Number of angles
     angles = 360
     # Source radius
     src_rad = 10
     # Noise specifics
     I0 = 2 ** 8
-    noise = ['Poisson', I0]
+    noise = None #['Poisson', I0]
     
     # Load data?
     f_load_path = None
@@ -57,12 +65,12 @@ def cfg():
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
     nVD = 1
-    vecNodes = [4, 4, 4, 4]
+    vecNodes = [2 ** i for i in range(5)]
 
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'FB_NOI'
+    specifics = 'DF_CA'
     filts = ['Hann']
 
 # %%

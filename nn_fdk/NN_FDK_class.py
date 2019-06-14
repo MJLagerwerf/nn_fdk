@@ -239,7 +239,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                              'reconstruction with node_output=True.')
         space = self.CT_obj.reco_space
         for i in range(self.network[nwNumber]['nNodes']):
-            xy, xz, yz = self.node_out_axis[i]
+            xy, xz, yz = self.node_out_axis
             fig, (ax1, ax2, ax3) = pylab.subplots(1, 3, figsize=[20, 6])
             fig.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
             ima = ax1.imshow(np.rot90(xy), clim=clim, extent=[space.min_pt[0],

@@ -14,7 +14,7 @@ import astra
 def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
                          bin_param):
 
-    MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 10 ** 5])
+    MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 10 ** 6])
     ang = np.linspace((1 / angles) * np.pi, (2 + 1 / angles) * np.pi, angles,
                       False)
 
@@ -138,7 +138,7 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
 # %%
 def Create_dataset(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param):
     # Maximum number of voxels considered per dataset
-    MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 10 ** 5])
+    MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 10 ** 6])
 
     # The size of the measured objects in voxels
     voxels = [pix, pix, pix]
@@ -236,7 +236,7 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
                                           (2, 0, 1)))
     voxels = data_obj.voxels
     
-    MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 10 ** 5])
+    MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 10 ** 6])
 
     if ang_freq is not None:
         ang = np.linspace(np.pi / angles, (2 + 1 / angles) * np.pi,

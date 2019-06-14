@@ -31,7 +31,8 @@ nVal, nVD = 1e6, 10
 Exp_bin = 'linear'
 bin_param = 2
 
-base_path = '/export/scratch1/home/voxels-gpu0/data/NNFDK/'
+base_path = '/export/scratch2/lagerwer/data/NNFDK/'
+#'/export/scratch1/home/voxels-gpu0/data/NNFDK/'
 # %%
 t1 = time.time()
 nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
