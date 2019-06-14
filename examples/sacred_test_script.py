@@ -53,10 +53,10 @@ def cfg():
     nVox = 1e6
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
-    nTD = 1
+    nTD = 10
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = 1
+    nVD = 10
     vecNodes = [4, 4, 4, 4]
 
     # Specifics for the expansion operator

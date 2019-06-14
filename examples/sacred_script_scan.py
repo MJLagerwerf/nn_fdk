@@ -6,14 +6,6 @@ Created on Fri Jun 14 16:10:04 2019
 @author: lagerwer
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Jun 12 13:53:15 2019
-
-@author: lagerwer
-"""
-
 
 import numpy as np
 import ddf_fdk as ddf
@@ -41,7 +33,7 @@ def cfg():
     it_j = 0
     pix = 1024
     # Specific phantom
-    phantom = 'Defrisse'
+    phantom = 'Defrise'
     # Number of angles
     angles = 360
     # Source radius
