@@ -206,6 +206,16 @@ def main(retrain, vecNodes, filts, specifics):
         
     Q, RT = log_variables(case.NNFDK.results, Q, RT)
     
+    niter = [50, 100, 200]
+    case.SIRT_NN.do(niter)
+    for ni in range(len(niter)):
+        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
+                              case.SIRT_NN.results.rec_axis[ni])
+
+    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
+    print('Finished SIRT')
+
+    
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
 
