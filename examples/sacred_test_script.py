@@ -9,7 +9,7 @@ Created on Wed Jun 12 13:53:15 2019
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 import nn_fdk as nn
 import h5py
 import time
@@ -20,7 +20,7 @@ import gc
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'test_sacred'
+name_exp = 'test_num_data'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
@@ -37,7 +37,7 @@ def cfg():
     # Number of angles
     angles = 360
     # Source radius
-    src_rad = 10
+    src_rad = 2
     # Noise specifics
     I0 = 2 ** 8
     noise = ['Poisson', I0]
@@ -48,7 +48,7 @@ def cfg():
     # Should we reshuffle the datapoints from the training sets?
     shuffle = False
     # Should we retrain the networks?
-    retrain = False
+    retrain = True
     # Total number of voxels used for training
     nVox = 1e6
     # Number of voxels used for training, number of datasets used for training
@@ -57,7 +57,7 @@ def cfg():
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
     nVD = 1
-    vecNodes = [4, 4, 4, 4]
+    vecNodes = [2 ** i for i in range(5)]
 
     # Specifics for the expansion operator
     Exp_bin = 'linear'

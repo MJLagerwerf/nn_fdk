@@ -31,16 +31,17 @@ nVal, nVD = 1e6, 10
 Exp_bin = 'linear'
 bin_param = 2
 
+base_path = '/export/scratch1/home/voxels-gpu0/data/NNFDK/'
 # %%
 t1 = time.time()
 nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                  nTrain, nTD, nVal, nVD, Exp_bin, bin_param)#,
+                                  nTrain, nTD, nVal, nVD, Exp_bin, bin_param, base_path)#,
 #                                  shuffle_TD_VD=True)
 print('Creating training and validation datasets took', time.time() - t1,
       'seconds')
 data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
                                              noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param)
+                                             Exp_bin, bin_param, base_path)
 # %% Create a test phantom
 voxels = [pix, pix, pix]
 # Create a data object
@@ -69,7 +70,7 @@ case.FDK_bin_nn = case.FDK_op * Exp_op
 
 # Create the NN-FDK object
 case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
-                             bin_param)
+                             bin_param, base_path)
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
@@ -77,7 +78,7 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 t2 = time.time()
 case.NNFDK.train(1)
 print('Training network took', time.time() - t2, 'seconds')
-case.NNFDK.do(astra=False, node_output=True)
+case.NNFDK.do(node_output=True)
 case.FDK.do('Ram-Lak')
 case.FDK.do('Hann')
 #case.SIRT.do([10, 20, 30])
@@ -105,8 +106,5 @@ case.NNFDK.show_filters()
 case.NNFDK.show_node_output()
 case.NNFDK.show()
 case.FDK.show()
-#case.show_phantom()
-# %%
-# %%
 
 
