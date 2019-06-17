@@ -9,7 +9,7 @@ Created on Wed Jun 12 13:53:15 2019
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 import nn_fdk as nn
 import h5py
 import time
@@ -57,12 +57,12 @@ def cfg():
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
     nVD = 10
-    vecNodes = [4, 4, 4, 4]
+    vecNodes = [2 ** i for i in range(5)]
 
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'FB_NOI'
+    specifics = 'FS_noi'
     filts = ['Hann']
 
 # %%
