@@ -33,7 +33,7 @@ def cfg():
     it_j = 0
     pix = 1024
     # Specific phantom
-    phantom = 'Defrise'
+    phantom = 'Cluttered sphere'
     # Number of angles
     angles = 360
     # Source radius
@@ -62,7 +62,7 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'DF_CA'
+    specifics = 'CS_CA'
     filts = ['Hann']
 
 # %%
