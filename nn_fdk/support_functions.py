@@ -21,6 +21,8 @@ def text_to_acronym(text):
     EBs = ['F', 'C', 'L', 'U']
     if text == 'Fourshape_test':
         text = 'Fourshape'
+    if text == 'Defrise random':
+        text = 'Defrise'
     if text in phantoms:
         out = list(compress(PHs, np.isin(phantoms, text)))[0]
     if text in binning:

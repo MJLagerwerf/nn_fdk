@@ -13,7 +13,10 @@ import astra
 # %%
 def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
                          bin_param):
-
+    if phantom == 'Defrise':
+        phantom = 'Defrise random'
+    if phantom == 'Fourshape_test':
+        phantom = 'Fourshape'
     MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 10 ** 6])
     ang = np.linspace((1 / angles) * np.pi, (2 + 1 / angles) * np.pi, angles,
                       False)
@@ -137,6 +140,10 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
 
 # %%
 def Create_dataset(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param):
+    if phantom == 'Defrise':
+        phantom = 'Defrise random'
+    if phantom == 'Fourshape_test':
+        phantom = 'Fourshape'
     # Maximum number of voxels considered per dataset
     MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 10 ** 6])
 

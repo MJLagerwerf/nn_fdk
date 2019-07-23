@@ -25,32 +25,6 @@ def load_dataset_adapt_voxels(data_path, idData, nVox):
     Ds = Ds[idVox[:int(nVox)], :]
     return Ds
 
-def create_number_datasets(pix, phantom, angles, src_rad, noise, Exp_bin,
-                           bin_param, nDatasets,
-                           base_path='/export/scratch2/lagerwer/data/NNFDK/'):
-    data_path, full_path = sup.make_map_path(pix, phantom, angles, src_rad,
-                                             noise, nTrain=0, nTD=0, nVal=0,
-                                             nVD=0, Exp_bin=Exp_bin,
-                                             bin_param=bin_param,
-                                             base_path=base_path)
-    if not os.path.exists(data_path):
-        os.makedirs(data_path)
-    
-    nD = sup.number_of_datasets(data_path, 'Dataset')
-    print(data_path)
-    # Check if that is enough
-    if nDatasets > nD:
-        print('Creating ' + str(nDatasets - nD) + ' new datasets')
-        # Make extra datasets till we have enough
-        for i in range(nDatasets - nD):
-            Dataset = CD.Create_dataset_ASTRA_sim(pix, phantom, angles,
-                                                  src_rad, noise, Exp_bin,
-                                                  bin_param)
-            np.save(data_path + 'Dataset' + str(i + nD), Dataset)
-            print('Finished making Dataset', str(i + nD))
-            gc.collect()
-    else:
-        print('We have enough datasets')
 
 def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                   nTrain, nTD, nVal, nVD, Exp_bin, bin_param,
@@ -71,7 +45,7 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
 
     if not os.path.exists(data_path):
         os.makedirs(data_path)
-
+    
     # Check how many datasets we have
     nD = sup.number_of_datasets(data_path, 'Dataset')
     # Check if that is enough
@@ -87,6 +61,8 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
             gc.collect()
     else:
         print('We have enough datasets')
+        
+        
     # We now have nTD + nVD (or more) datasets
     if 'shuffle_TD_VD' in kwargs:
         shuffle = True

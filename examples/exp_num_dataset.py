@@ -35,18 +35,18 @@ def cfg():
     # Specific phantom
     phantom = 'Fourshape_test'
     # Number of angles
-    angles = 360
+    angles = 32
     # Source radius
     src_rad = 10
     # Noise specifics
     I0 = 2 ** 10
-    noise = ['Poisson', I0]
+    noise = None #['Poisson', I0]
     
     # Load data?
     f_load_path = None
     g_load_path = None
     # Should we reshuffle the datapoints from the training sets?
-    shuffle = False
+    shuffle = True
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
@@ -72,7 +72,7 @@ def cfg():
 def create_datasets(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param, 
                     nTests):
     nn.create_number_datasets(pix, phantom, angles, src_rad, noise, Exp_bin,
-                              bin_param, nTests)
+                              bin_param, 2 * nTests)
  
 @ex.capture
 def preprocess_data(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal,
@@ -184,9 +184,10 @@ def main(retrain, nNodes, nTests, filts, specifics):
     print('Finished FDKs')
     TT = np.zeros(nTests)
     for i in range(nTests):
+        preprocess_data()
         t = time.time()
         case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
-                         TD_list=[2 * i], VD_list=[2 * i + 1])
+                         TD_list=[i], VD_list=[i])
         TT[i] = time.time() - t
         save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
                      '.hdf5')

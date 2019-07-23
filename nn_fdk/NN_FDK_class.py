@@ -43,13 +43,11 @@ def train_network(nHiddenNodes, full_path, name='', retrain=False,  **kwargs):
     nTD = sup.number_of_datasets(full_path, TD_dn)
     nVD = sup.number_of_datasets(full_path, VD_dn)
     if 'TD_list' in kwargs:
-        TD_fls = [full_path + TD_dn + tdl for tdl in kwargs['TD_list']]
-        print('hoi')
+        TD_fls = [full_path + TD_dn + str(tdl) for tdl in kwargs['TD_list']]
     else:
         TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
     if 'VD_list' in kwargs:
-        VD_fls = [full_path + VD_dn + vdl for vdl in kwargs['VD_list']]
-        print('hoi2')
+        VD_fls = [full_path + VD_dn + str(vdl) for vdl in kwargs['VD_list']]
     else:
         VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
 
@@ -166,10 +164,10 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
             full_path = input_path
         if hasattr(self, 'network'):
             self.network += [train_network(nHiddenNodes, full_path, name,
-                                               retrain)]
+                                               retrain, **kwargs)]
         else:
             self.network = [train_network(nHiddenNodes, full_path, name, 
-                                          retrain)]
+                                          retrain, **kwargs)]
 
 
     def do(self, node_output=False, nwNumber=-1, compute_results=True,
