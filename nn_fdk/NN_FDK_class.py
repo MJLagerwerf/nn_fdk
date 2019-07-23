@@ -20,6 +20,7 @@ from . import Network_class as N
 from . import TrainingData_class as TDC
 from . import NNFDK_astra_backend as NNFDK_astra
 from . import support_functions as sup
+from . import Preprocess_datasets as PD
 # %%
 def sigmoid(x):
     '''Sigmoid function'''
@@ -34,7 +35,7 @@ def outer_layer(x, b, sc2_1, sc2_2):
                             '+ sc2_2')
 
 # %%
-def train_network(nHiddenNodes, full_path, name='', retrain=False,  **kwargs):
+def train_network(nHiddenNodes, full_path, name='', retrain=False, **kwargs):
     # Set a path to save the network
     fnNetwork = full_path + '/network_' + str(nHiddenNodes) + name
     # Check how many TD and VD datasets we have
@@ -42,14 +43,9 @@ def train_network(nHiddenNodes, full_path, name='', retrain=False,  **kwargs):
     VD_dn = 'VD'
     nTD = sup.number_of_datasets(full_path, TD_dn)
     nVD = sup.number_of_datasets(full_path, VD_dn)
-    if 'TD_list' in kwargs:
-        TD_fls = [full_path + TD_dn + str(tdl) for tdl in kwargs['TD_list']]
-    else:
-        TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
-    if 'VD_list' in kwargs:
-        VD_fls = [full_path + VD_dn + str(vdl) for vdl in kwargs['VD_list']]
-    else:
-        VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
+
+    TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
+    VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
 
     # Open hdf5 file for your network
     # Check if we already have a network trained for this number of nodes
@@ -145,12 +141,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         self.nVal = nVal
         self.nVD = nVD
         self.base_path = base_path
-
-    def train(self, nHiddenNodes, input_path=False, name='', retrain=False, 
-              **kwargs):
-        # Create the load_path containing all specifics
-        if not input_path:
-            data_path, full_path = sup.make_map_path(self.CT_obj.pix,
+        self.data_path, self.full_path = sup.make_map_path(self.CT_obj.pix,
                                                      self.CT_obj.phantom.PH,
                                                      self.CT_obj.angles,
                                                      self.CT_obj.src_rad,
@@ -160,15 +151,20 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                                                      self.Exp_bin,
                                                      self.bin_param,
                                                      base_path=self.base_path)
-        else:
-            full_path = input_path
-        if hasattr(self, 'network'):
-            self.network += [train_network(nHiddenNodes, full_path, name,
-                                               retrain, **kwargs)]
-        else:
-            self.network = [train_network(nHiddenNodes, full_path, name, 
-                                          retrain, **kwargs)]
 
+    def train(self, nHiddenNodes, name='', retrain=False, DS_list=False, 
+              **kwargs):
+        PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
+                           self.nTD, self.nVal, self.nVD, DS_list=DS_list,
+                           **kwargs)
+        t = time.time()
+        if hasattr(self, 'network'):
+            self.network += [train_network(nHiddenNodes, self.full_path, name,
+                                               retrain)]
+        else:
+            self.network = [train_network(nHiddenNodes, self.full_path, name, 
+                                          retrain)]
+        self.train_time = time.time() - t 
 
     def do(self, node_output=False, nwNumber=-1, compute_results=True,
            measures=['MSE', 'MAE', 'SSIM'], astra=True):

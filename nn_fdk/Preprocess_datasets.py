@@ -27,32 +27,22 @@ def load_dataset_adapt_voxels(data_path, idData, nVox):
 
 
 def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                  nTrain, nTD, nVal, nVD, Exp_bin, bin_param,
+                                  Exp_bin, bin_param, nDatasets,
                                   base_path='/export/scratch2/lagerwer/data/NNFDK/',
                                   **kwargs):
-
-    data_path, full_path = sup.make_map_path(pix, phantom, angles, src_rad,
-                                             noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param, base_path)
+    data_path = sup.make_data_path(pix, phantom, angles, src_rad, noise,
+                                   Exp_bin, bin_param)
     
-    voxTD = nTrain // nTD
-    voxVD = nVal // nVD
-    if not 'voxMaxData' in kwargs:
-        voxMaxData = np.max([int(pix ** 3 * 0.005), 10 ** 6])
-    
-    if voxTD > voxMaxData or voxVD > voxMaxData:
-        raise ValueError('To many voxels per dataset')
-
     if not os.path.exists(data_path):
         os.makedirs(data_path)
     
     # Check how many datasets we have
     nD = sup.number_of_datasets(data_path, 'Dataset')
     # Check if that is enough
-    if nTD + nVD > nD:
+    if nDatasets > nD:
         print('Creating new datasets')
         # Make extra datasets till we have enough
-        for i in range(nTD + nVD - nD):
+        for i in range(nDatasets - nD):
             Dataset = CD.Create_dataset_ASTRA_sim(pix, phantom, angles,
                                                   src_rad, noise, Exp_bin,
                                                   bin_param)
@@ -61,68 +51,44 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
             gc.collect()
     else:
         print('We have enough datasets')
-        
-        
-    # We now have nTD + nVD (or more) datasets
-    if 'shuffle_TD_VD' in kwargs:
-        shuffle = True
+
+def random_lists(nTD, nVD):
+    nData = np.arange(nTD + nVD)
+    np.random.shuffle(nData)
+    idTrain = nData[:nTD]
+    idVal = nData[nTD:]
+    return idTrain, idVal
+    
+
+def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
+                    **kwargs):       
+    full_path = data_path + sup.make_full_path(nTrain, nTD, nVal, nVD)
+    print(full_path)
+    voxTD = nTrain // nTD
+    voxVD = nVal // nVD
+    if not 'voxMaxData' in kwargs:
+        voxMaxData = np.max([int(pix ** 3 * 0.005), 10 ** 6])
+    
+    if voxTD > voxMaxData or voxVD > voxMaxData:
+        raise ValueError('To many voxels per dataset')
+
+    if not os.path.exists(full_path):
+        os.makedirs(full_path)
+    
+    if not DS_list:
+        idTrain, idVal = random_lists(nTD, nVD)
     else:
-        shuffle = False
-    if not shuffle:
-        if os.path.exists(full_path):
-            cTD = sup.number_of_datasets(full_path, 'TD')
-            if cTD != nTD:
-                raise ValueError('Something went wrong, not the correct number',
-                                 'of training datasets,', str(cTD), 'instead of',
-                                 str(nTD))
-            cVD = sup.number_of_datasets(full_path, 'VD')
-            if cVD != nVD:
-                raise ValueError('Something went wrong, not the correct number',
-                                 'of validation datasets,', str(cVD), 'instead of',
-                                 str(nVD))
-            print('Training and validation datasets are already available')
-        else:
-            if not os.path.exists(full_path):
-                os.makedirs(full_path)
-            # Make pick datasets for the training and validation randomly
-            nData = np.arange(nTD + nVD)
-            np.random.shuffle(nData)
-            idTrain = nData[:nTD]
-            idVal = nData[nTD:]
-            count = 0
-            t1 = time.time()
-            for i in idTrain:
-                TD = load_dataset_adapt_voxels(data_path, i, voxTD)
-                sp.savemat(full_path + 'TD' + str(count), {'TD': TD})
-                count += 1
-            print(time.time() -t1, 'seconds to load, take voxels and save training datasets')
-            t2 = time.time()
-            count = 0
-            for i in idVal:
-                VD = load_dataset_adapt_voxels(data_path, i, voxVD)
-                sp.savemat(full_path + 'VD' + str(count), {'VD': VD})
-                count += 1
-            print(time.time() -t2, 'seconds to load, take voxels and save validation datasets')
-    else:
-        if not os.path.exists(full_path):
-            os.makedirs(full_path)
-        # Make pick datasets for the training and validation randomly
-        nData = np.arange (nTD + nVD)
-        np.random.shuffle(nData)
-        idTrain = nData[:nTD]
-        idVal = nData[nTD:]
-        count = 0
-        t1 = time.time()
-        for i in idTrain:
-            TD = load_dataset_adapt_voxels(data_path, i, voxTD)
-            sp.savemat(full_path + 'TD' + str(count), {'TD': TD})
-            count += 1
-        print(time.time() -t1, 'seconds to load, take voxels and save training datasets')
-        t2 = time.time()
-        count = 0
-        for i in idVal:
-            VD = load_dataset_adapt_voxels(data_path, i, voxVD)
-            sp.savemat(full_path + 'VD' + str(count), {'VD': VD})
-            count += 1
-        print(time.time() -t2, 'seconds to load, take voxels and save validation datasets')
-    gc.collect()
+        idTrain = DS_list[0]
+        idVal = DS_list[1]
+        print('Tlist', idTrain, 'Vlist', idVal)
+
+    count = 0
+    for i in idTrain:
+        TD = load_dataset_adapt_voxels(data_path, i, voxTD)
+        sp.savemat(full_path + 'TD' + str(count), {'TD': TD})
+        count += 1
+    count = 0
+    for i in idVal:
+        VD = load_dataset_adapt_voxels(data_path, i, voxVD)
+        sp.savemat(full_path + 'VD' + str(count), {'VD': VD})
+        count += 1

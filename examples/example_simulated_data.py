@@ -14,7 +14,7 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Defrise random'
+phantom = 'FORBILD'
 # Number of angles
 angles = 360
 # Source radius
@@ -23,26 +23,23 @@ det_rad = 0
 # Noise specifics
 noise = ['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
-nTrain, nTD = 1e6, 10
+nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 10
+nVal, nVD = 1e6, 1
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
 bin_param = 2
 
-base_path = '/export/scratch2/lagerwer/data/NNFDK/'
+
 #'/export/scratch1/home/voxels-gpu0/data/NNFDK/'
 # %%
 t1 = time.time()
 nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                  nTrain, nTD, nVal, nVD, Exp_bin, bin_param, base_path)#,
-#                                  shuffle_TD_VD=True)
+                                 Exp_bin, bin_param, nTD + nVD)
 print('Creating training and validation datasets took', time.time() - t1,
       'seconds')
-data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
-                                             noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param, base_path)
+
 # %% Create a test phantom
 voxels = [pix, pix, pix]
 # Create a data object
@@ -71,7 +68,7 @@ case.FDK_bin_nn = case.FDK_op * Exp_op
 
 # Create the NN-FDK object
 case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
-                             bin_param, base_path)
+                             bin_param)
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%

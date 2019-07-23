@@ -30,14 +30,12 @@ def text_to_acronym(text):
     try:
         out
     except NameError:
-        sys.exit('Typo in phantom or exp_bin, you moron')
+        sys.exit('Typo in phantom or exp_bin, you moron, you typed: ' + str(text))
     return out
 
-
 # %%
-def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-                  Exp_bin, bin_param,
-                  base_path='/export/scratch2/lagerwer/data/NNFDK/'):
+def make_data_path(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param,
+                   base_path='/export/scratch2/lagerwer/data/NNFDK/'):
     PH = text_to_acronym(phantom)
     EB = text_to_acronym(Exp_bin)
 
@@ -49,11 +47,26 @@ def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
                    str(src_rad) + '_I0' + str(noise[1]) + '/'
     filter_map = EB + str(bin_param) + '/'
 
+
+    data_path = base_path + data_map + filter_map
+    
+    return data_path
+
+def make_full_path(nTrain, nTD, nVal, nVD):
     training_map = 'nT' + '{:.0e}'.format(nTrain) + '_nTD' + str(nTD)
     validation_map =  'nV' + '{:.0e}'.format(nVal) + '_nVD' + str(nVD) + '/'
-    data_path = base_path + data_map + filter_map
+    return training_map + validation_map
 
-    full_path = data_path + training_map + validation_map
+# %%
+def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
+                  Exp_bin, bin_param,
+                  base_path='/export/scratch2/lagerwer/data/NNFDK/'):
+
+    data_path = make_data_path(pix, phantom, angles, src_rad, noise, Exp_bin,
+                               bin_param, base_path=base_path)
+        
+    
+    full_path = data_path + make_full_path(nTrain, nTD, nVal, nVD)
 
     return data_path, full_path
 

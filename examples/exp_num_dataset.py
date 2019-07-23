@@ -45,18 +45,16 @@ def cfg():
     # Load data?
     f_load_path = None
     g_load_path = None
-    # Should we reshuffle the datapoints from the training sets?
-    shuffle = True
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
     nVox = 1e6
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
-    nTD = 1
+    nTD = 10
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = 1
+    nVD = 10
     nNodes = 4
     nTests = 10
     
@@ -69,22 +67,11 @@ def cfg():
 
 # %%
 @ex.capture
-def create_datasets(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param, 
-                    nTests):
-    nn.create_number_datasets(pix, phantom, angles, src_rad, noise, Exp_bin,
-                              bin_param, 2 * nTests)
- 
-@ex.capture
-def preprocess_data(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal,
-                    nVD, Exp_bin, bin_param, shuffle):
-    # Create training and validation data
-    if shuffle:
-        nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                  nTrain, nTD, nVal, nVD, Exp_bin, bin_param,
-                                  shuffle_TD_VD=True)
-    else:
-        nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                  nTrain, nTD, nVal, nVD, Exp_bin, bin_param)
+def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
+                    bin_param, nTests):
+    nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
+                                 Exp_bin, bin_param, 2 * nTests)
+
         
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
@@ -164,7 +151,6 @@ def main(retrain, nNodes, nTests, filts, specifics):
     RT = np.zeros((0))
     
     create_datasets()
-    preprocess_data()
     # Create a test dataset
     case = CT()
     # Create the paths where the objects are saved
@@ -184,11 +170,10 @@ def main(retrain, nNodes, nTests, filts, specifics):
     print('Finished FDKs')
     TT = np.zeros(nTests)
     for i in range(nTests):
-        preprocess_data()
-        t = time.time()
+        DS_list = [[2 * i], [2 * i + 1]]
         case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
-                         TD_list=[i], VD_list=[i])
-        TT[i] = time.time() - t
+                         DS_list=DS_list)
+        TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
                      '.hdf5')
         
