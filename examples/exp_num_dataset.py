@@ -173,39 +173,39 @@ def main(retrain, nNodes, nTests, filts, specifics):
     save_and_add_artifact(WV_path + '_g.npy', case.g)
 
 
-    for i in range(len(filts)):
-        case.FDK.do(filts[i])
-    Q, RT = log_variables(case.FDK.results, Q, RT)
-
-    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
-            case.FDK.results.rec_axis[-1])
-    
-    
-    print('Finished FDKs')
-    TT = np.zeros(nTests)
-    for i in range(nTests):
-        t = time.time()
-        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
-                         TD_list=[2 * i], VD_list=[2 * i + 1])
-        TT[i] = time.time() - t
-        save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
-                     '.hdf5')
-        
-        case.NNFDK.do()
-        save_and_add_artifact(WV_path + '_NNFDK'+  str(nNodes) + '_' + str(i) + 
-                               '_rec.npy', case.NNFDK.results.rec_axis[-1])
-
-        
-    Q, RT = log_variables(case.NNFDK.results, Q, RT)
-    
-    save_and_add_artifact(WV_path + '_Q.npy', Q)
-    save_and_add_artifact(WV_path + '_RT.npy', RT)
-
-    print('Finished NNFDKs')
-    save_table(case, WV_path)
-
-    
-    case = None
-    gc.collect()
+#    for i in range(len(filts)):
+#        case.FDK.do(filts[i])
+#    Q, RT = log_variables(case.FDK.results, Q, RT)
+#
+#    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
+#            case.FDK.results.rec_axis[-1])
+#    
+#    
+#    print('Finished FDKs')
+#    TT = np.zeros(nTests)
+#    for i in range(nTests):
+#        t = time.time()
+#        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
+#                         TD_list=[2 * i], VD_list=[2 * i + 1])
+#        TT[i] = time.time() - t
+#        save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
+#                     '.hdf5')
+#        
+#        case.NNFDK.do()
+#        save_and_add_artifact(WV_path + '_NNFDK'+  str(nNodes) + '_' + str(i) + 
+#                               '_rec.npy', case.NNFDK.results.rec_axis[-1])
+#
+#        
+#    Q, RT = log_variables(case.NNFDK.results, Q, RT)
+#    
+#    save_and_add_artifact(WV_path + '_Q.npy', Q)
+#    save_and_add_artifact(WV_path + '_RT.npy', RT)
+#
+#    print('Finished NNFDKs')
+#    save_table(case, WV_path)
+#
+#    
+#    case = None
+#    gc.collect()
     return Q
 

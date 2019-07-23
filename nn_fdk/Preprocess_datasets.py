@@ -37,6 +37,7 @@ def create_number_datasets(pix, phantom, angles, src_rad, noise, Exp_bin,
         os.makedirs(data_path)
     
     nD = sup.number_of_datasets(data_path, 'Dataset')
+    print(data_path)
     # Check if that is enough
     if nDatasets > nD:
         print('Creating ' + str(nDatasets - nD) + ' new datasets')
