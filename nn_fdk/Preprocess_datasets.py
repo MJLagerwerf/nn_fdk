@@ -39,7 +39,7 @@ def create_number_datasets(pix, phantom, angles, src_rad, noise, Exp_bin,
     nD = sup.number_of_datasets(data_path, 'Dataset')
     # Check if that is enough
     if nDatasets > nD:
-        print('Creating new datasets')
+        print('Creating ' + str(nDatasets - nD) + ' new datasets')
         # Make extra datasets till we have enough
         for i in range(nDatasets - nD):
             Dataset = CD.Create_dataset_ASTRA_sim(pix, phantom, angles,

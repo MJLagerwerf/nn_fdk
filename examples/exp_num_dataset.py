@@ -70,7 +70,7 @@ def cfg():
 # %%
 @ex.capture
 def create_datasets(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param, 
-                nTests):
+                    nTests):
     nn.create_number_datasets(pix, phantom, angles, src_rad, noise, Exp_bin,
                               bin_param, nTests)
  
