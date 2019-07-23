@@ -19,7 +19,7 @@ __version__ = __get_version()
 # Import all definitions from main module.
 #from .Create_datasets import Create_dataset_ASTRA, Create_dataset
 from .NN_FDK_class import NNFDK_class
-from .Preprocess_datasets import Create_TrainingValidationData
+from .Preprocess_datasets import Create_TrainingValidationData, create_number_datasets
 from .Create_datasets import Create_dataset_ASTRA_real
 
 from .support_functions import *

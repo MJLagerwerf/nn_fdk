@@ -20,7 +20,7 @@ import gc
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'test_num_data'
+name_exp = 'num_datasets'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
@@ -35,12 +35,12 @@ def cfg():
     # Specific phantom
     phantom = 'Fourshape_test'
     # Number of angles
-    angles = 360
+    angles = 96
     # Source radius
     src_rad = 10
     # Noise specifics
     I0 = 2 ** 10
-    noise = ['Poisson', I0]
+    noise = None #['Poisson', I0]
     
     # Load data?
     f_load_path = None
@@ -69,8 +69,14 @@ def cfg():
 
 # %%
 @ex.capture
-def Create_data(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, shuffle):
+def create_datasets(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param, 
+                nTests):
+    nn.create_number_datasets(pix, phantom, angles, src_rad, noise, Exp_bin,
+                              bin_param, nTests)
+ 
+@ex.capture
+def preprocess_data(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal,
+                    nVD, Exp_bin, bin_param, shuffle):
     # Create training and validation data
     if shuffle:
         nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
@@ -157,9 +163,10 @@ def main(retrain, nNodes, nTests, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
+    create_datasets()
+    preprocess_data()
     # Create a test dataset
     case = CT()
-    Create_data(nTD=nTests, nVD=nTests)
     # Create the paths where the objects are saved
     data_path, full_path = make_map_path()
     WV_path = case.WV_path + specifics 
