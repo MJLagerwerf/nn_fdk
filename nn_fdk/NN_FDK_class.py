@@ -34,20 +34,25 @@ def outer_layer(x, b, sc2_1, sc2_2):
                             '+ sc2_2')
 
 # %%
-def train_network(nHiddenNodes, full_path, **kwargs):
-    if 'retrain' in kwargs:
-        retrain = kwargs['retrain']
-    else:
-        retrain = False
+def train_network(nHiddenNodes, full_path, name='', retrain=False,  **kwargs):
     # Set a path to save the network
-    fnNetwork = full_path + '/network_' + str(nHiddenNodes)
+    fnNetwork = full_path + '/network_' + str(nHiddenNodes) + name
     # Check how many TD and VD datasets we have
-    nTD = sup.number_of_datasets(full_path, 'TD')
-    nVD = sup.number_of_datasets(full_path, 'VD')
-    TD_fls = [full_path + 'TD' + str(i) for i in range(nTD)]
     TD_dn = 'TD'
-    VD_fls = [full_path + 'VD' + str(i) for i in range(nVD)]
     VD_dn = 'VD'
+    nTD = sup.number_of_datasets(full_path, TD_dn)
+    nVD = sup.number_of_datasets(full_path, VD_dn)
+    if 'TD_list' in kwargs:
+        TD_fls = [full_path + TD_dn + tdl for tdl in kwargs['TD_list']]
+        print('hoi')
+    else:
+        TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
+    if 'VD_list' in kwargs:
+        VD_fls = [full_path + VD_dn + vdl for vdl in kwargs['VD_list']]
+        print('hoi2')
+    else:
+        VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
+
     # Open hdf5 file for your network
     # Check if we already have a network trained for this number of nodes
     if os.path.exists(fnNetwork + '.hdf5'):
@@ -143,7 +148,8 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         self.nVD = nVD
         self.base_path = base_path
 
-    def train(self, nHiddenNodes, input_path=False, **kwargs):
+    def train(self, nHiddenNodes, input_path=False, name='', retrain=False, 
+              **kwargs):
         # Create the load_path containing all specifics
         if not input_path:
             data_path, full_path = sup.make_map_path(self.CT_obj.pix,
@@ -158,18 +164,13 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                                                      base_path=self.base_path)
         else:
             full_path = input_path
-        if 'retrain' in kwargs:
-            if hasattr(self, 'network'):
-                self.network += [train_network(nHiddenNodes, full_path,
-                                                   retrain=kwargs['retrain'])]
-            else:
-                self.network = [train_network(nHiddenNodes, full_path,
-                                                  retrain=kwargs['retrain'])]
+        if hasattr(self, 'network'):
+            self.network += [train_network(nHiddenNodes, full_path, name,
+                                               retrain)]
         else:
-            if hasattr(self, 'network'):
-                self.network += [train_network(nHiddenNodes, full_path)]
-            else:
-                self.network = [train_network(nHiddenNodes, full_path)]
+            self.network = [train_network(nHiddenNodes, full_path, name, 
+                                          retrain)]
+
 
     def do(self, node_output=False, nwNumber=-1, compute_results=True,
            measures=['MSE', 'MAE', 'SSIM'], astra=True):

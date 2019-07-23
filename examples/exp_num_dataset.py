@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Jun 12 13:53:15 2019
+Created on Tue Jul 23 10:30:45 2019
 
 @author: lagerwer
 """
@@ -33,13 +33,13 @@ def cfg():
     it_j = 0
     pix = 256
     # Specific phantom
-    phantom = 'Fourshape'
+    phantom = 'Fourshape_test'
     # Number of angles
     angles = 360
     # Source radius
     src_rad = 10
     # Noise specifics
-    I0 = 2 ** 8
+    I0 = 2 ** 10
     noise = ['Poisson', I0]
     
     # Load data?
@@ -50,30 +50,24 @@ def cfg():
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
-    nVox = 1e7
+    nVox = 1e6
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
-    nTD = 10
+    nTD = 1
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = 10
-    vecNodes = [2 ** i for i in range(5)]
+    nVD = 1
+    nNodes = 4
+    nTests = 10
+    
 
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'FS_noi'
+    specifics = 'num_dat_FS_noi'
     filts = ['Hann']
 
 # %%
-@ex.capture
-def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param):
-    data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
-                                             noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param)
-    return data_path, full_path
-
 @ex.capture
 def Create_data(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
               Exp_bin, bin_param, shuffle):
@@ -119,6 +113,15 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
     CT_obj.rec_methods += [CT_obj.NNFDK]
     return CT_obj
 
+# %%
+@ex.capture
+def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
+              Exp_bin, bin_param):
+    data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
+                                             noise, nTrain, nTD, nVal, nVD,
+                                             Exp_bin, bin_param)
+    return data_path, full_path
+
 @ex.capture
 def save_and_add_artifact(path, arr):
     np.save(path, arr)
@@ -150,21 +153,13 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(retrain, vecNodes, filts, specifics):
+def main(retrain, nNodes, nTests, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
-    # Create the training and validation data
-    t1 = time.time()
-    Create_data()
-    t2 = time.time()
-    print(t2 - t1, 'seconds to create data')
     # Create a test dataset
     case = CT()
-    t3 = time.time()
-    print(t3 - t2, 'seconds to initialize CT object')
-    
-
+    Create_data(nTD=nTests, nVD=nTests)
     # Create the paths where the objects are saved
     data_path, full_path = make_map_path()
     WV_path = case.WV_path + specifics 
@@ -180,21 +175,19 @@ def main(retrain, vecNodes, filts, specifics):
     
     
     print('Finished FDKs')
-    TT = np.zeros(len(vecNodes))
-    for i in range(len(vecNodes)):
+    TT = np.zeros(nTests)
+    for i in range(nTests):
         t = time.time()
-        if retrain:
-            case.NNFDK.train(vecNodes[i], retrain=True)
-        else:
-            case.NNFDK.train(vecNodes[i])
+        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
+                         TD_list=[2 * i], VD_list=[2 * i + 1])
         TT[i] = time.time() - t
-        save_network(case, full_path, 'network_' + str(vecNodes[i]) + '.hdf5')
+        save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
+                     '.hdf5')
         
         case.NNFDK.do()
-        save_and_add_artifact(WV_path +'_NNFDK'+ str(vecNodes[i]) +'_rec.npy',
-                              case.NNFDK.results.rec_axis[-1])
+        save_and_add_artifact(WV_path + '_NNFDK'+  str(nNodes) + '_' + str(i) + 
+                               '_rec.npy', case.NNFDK.results.rec_axis[-1])
 
-        ex.log_scalar('Reconstruction time', case.NNFDK.results.rec_time[i])
         
     Q, RT = log_variables(case.NNFDK.results, Q, RT)
     
