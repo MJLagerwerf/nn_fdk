@@ -63,7 +63,6 @@ def random_lists(nTD, nVD):
 def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
                     **kwargs):       
     full_path = data_path + sup.make_full_path(nTrain, nTD, nVal, nVD)
-    print(full_path)
     voxTD = nTrain // nTD
     voxVD = nVal // nVD
     if not 'voxMaxData' in kwargs:
