@@ -172,7 +172,6 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     TT = np.zeros(nTests)
     for i in range(nTests):
         DS_list = [[], []]
-        DS_list = [[2 * i], [2 * i + 1]]
         for j in range(nD):
             DS_list[0] += [2 * (i + j * nTests)]
             DS_list[1] += [2 * (i + j * nTests) + 1]
