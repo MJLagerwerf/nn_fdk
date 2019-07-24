@@ -49,12 +49,13 @@ def cfg():
     retrain = True
     # Total number of voxels used for training
     nVox = 1e6
+    nD = 10
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
-    nTD = 10
+    nTD = nD
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = 10
+    nVD = nD
     nNodes = 4
     nTests = 10
     
@@ -146,7 +147,7 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(retrain, nNodes, nTests, filts, specifics):
+def main(retrain, nNodes, nTests, nD, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
@@ -170,7 +171,11 @@ def main(retrain, nNodes, nTests, filts, specifics):
     print('Finished FDKs')
     TT = np.zeros(nTests)
     for i in range(nTests):
+        DS_list = [[], []]
         DS_list = [[2 * i], [2 * i + 1]]
+        for j in range(nD):
+            DS_list[0] += [2 * (i + j * nTests)]
+            DS_list[1] += [2 * (i + j * nTests) + 1]
         case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
                          DS_list=DS_list)
         TT[i] = case.NNFDK.train_time
