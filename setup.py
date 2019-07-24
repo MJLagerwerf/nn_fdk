@@ -20,7 +20,8 @@ requirements = [
 	'numexpr',
 	'h5py',
 	'sacred',
-	'tqdm'
+	'tqdm',
+    'pymongo'
     # Add your project's requirements here, e.g.,
     # 'astra-toolbox',
     # 'sacred>=0.7.2',

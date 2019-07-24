@@ -38,8 +38,8 @@ def cfg():
     # Source radius
     src_rad = 10
     # Noise specifics
-    I0 = 2 ** 10
-    noise = None#['Poisson', I0]
+    I0 = 2 ** 14
+    noise = ['Poisson', I0]
     
     # Load data?
     f_load_path = None

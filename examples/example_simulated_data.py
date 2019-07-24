@@ -14,18 +14,18 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Defrise'
+phantom = 'Defrise random'
 # Number of angles
 angles = 360
 # Source radius
 src_rad = 5
 det_rad = 0
 # Noise specifics
-noise = None #['Poisson', 2 ** 10]
+noise = None #['Poisson', 2 ** 14]
 # Number of voxels used for training, number of datasets used for training
-nTrain, nTD = 1e6, 4
+nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 4
+nVal, nVD = 1e6, 1
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -78,17 +78,17 @@ case.NNFDK.train(4)#, retrain=True)
 print('Training network took', time.time() - t2, 'seconds')
 case.NNFDK.do(node_output=True)
 case.FDK.do('Hann')
-case.SIRT.do([20, 50])
+case.SIRT_NN.do([50, 100, 200])
 
 
 
 # %%
-pylab.figure()
-
-pylab.plot(case.NNFDK.network[0]['l_tE'][5:], label= 'training error')
-pylab.plot(case.NNFDK.network[0]['l_vE'][5:], label= 'validation error')
-#pylab.ylim([-0.00000001, 0.0001])
-pylab.legend()
+#pylab.figure()
+#
+#pylab.plot(case.NNFDK.network[0]['l_tE'][5:], label= 'training error')
+#pylab.plot(case.NNFDK.network[0]['l_vE'][5:], label= 'validation error')
+##pylab.ylim([-0.00000001, 0.0001])
+#pylab.legend()
 #NW_full = h5py.File(full_path + 'network_' + str(1) + '.hdf5', 'r')
 #NW = h5py.File(case.WV_path +  'network_' + str(1) + '.hdf5', 'w')
 #
@@ -102,6 +102,7 @@ case.table()
 case.show_phantom()
 case.NNFDK.show()
 case.FDK.show()
+case.SIRT_NN.show(-2)
 
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output()
