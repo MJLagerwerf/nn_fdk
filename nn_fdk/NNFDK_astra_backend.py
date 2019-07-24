@@ -100,9 +100,10 @@ def NNFDK_astra(g, NW, geom, reco_space, Exp_op, node_output, ang_freq=None):
         astra.algorithm.run(alg_id)
         rec_tot = hidden_layer(rec, rec_tot, NW['l2'][i], b)
         if node_output:
-            rec = hidden_layer(rec, 0, NW['l2'][i], b)
-            node_output_axis += [rec[:, :, mid], rec[:, mid, :],
-                                 rec[mid, :, :]]
+            rec2 = hidden_layer(rec, 0, NW['l2'][i], b)
+            node_output_axis += [rec2[:, :, mid], rec2[:, mid, :],
+                                 rec2[mid, :, :]]
+
         
     # Make a numpy array of the filter list
     h_e = np.asarray(h_e)

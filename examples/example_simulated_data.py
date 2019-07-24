@@ -14,18 +14,18 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'FORBILD'
+phantom = 'Defrise'
 # Number of angles
 angles = 360
 # Source radius
-src_rad = 10
+src_rad = 5
 det_rad = 0
 # Noise specifics
-noise = ['Poisson', 2 ** 8]
+noise = None #['Poisson', 2 ** 10]
 # Number of voxels used for training, number of datasets used for training
-nTrain, nTD = 1e6, 1
+nTrain, nTD = 1e6, 4
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 1
+nVal, nVD = 1e6, 4
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -74,12 +74,11 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
 #for i in range(1):
 t2 = time.time()
-case.NNFDK.train(1)
+case.NNFDK.train(4)#, retrain=True)
 print('Training network took', time.time() - t2, 'seconds')
 case.NNFDK.do(node_output=True)
-case.FDK.do('Ram-Lak')
 case.FDK.do('Hann')
-#case.SIRT.do([10, 20, 30])
+case.SIRT.do([20, 50])
 
 
 
@@ -97,12 +96,13 @@ pylab.legend()
 #
 ## %%
 #case.FDK.do('Hann')
-case.table()
 # %%
-
-case.NNFDK.show_filters()
-case.NNFDK.show_node_output()
+pylab.close('all')
+case.table()
+case.show_phantom()
 case.NNFDK.show()
 case.FDK.show()
 
+#case.NNFDK.show_filters()
+#case.NNFDK.show_node_output()
 
