@@ -56,7 +56,6 @@ def cfg():
     nVal = nVox
     nVD = nD
     nNodes = 4
-    nTests = 1
     
     # Specifics for the expansion operator
     Exp_bin = 'linear'
@@ -69,7 +68,7 @@ def cfg():
 def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
                     bin_param, nTests):
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, 2 * nTests)
+                                 Exp_bin, bin_param, nTD + nVD)
 
         
 @ex.capture
@@ -168,19 +167,14 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     
     print('Finished FDKs')
     TT = np.zeros(nTests)
-    for i in range(nTests):
-        DS_list = [[], []]
-        for j in range(nD):
-            DS_list[0] += [2 * (i + j * nTests)]
-            DS_list[1] += [2 * (i + j * nTests) + 1]
-        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
-                         DS_list=DS_list)
+    for i in range(5):
+        case.NNFDK.train(nNodes, retrain=retrain)
+    
         TT[i] = case.NNFDK.train_time
-        save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
-                     '.hdf5')
+        save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')
         
         case.NNFDK.do()
-        save_and_add_artifact(WV_path + '_NNFDK'+  str(nNodes) + '_' + str(i) + 
+        save_and_add_artifact(WV_path + '_NNFDK'+  str(2 ** i) + 
                                '_rec.npy', case.NNFDK.results.rec_axis[-1])
 
         
