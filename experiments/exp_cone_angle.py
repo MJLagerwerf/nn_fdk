@@ -144,7 +144,7 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(retrain, nNodes, nTests, nD, filts, specifics):
+def main(retrain, nNodes, nD, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
@@ -166,7 +166,7 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     
     
     print('Finished FDKs')
-    TT = np.zeros(nTests)
+    TT = np.zeros(5)
     for i in range(5):
         case.NNFDK.train(nNodes, retrain=retrain)
     
