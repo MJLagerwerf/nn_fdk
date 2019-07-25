@@ -35,14 +35,13 @@ def outer_layer(x, b, sc2_1, sc2_2):
                             '+ sc2_2')
 
 # %%
-def train_network(nHiddenNodes, full_path, name='', retrain=False, **kwargs):
+def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
+                  **kwargs):
     # Set a path to save the network
     fnNetwork = full_path + '/network_' + str(nHiddenNodes) + name
     # Check how many TD and VD datasets we have
     TD_dn = 'TD'
     VD_dn = 'VD'
-    nTD = sup.number_of_datasets(full_path, TD_dn)
-    nVD = sup.number_of_datasets(full_path, VD_dn)
 
     TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
     VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
@@ -160,11 +159,11 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                            **kwargs)
         t = time.time()
         if hasattr(self, 'network'):
-            self.network += [train_network(nHiddenNodes, self.full_path, name,
-                                               retrain)]
+            self.network += [train_network(nHiddenNodes, self.nTD, self.nVD,
+                                           self.full_path, name, retrain)]
         else:
-            self.network = [train_network(nHiddenNodes, self.full_path, name, 
-                                          retrain)]
+            self.network = [train_network(nHiddenNodes, self.nTD, self.nVD,
+                                          self.full_path, name, retrain)]
         self.train_time = time.time() - t 
 
     def do(self, node_output=False, nwNumber=-1, compute_results=True,
