@@ -66,7 +66,7 @@ def cfg():
 # %%
 @ex.capture
 def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
-                    bin_param, nTests):
+                    bin_param):
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                  Exp_bin, bin_param, nTD + nVD)
 
