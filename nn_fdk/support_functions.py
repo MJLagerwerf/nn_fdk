@@ -86,3 +86,20 @@ def number_of_datasets(path, data_type):
     return nDatasets
 
 
+# %%
+def load_results(path, nMeth, nExp, files, spec, spec_var, **kwargs):
+    i = 0
+    if 'name_result' in kwargs:
+        Q = np.zeros((nMeth, nExp))
+        for f in files:
+            Q[:, i] = np.load(path + str(f) + '/' + spec + str(spec_var[i]) +
+                             kwargs['name_result'] + '.npy')
+            i += 1
+    else:
+        Q = np.zeros((nMeth, nExp, 3))
+        for f in files:
+            Q[:, i, :] = np.load(path + str(f)+ '/' + spec + str(spec_var[i]) +
+                         '_Q.npy')
+            i += 1
+    return Q
+
