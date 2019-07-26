@@ -138,6 +138,8 @@ def log_variables(results, Q, RT):
     Q = np.append(Q, results.Q, axis=0)
     RT = np.append(RT, results.rec_time)
     return Q, RT
+
+
 # %%
 @ex.automain
 def main(retrain, filts, specifics):

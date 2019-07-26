@@ -45,7 +45,6 @@ def cfg():
     # Source radius
     src_rad = 10
     # Noise specifics
-    noise = None #['Poisson', I0[it_i]]
 
     # Should we retrain the networks?
     retrain = True
