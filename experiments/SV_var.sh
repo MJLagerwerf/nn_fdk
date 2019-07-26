@@ -8,6 +8,6 @@
 for i in {0..4}
 do
     python SV_var.py -p -F \
-    NNFDK_results/SV_var_1024 with it_i=$i
+    NNFDK_results/SV_var_1024 with it_i=$i pix=1024
 done
 

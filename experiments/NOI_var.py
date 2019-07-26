@@ -27,7 +27,7 @@ ex = Experiment()
 def cfg():
     it_i = 0
     it_j = 0
-    pix = 1024
+    pix = 256
     # Specific phantom
     phantom = 'Fourshape_test'
     # Number of angles
@@ -169,7 +169,7 @@ def main(retrain, filts, specifics):
     print('Finished FDKs')
     TT = np.zeros(5)
     for i in range(5):
-        case.NNFDK.train(nNodes, retrain=retrain)
+        case.NNFDK.train(2 ** i, retrain=retrain)
     
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')
@@ -181,7 +181,7 @@ def main(retrain, filts, specifics):
         
     Q, RT = log_variables(case.NNFDK.results, Q, RT)
     
-    niter = [50, 100, 200]
+    niter = [20, 50, 100]
     case.SIRT_NN.do(niter)
     for ni in range(len(niter)):
         save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
