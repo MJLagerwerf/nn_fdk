@@ -154,7 +154,6 @@ def main(retrain, filts, specifics):
     WV_path = case.WV_path + specifics 
     save_and_add_artifact(WV_path + '_g.npy', case.g)
 
-
     for i in range(len(filts)):
         case.FDK.do(filts[i])
     Q, RT = log_variables(case.FDK.results, Q, RT)
@@ -174,6 +173,7 @@ def main(retrain, filts, specifics):
         save_and_add_artifact(WV_path + '_NNFDK'+  str(2 ** i) + 
                                '_rec.npy', case.NNFDK.results.rec_axis[-1])
 
+    save_and_add_artifact(WV_path + '_TT.npy', TT)
         
     Q, RT = log_variables(case.NNFDK.results, Q, RT)
     

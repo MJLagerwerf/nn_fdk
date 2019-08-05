@@ -177,6 +177,7 @@ def main(retrain, nNodes, nD, filts, specifics):
         save_and_add_artifact(WV_path + '_NNFDK'+  str(2 ** i) + 
                                '_rec.npy', case.NNFDK.results.rec_axis[-1])
 
+    save_and_add_artifact(WV_path + '_TT.npy', TT)
         
     Q, RT = log_variables(case.NNFDK.results, Q, RT)
     
@@ -186,6 +187,7 @@ def main(retrain, nNodes, nD, filts, specifics):
         save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
                               case.SIRT_NN.results.rec_axis[ni])
 
+    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
 
