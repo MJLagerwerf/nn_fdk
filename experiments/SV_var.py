@@ -183,6 +183,7 @@ def main(retrain, filts, specifics):
         save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
                               case.SIRT_NN.results.rec_axis[ni])
 
+    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
 
