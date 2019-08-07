@@ -25,7 +25,7 @@ def cfg():
     sc = 1
     Exp_bin = 'linear'
     bin_param = 2
-    it_i = 1
+    it_i = 18
 
 
 # %%
@@ -58,20 +58,20 @@ def main(it_i, path, dsets, ang_freqs, sc):
     else:
         scaling = '_sc' + str(sc)
 
-    dataset, meta = load_and_preprocess(path + case, dsets[0], redo=True)
+#    dataset, meta = load_and_preprocess(path + case, dsets[0], redo=True)
     # do the high dose sparse view cases  
-    for af in ang_freqs:
-        t = time.time()
-        B = Create_dataset(dataset, meta, af)
-        np.save(save_path + 'Dataset_' + dsets[0] + '_ang_freq' + str(af) + \
-                scaling, B)
-        print('Finished creating Dataset_' + dsets[0] + '_ang_freq' + str(af) + \
-              scaling, time.time() - t)
+#    for af in ang_freqs:
+#        t = time.time()
+#        B = Create_dataset(dataset, meta, af)
+#        np.save(save_path + 'Dataset_' + dsets[0] + '_ang_freq' + str(af) + \
+#                scaling, B)
+#        print('Finished creating Dataset_' + dsets[0] + '_ang_freq' + str(af) + \
+#              scaling, time.time() - t)
             
-    # Do the low dose case
+#     Do the low dose case
     t = time.time()
     ang_freq = 1
-    dataset, meta = load_and_preprocess(path + case, dsets[1], redo=False)
+    dataset, meta = load_and_preprocess(path + case, dsets[1], redo=True)
     B = Create_dataset(dataset, meta, ang_freq)
     np.save(save_path + 'Dataset_' + dsets[1] + scaling, B)
     print('Finished creating Dataset_' + dsets[1] + scaling, time.time() - t)

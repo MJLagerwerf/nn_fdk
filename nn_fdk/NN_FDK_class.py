@@ -33,6 +33,7 @@ def outer_layer(x, b, sc2_1, sc2_2):
     ''' Outer layer'''
     return numexpr.evaluate('2 * (1 / (1 + exp(-(x - b))) - .25) * sc2_1' \
                             '+ sc2_2')
+    
 
 # %%
 def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
@@ -42,10 +43,13 @@ def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
     # Check how many TD and VD datasets we have
     TD_dn = 'TD'
     VD_dn = 'VD'
-
-    TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
-    VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
-    
+    if 'dataset_lists' in kwargs:
+        TD_fls = kwargs['dataset_lists'][0]
+        VD_fls = kwargs['dataset_lists'][1]        
+    else:
+        TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
+        VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
+        
     # Open hdf5 file for your network
     # Check if we already have a network trained for this number of nodes
     if os.path.exists(fnNetwork + '.hdf5'):
@@ -140,7 +144,8 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         self.nVal = nVal
         self.nVD = nVD
         self.base_path = base_path
-        self.data_path, self.full_path = sup.make_map_path(self.CT_obj.pix,
+        if self.CT_obj.phantom.data_type == 'simulated':
+            self.data_path, self.full_path = sup.make_map_path(self.CT_obj.pix,
                                                      self.CT_obj.phantom.PH,
                                                      self.CT_obj.angles,
                                                      self.CT_obj.src_rad,
@@ -150,12 +155,17 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                                                      self.Exp_bin,
                                                      self.bin_param,
                                                      base_path=self.base_path)
+        else:
+            self.data_path, self.full_path = sup.make_map_path_RD()
 
     def train(self, nHiddenNodes, name='', retrain=False, DS_list=False, 
               **kwargs):
-        PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
+        if self.CT_obj.phantom.data_type == 'simulated':    
+            PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
                            self.nTD, self.nVal, self.nVD, DS_list=DS_list,
                            **kwargs)
+        else:
+            pass
         t = time.time()
         if hasattr(self, 'network'):
             self.network += [train_network(nHiddenNodes, self.nTD, self.nVD,

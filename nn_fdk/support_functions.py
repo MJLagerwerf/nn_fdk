@@ -52,6 +52,18 @@ def make_data_path(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param,
     
     return data_path
 
+def make_data_path_RD(load_path, Exp_bin, bin_param,
+                   base_path='/export/scratch2/lagerwer/data/NNFDK/'):
+    data_map = load_path 
+    
+    EB = text_to_acronym(Exp_bin)
+    filter_map = EB + str(bin_param) + '/'
+
+    data_path = base_path + data_map + filter_map
+    
+    return data_path
+
+
 def make_full_path(nTrain, nTD, nVal, nVD):
     training_map = 'nT' + '{:.0e}'.format(nTrain) + '_nTD' + str(nTD)
     validation_map =  'nV' + '{:.0e}'.format(nVal) + '_nVD' + str(nVD) + '/'
@@ -69,6 +81,19 @@ def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
     full_path = data_path + make_full_path(nTrain, nTD, nVal, nVD)
 
     return data_path, full_path
+
+def make_map_path_RD(load_path, nTrain, nTD, nVal, nVD,
+                  Exp_bin, bin_param,
+                  base_path='/export/scratch2/lagerwer/data/NNFDK/'):
+
+    data_path = make_data_path(load_path, Exp_bin, bin_param,
+                               base_path=base_path)
+        
+    
+    full_path = data_path + make_full_path(nTrain, nTD, nVal, nVD)
+
+    return data_path, full_path
+
 
 
 # %%
