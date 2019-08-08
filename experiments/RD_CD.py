@@ -63,9 +63,9 @@ def main(it_i, path, dsets, ang_freqs, sc):
     for af in ang_freqs:
         t = time.time()
         B = Create_dataset(dataset, meta, af)
-        np.save(save_path + 'Dataset'+ str(it_i) + '_' + dsets[0] + \
+        np.save(save_path + 'Dataset'+ str(it_i-1) + '_' + dsets[0] + \
                 '_ang_freq' + str(af) + scaling, B)
-        print('Finished creating Dataset'+ str(it_i) + '_' + dsets[0] + \
+        print('Finished creating Dataset'+ str(it_i-1) + '_' + dsets[0] + \
                 '_ang_freq' + str(af) + scaling, time.time() - t)
             
 #     Do the low dose case
@@ -73,8 +73,8 @@ def main(it_i, path, dsets, ang_freqs, sc):
     ang_freq = 1
     dataset, meta = load_and_preprocess(path + case, dsets[1], redo=False)
     B = Create_dataset(dataset, meta, ang_freq)
-    np.save(save_path + 'Dataset' + str(it_i) + '_' + dsets[1] + scaling, B)
-    print('Finished creating Dataset' + str(it_i) + '_' + dsets[1] + scaling,
+    np.save(save_path + 'Dataset' + str(it_i-1) + '_' + dsets[1] + scaling, B)
+    print('Finished creating Dataset' + str(it_i-1) + '_' + dsets[1] + scaling,
           time.time() - t)
 
     return case
