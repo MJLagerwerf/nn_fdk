@@ -133,7 +133,8 @@ def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
 
 class NNFDK_class(ddf.algorithm_class.algorithm_class):
     def __init__(self, CT_obj, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
-                 bin_param, base_path='/export/scratch2/lagerwer/data/NNFDK/'):
+                 bin_param, dset=None,
+                 base_path='/export/scratch2/lagerwer/data/NNFDK/'):
         self.CT_obj = CT_obj
         self.method = 'NN-FDK'
         self.Exp_bin = Exp_bin
@@ -143,6 +144,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         self.nTD = nTD
         self.nVal = nVal
         self.nVD = nVD
+        self.dset = dset
         self.base_path = base_path
         if self.CT_obj.phantom.data_type == 'simulated':
             self.data_path, self.full_path = sup.make_map_path(self.CT_obj.pix,
@@ -156,16 +158,18 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                                                      self.bin_param,
                                                      base_path=self.base_path)
         else:
-            self.data_path, self.full_path = sup.make_map_path_RD()
+            self.data_path, self.full_path = sup.make_map_path_RD(self.dset,
+                                                self.CT_obj.phantom.ang_freq,
+                                                self.nTrain, self.nTD,
+                                                self.nVal, self.nVD)
 
     def train(self, nHiddenNodes, name='', retrain=False, DS_list=False, 
               **kwargs):
-        if self.CT_obj.phantom.data_type == 'simulated':    
-            PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
+
+        PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
                            self.nTD, self.nVal, self.nVD, DS_list=DS_list,
                            **kwargs)
-        else:
-            pass
+
         t = time.time()
         if hasattr(self, 'network'):
             self.network += [train_network(nHiddenNodes, self.nTD, self.nVD,

@@ -52,14 +52,15 @@ def make_data_path(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param,
     
     return data_path
 
-def make_data_path_RD(load_path, Exp_bin, bin_param,
-                   base_path='/export/scratch2/lagerwer/data/NNFDK/'):
-    data_map = load_path 
-    
-    EB = text_to_acronym(Exp_bin)
-    filter_map = EB + str(bin_param) + '/'
-
-    data_path = base_path + data_map + filter_map
+def make_data_path_RD(dset, ang_freq,
+    base_path='/export/scratch2/lagerwer/data/FlexRay/walnuts_10MAY/NNFDK/'):
+    if dset == 'good':
+        
+        data_path = base_path + dset + '_ang_freq' + str(ang_freq) + '/'
+    elif dset == 'noisy':
+        data_path = base_path + dset + '/'
+    else:
+        raise ValueError(dset, 'is not a valid dataset type')
     
     return data_path
 
@@ -82,13 +83,11 @@ def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
     return data_path, full_path
 
-def make_map_path_RD(load_path, nTrain, nTD, nVal, nVD,
-                  Exp_bin, bin_param,
-                  base_path='/export/scratch2/lagerwer/data/NNFDK/'):
 
-    data_path = make_data_path(load_path, Exp_bin, bin_param,
-                               base_path=base_path)
-        
+def make_map_path_RD(dset, ang_freq, nTrain, nTD, nVal, nVD,
+    base_path='/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/NNFDK/'):
+
+    data_path = make_data_path_RD(dset, ang_freq, base_path=base_path)
     
     full_path = data_path + make_full_path(nTrain, nTD, nVal, nVD)
 

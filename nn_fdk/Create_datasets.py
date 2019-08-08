@@ -243,7 +243,7 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
                                           (2, 0, 1)))
     voxels = data_obj.voxels
     
-    MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 10 ** 6])
+    MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 2 * 10 ** 7])
 
     if ang_freq is not None:
         ang = np.linspace(np.pi / angles, (2 + 1 / angles) * np.pi,
