@@ -60,14 +60,12 @@ def make_custom_data(data_path, nTests, nTrain, nTD, nVal, nVD):
     for i in range(DD):
         TDs = load_dataset_adapt_voxels_mult(data_path, i, voxTD, num_dat)
         for j in range(num_dat):
-            print(full_path + 'TD' + str(i + j * DD))
             sp.savemat(full_path + 'TD' + str(i + j * DD),
                        {'TD': TDs[j, :, :]})
             
     for i in range(DD, 2 * DD):
         VDs = load_dataset_adapt_voxels_mult(data_path, i, voxVD, num_dat)
         for j in range(num_dat):
-            print(full_path + 'VD' + str((i- DD) + j * DD))
             sp.savemat(full_path + 'VD' + str((i- DD) + j * DD),
                        {'VD': VDs[j, :, :]})
 
