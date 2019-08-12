@@ -58,7 +58,9 @@ def random_lists(nTD, nVD):
     idTrain = nData[:nTD]
     idVal = nData[nTD:]
     return idTrain, idVal
-    
+
+
+
 
 def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
                     **kwargs):       
@@ -91,3 +93,4 @@ def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
         VD = load_dataset_adapt_voxels(data_path, i, voxVD)
         sp.savemat(full_path + 'VD' + str(count), {'VD': VD})
         count += 1
+

@@ -43,13 +43,14 @@ def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
     # Check how many TD and VD datasets we have
     TD_dn = 'TD'
     VD_dn = 'VD'
-    if 'dataset_lists' in kwargs:
-        TD_fls = kwargs['dataset_lists'][0]
-        VD_fls = kwargs['dataset_lists'][1]        
+    if 'd_fls' in kwargs:
+        TD_fls = [full_path + TD_dn + str(i) for i in kwargs['d_fls'][0]] 
+        VD_fls = [full_path + VD_dn + str(i) for i in kwargs['d_fls'][1]]
     else:
         TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
         VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
-        
+    
+    print(TD_fls)
     # Open hdf5 file for your network
     # Check if we already have a network trained for this number of nodes
     if os.path.exists(fnNetwork + '.hdf5'):
@@ -164,20 +165,22 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                                                 self.nVal, self.nVD)
 
     def train(self, nHiddenNodes, name='', retrain=False, DS_list=False, 
-              **kwargs):
-
-        PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
-                           self.nTD, self.nVal, self.nVD, DS_list=DS_list,
-                           **kwargs)
+              preprocess=True, **kwargs):
+        if preprocess:
+            PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
+                               self.nTD, self.nVal, self.nVD, DS_list=DS_list,
+                               **kwargs)
 
         t = time.time()
         if hasattr(self, 'network'):
             self.network += [train_network(nHiddenNodes, self.nTD, self.nVD,
-                                           self.full_path, name, retrain)]
+                                           self.full_path, name, retrain,
+                                           **kwargs)]
         else:
             self.network = [train_network(nHiddenNodes, self.nTD, self.nVD,
-                                          self.full_path, name, retrain)]
-        self.train_time = time.time() - t 
+                                          self.full_path, name, retrain,
+                                          **kwargs)]
+        self.train_time = time.time() - t
 
     def do(self, node_output=False, nwNumber=-1, compute_results=True,
            measures=['MSE', 'MAE', 'SSIM'], astra=True):
