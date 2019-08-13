@@ -30,7 +30,7 @@ def cfg():
     # Specific phantom
     phantom = 'Fourshape_test'
     # Number of angles
-    ang = [8, 16, 32, 64, 128, 256]
+    ang = [8, 16, 32, 64, 128, 192, 256, 320, 384]
     angles = ang[it_i]
     
     # Load data?
