@@ -58,7 +58,7 @@ def main(it_i, path, dsets, ang_freqs, sc):
     else:
         scaling = '_sc' + str(sc)
 
-    dataset, meta = load_and_preprocess(path + case, dsets[0], redo=False)
+    dataset, meta = load_and_preprocess(path + case, dsets[0], redo=True)
     # do the high dose sparse view cases  
     for af in ang_freqs:
         t = time.time()
