@@ -35,7 +35,8 @@ def cfg():
     # Source radius
     src_rad = 10
     # Noise specifics
-    I0 = [2 ** 8, 2 ** 9, 2 ** 10, 2 ** 11, 2 ** 12, 2 ** 13]
+    I0 = [2 ** 8, 2 ** 9, 2 ** 10, 2 ** 11, 2 ** 12, 2 ** 13, 2 ** 14, 2 ** 16,
+          2 ** 18, 2 ** 20]
     noise = ['Poisson', I0[it_i]]
     
     # Load data?
