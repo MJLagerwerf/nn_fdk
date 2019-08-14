@@ -51,19 +51,19 @@ def main(it_i, path, dsets, ang_freqs, sc):
     else:
         case = 'walnut_' + str(it_i) + '/'
 
-    pd = 'processed_data/'
-    save_path = path + case + pd
     if sc == 1:
         scaling = ''
     else:
         scaling = '_sc' + str(sc)
 
-    dataset, meta = load_and_preprocess(path + case, dsets[0], redo=True)
+    dataset, meta = load_and_preprocess(path + case, dsets[0], redo=False)
     # do the high dose sparse view cases  
     for af in ang_freqs:
         t = time.time()
         B = Create_dataset(dataset, meta, af)
-        np.save(save_path + 'Dataset'+ str(it_i-1) + '_' + dsets[0] + scaling, B)
+        save_path = path + 'NNFDK/' + dsets[0] + '_ang_freq' + str(af) + scaling
+#        print(save_path + '/Dataset'+ str(it_i-1))
+        np.save(save_path + 'Dataset'+ str(it_i-1), B)
         print('Finished creating Dataset'+ str(it_i-1) + '_' + dsets[0] + \
                 '_ang_freq' + str(af) + scaling, time.time() - t)
             
@@ -72,7 +72,9 @@ def main(it_i, path, dsets, ang_freqs, sc):
     ang_freq = 1
     dataset, meta = load_and_preprocess(path + case, dsets[1], redo=False)
     B = Create_dataset(dataset, meta, ang_freq)
-    np.save(save_path + 'Dataset' + str(it_i-1) + '_' + dsets[1] + scaling, B)
+    save_path = path + 'NNFDK/' + dsets[1] + scaling
+#    print(save_path + '/Dataset'+ str(it_i-1))
+    np.save(save_path + '/Dataset' + str(it_i-1), B)
     print('Finished creating Dataset' + str(it_i-1) + '_' + dsets[1] + scaling,
           time.time() - t)
 
