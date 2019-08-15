@@ -62,7 +62,7 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'nVox' + str(nVox[it_i])
+    specifics = 'nVox{:.0f}'.format(nVox[it_i])
     filts = ['Hann']
 
 # %%
