@@ -19,7 +19,7 @@ import gc
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'num_datasets'
+name_exp = 'nVox'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
@@ -62,7 +62,7 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'nVox' + str(nVox)
+    specifics = 'nVox' + str(nVox[it_i])
     filts = ['Hann']
 
 # %%
