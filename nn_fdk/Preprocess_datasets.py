@@ -60,15 +60,13 @@ def random_lists(nTD, nVD):
     return idTrain, idVal
 
 
-
-
 def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
                     **kwargs):       
     full_path = data_path + sup.make_full_path(nTrain, nTD, nVal, nVD)
     voxTD = nTrain // nTD
     voxVD = nVal // nVD
     if not 'voxMaxData' in kwargs:
-        voxMaxData = np.max([int(pix ** 3 * 0.005), 10 ** 7])
+        voxMaxData = np.max([int(pix ** 3 * 0.005), 10 ** 8])
     
     if voxTD > voxMaxData or voxVD > voxMaxData:
         raise ValueError('To many voxels per dataset')
