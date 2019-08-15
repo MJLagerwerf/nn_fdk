@@ -68,7 +68,7 @@ def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
     voxTD = nTrain // nTD
     voxVD = nVal // nVD
     if not 'voxMaxData' in kwargs:
-        voxMaxData = np.max([int(pix ** 3 * 0.005), 10 ** 6])
+        voxMaxData = np.max([int(pix ** 3 * 0.005), 10 ** 7])
     
     if voxTD > voxMaxData or voxVD > voxMaxData:
         raise ValueError('To many voxels per dataset')

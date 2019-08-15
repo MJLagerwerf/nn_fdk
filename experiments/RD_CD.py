@@ -63,7 +63,7 @@ def main(it_i, path, dsets, ang_freqs, sc):
         B = Create_dataset(dataset, meta, af)
         save_path = path + 'NNFDK/' + dsets[0] + '_ang_freq' + str(af) + scaling
 #        print(save_path + '/Dataset'+ str(it_i-1))
-        np.save(save_path + 'Dataset'+ str(it_i-1), B)
+        np.save(save_path + '/Dataset'+ str(it_i-1), B)
         print('Finished creating Dataset'+ str(it_i-1) + '_' + dsets[0] + \
                 '_ang_freq' + str(af) + scaling, time.time() - t)
             

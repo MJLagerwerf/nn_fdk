@@ -181,7 +181,7 @@ class TrainingData(object):
             minL = np.minimum(maxL, data[:, 0:self.nPar].min(0))
             maxIn = np.max([maxIn, data[:, self.nPar].max()])
             minIn = np.min([minIn, data[:, self.nPar].min()])
-        print(minL, maxL, minIn, maxIn)
+#        print(minL, maxL, minIn, maxIn)
         return (minL, maxL, minIn, maxIn)
 
     def normalizeData(self, minL, maxL, minIn, maxIn):
