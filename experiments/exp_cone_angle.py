@@ -39,7 +39,7 @@ def cfg():
     src_rad = 10
     # Noise specifics
     I0 = 2 ** 14
-    noise = ['Poisson', I0]
+    noise = None #['Poisson', I0]
     
     # Load data?
     f_load_path = None
@@ -60,8 +60,8 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'num_dat_FS_noi'
-    filts = ['Hann']
+    specifics = 'SR' + str(src_rad)
+    filts = ['Ram-Lak', 'Hann']
 
 # %%
 @ex.capture
@@ -168,7 +168,10 @@ def main(retrain, nNodes, nD, filts, specifics):
     print('Finished FDKs')
     TT = np.zeros(5)
     for i in range(5):
-        case.NNFDK.train(2 ** i, retrain=retrain)
+        if i > 0:
+            case.NNFDK.train(2 ** i, retrain=retrain, preprocess=False)
+        else:
+            case.NNFDK.train(2 ** i, retrain=retrain)
     
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')

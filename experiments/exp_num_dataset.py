@@ -63,7 +63,7 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'num_dat_FS_noi'
+    specifics = 'num_dat'
     filts = ['Hann']
 
 # %%

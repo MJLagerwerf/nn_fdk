@@ -28,7 +28,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 # %%
 @ex.config
 def cfg():
-    it_i = 0
+    it_i = 1
     it_j = 0
     pix = 256
     # Specific phantom
@@ -146,28 +146,29 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(retrain, nNodes, nTests, nD, filts, specifics):
+def main(it_i, retrain, nNodes, nTests, nD, filts, specifics):
+    t = time.time()
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
     create_datasets()
     # Create a test dataset
-    case = CT()
+    t0 = time.time()
+    print('It took', (t0 - t) / 60, 'minutes to finish creating the datasets')
+    
+    if it_i == 0:
+        case = CT()
+    else:
+        case = CT(g_load_path=f"{FSpath}/1/nVox10000_g.npy")
     # Create the paths where the objects are saved
     data_path, full_path = make_map_path()
-    WV_path = case.WV_path + specifics 
+    WV_path = case.WV_path + specifics
     save_and_add_artifact(WV_path + '_g.npy', case.g)
 
+    t1 = time.time()
+    print('Finished setting up the inverse problem. Took:', (t1 - t0) / 60,
+          'minutes')
 
-#    for i in range(len(filts)):
-#        case.FDK.do(filts[i])
-#    Q, RT = log_variables(case.FDK.results, Q, RT)
-#
-#    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
-#            case.FDK.results.rec_axis[-1])
-#    
-    
-#    print('Finished FDKs')
     TT = np.zeros(nTests)
     for i in range(nTests):
         case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain)
@@ -185,8 +186,8 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
-
-    print('Finished NNFDKs')
+    t2 = time.time()
+    print('Finished NNFDKs. Took:', (t2 - t1) / 60, 'minutes')
     save_table(case, WV_path)
 
     
