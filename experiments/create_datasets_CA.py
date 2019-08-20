@@ -13,7 +13,7 @@ import ddf_fdk as ddf
 import nn_fdk as nn
 import time
 import os
-from load_and_preprocess_CA import * 
+import load_and_preprocess_CA as cap
 
 # %%
 ex = Experiment()
@@ -31,7 +31,7 @@ def cfg():
 # %%
 @ex.capture
 def load_and_preprocess(path, dset, redo):
-    dataset, vecs_path = load_and_preprocess(path, dset, redo=redo)
+    dataset, vecs_path = cap.load_and_preprocess(path, dset, redo=redo)
     meta = ddf.load_meta(path + dset + '/', 1)
     return dataset, meta
 
@@ -49,8 +49,7 @@ def main(it_i, path, dset):
 
     case = f'Walnut{it_i}/'
        
-    t = time.time()
-    ang_freq = 1
+#    t = time.time()
     dataset, meta = load_and_preprocess(path + case, dset, redo=False)
 #    B = Create_dataset(dataset, meta, ang_freq)
 #    save_path = f'{path}NNFDK/{dset}'
