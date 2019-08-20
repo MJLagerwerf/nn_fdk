@@ -45,17 +45,15 @@ def Create_dataset(dataset, meta, ang_freq, Exp_bin, bin_param):
     
 # %%
 @ex.automain
-def main(it_i, path, dset):
+def main(path, dset):
 
-    case = f'Walnut{it_i}/'
-       
 #    t = time.time()
-    dataset, meta = load_and_preprocess(path + case, dset, redo=False)
+    dataset, meta = load_and_preprocess(path, dset, redo=False)
 #    B = Create_dataset(dataset, meta, ang_freq)
 #    save_path = f'{path}NNFDK/{dset}'
 #    np.save(f'{save_path}/Dataset{it_i-1}', B)
 #    print(f'Finished creating Dataset{it_i-1}_{dset}',
 #          time.time() - t, 'seconds')
 
-    return case
+    return ''
 
