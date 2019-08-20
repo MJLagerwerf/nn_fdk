@@ -30,9 +30,9 @@ def cfg():
 
 # %%
 @ex.capture
-def load_and_preprocess(path, dset, sc, redo):
-    dataset, vecs_path = load_and_preprocess(path, dset, sc,redo=redo)
-    meta = ddf.load_meta(path + dset + '/', sc)
+def load_and_preprocess(path, dset, redo):
+    dataset, vecs_path = load_and_preprocess(path, dset, redo=redo)
+    meta = ddf.load_meta(path + dset + '/', 1)
     return dataset, meta
 
 @ex.capture
