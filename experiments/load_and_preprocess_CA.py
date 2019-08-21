@@ -122,10 +122,10 @@ def load_and_preprocess(path, dset, redo=False):
     else:
         print('Already computed mask and ground truth for this dataset')
 
-        dataset = {'g' : f'{pp}g_{dset}.npy',
-                   'ground_truth' : f'{pp}ground_truth.npy',
-                   'mask' : f'{pp}mask.npy'}
-        vecs_path = f'{path}{dset}scan_geom_corrected.geom'
+    dataset = {'g' : f'{pp}g_{dset}.npy',
+               'ground_truth' : f'{pp}ground_truth.npy',
+               'mask' : f'{pp}mask.npy'}
+    vecs_path = f'{path}{dset}scan_geom_corrected.geom'
     return dataset, vecs_path
     
 
