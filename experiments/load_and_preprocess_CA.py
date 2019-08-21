@@ -29,7 +29,7 @@ def transform(obj):
     return out
 
 
-def preprocess_data_portrait(path, dset, sc, redo):
+def preprocess_data_portrait(path, dset, redo):
     pp = f'{path}processed_data/'
     if not os.path.exists(pp):
         os.makedirs(pp)
