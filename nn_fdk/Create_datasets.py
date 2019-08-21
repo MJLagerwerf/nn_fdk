@@ -234,24 +234,20 @@ def Make_Smat(voxels, MaxVoxDataset, WV_path, **kwargs):
 
 # %%
 def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
-                         Exp_bin, bin_param):
+                         Exp_bin, bin_param, vecs=False):
     
     # The size of the measured objects in voxels
     data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq)
+    
+    
+    
     angles = data_obj.angles_in
     g = np.ascontiguousarray(np.transpose(np.asarray(data_obj.g.copy()),
                                           (2, 0, 1)))
     voxels = data_obj.voxels
     
     MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 2 * 10 ** 7])
-
-    if ang_freq is not None:
-        ang = np.linspace(np.pi / angles, (2 + 1 / angles) * np.pi,
-                             angles, False)[::ang_freq]
-        angles = np.size(ang)
-    else:
-        ang = np.linspace(np.pi/angles, (2 + 1 / angles) * np.pi, angles,
-                          False)
+    
     Smat = Make_Smat(voxels, MaxVoxDataset, '', real_data=dataset['mask'])
 
 
@@ -263,6 +259,7 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
 
     vol_geom = astra.create_vol_geom(voxels[0], voxels[1], voxels[2], minvox,
                                      maxvox, minvox, maxvox, minvox, maxvox)
+    
     w_du, w_dv = (geom.detector.partition.max_pt \
                     -geom.detector.partition.min_pt)/ np.array(dpix)
 

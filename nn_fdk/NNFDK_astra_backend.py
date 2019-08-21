@@ -10,6 +10,7 @@ import astra
 import odl
 import numexpr
 import time
+import ddf_fdk as ddf
 
 # %%
 def sigmoid(x):
@@ -43,16 +44,12 @@ def NNFDK_astra(g, NW, geom, reco_space, Exp_op, node_output, ang_freq=None):
     vol_geom = astra.create_vol_geom(v, v, v, minvox, maxvox, minvox, maxvox,
                                      minvox, maxvox)
 
-    w_du, w_dv = (geom.detector.partition.max_pt \
-                    -geom.detector.partition.min_pt) / np.array([u,v])
-    if ang_freq is not None:
-        angles = np.linspace(np.pi / 500, (2 + 1 / 500) * np.pi,
-                             500, False)[::ang_freq]
-    else:
-        angles = np.linspace(np.pi/ang, (2 + 1 / ang) * np.pi, ang, False)
-
-    proj_geom = astra.create_proj_geom('cone', w_du, w_dv, v, u,
-                                       angles, geom.src_radius, geom.det_radius)
+    # Build a vecs vector from the geometry, or load it
+    if type(geom) == np.ndarray:
+        vecs = geom
+    elif type(geom) == odl.tomo.geometry.conebeam.ConeFlatGeometry:
+        vecs = ddf.astra_conebeam_3d_geom_to_vec(geom)
+    proj_geom = astra.create_proj_geom('cone_vec', v, u, vecs)
     g = np.transpose(np.asarray(g), (2, 0, 1))
     # %%
     proj_id = astra.data3d.create('-proj3d', proj_geom, g)

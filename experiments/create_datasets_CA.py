@@ -48,7 +48,7 @@ def Create_dataset(dataset, meta, ang_freq, Exp_bin, bin_param):
 def main(path, dset):
 
 #    t = time.time()
-    dataset, meta = load_and_preprocess(path, dset, redo=False)
+    dataset, meta = load_and_preprocess(path, dset, redo=True)
 #    B = Create_dataset(dataset, meta, ang_freq)
 #    save_path = f'{path}NNFDK/{dset}'
 #    np.save(f'{save_path}/Dataset{it_i-1}', B)
