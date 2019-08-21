@@ -20,7 +20,16 @@ import scipy.ndimage as sp
 from tqdm import tqdm
 
 # %%
-def preprocess_data_portrait(path, dset, redo):
+def transform(obj):
+    x, y, z = np.shape(obj)
+    out = np.zeros((x, z, y))
+    trafo = lambda image : np.transpose(np.flipud(image))    
+    for i in tqdm(range(np.size(obj, 0))):
+        out[i, :, :] = trafo(obj[i, :, :])
+    return out
+
+
+def preprocess_data_portrait(path, dset, sc, redo):
     pp = f'{path}processed_data/'
     if not os.path.exists(pp):
         os.makedirs(pp)
@@ -28,8 +37,11 @@ def preprocess_data_portrait(path, dset, redo):
 
     if not os.path.exists(f'{sp}.npy') or redo:
         dark = ddf.read_experimental_data.read_raw(path + dset, 'di0')
+        dark = transform(dark)
         flat = ddf.read_experimental_data.read_raw(path + dset, 'io0')
+        flat = transform(flat)
         proj = ddf.read_experimental_data.read_raw(path + dset, 'scan_0')
+        proj = transform(proj)
         # if there is a dead pixel, give it the minimum photon count from proj
         max_photon_count = proj.max()
         proj[proj == 0] = max_photon_count + 1
@@ -50,8 +62,9 @@ def preprocess_data_portrait(path, dset, redo):
         if np.size(proj, 1) % 2 != 0:
             line_u = np.zeros((proj.shape[0], 1, proj.shape[2]))
             proj = np.concatenate((proj, line_u), 1)
-
-        proj = proj[:,:, ::-1]
+        
+        proj = proj[::-1,...]
+        proj = np.transpose(proj, (0, 2, 1))
         np.save(sp, proj)
     else:
         proj = np.load(f'{sp}.npy')
