@@ -192,11 +192,13 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                                                 self.CT_obj.g, NW,
                                                 self.CT_obj.geometry,
                                                 self.CT_obj.reco_space,
+                                                self.CT_obj.w_detu,
                                                 self.Exp_op, node_output)
             else:
                 rec, h_e, = NNFDK_astra.NNFDK_astra(self.CT_obj.g, NW,
                                                     self.CT_obj.geometry,
                                                     self.CT_obj.reco_space,
+                                                    self.CT_obj.w_detu,
                                                     self.Exp_op, node_output)
         else:
             # Take the network requested

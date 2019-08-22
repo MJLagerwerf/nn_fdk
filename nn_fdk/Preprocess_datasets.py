@@ -32,7 +32,6 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                   **kwargs):
     data_path = sup.make_data_path(pix, phantom, angles, src_rad, noise,
                                    Exp_bin, bin_param)
-    
     if not os.path.exists(data_path):
         os.makedirs(data_path)
     
@@ -45,7 +44,7 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
         for i in range(nDatasets - nD):
             Dataset = CD.Create_dataset_ASTRA_sim(pix, phantom, angles,
                                                   src_rad, noise, Exp_bin,
-                                                  bin_param)
+                                                  bin_param, **kwargs)
             np.save(data_path + 'Dataset' + str(i + nD), Dataset)
             print('Finished making Dataset', str(i + nD))
             gc.collect()

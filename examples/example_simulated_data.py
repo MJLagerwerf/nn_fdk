@@ -16,17 +16,17 @@ pix = 256
 # Specific phantom
 phantom = 'Fourshape_test'
 # Number of angles
-angles = 8
+angles = 180
 # Source radius
 src_rad = 10
 det_rad = 0
 # Noise specifics
-noise = None#['Poisson', 2 ** 14]
+noise = ['Poisson', 2 ** 10]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e7, 4
 # Number of voxels used for validation, number of datasets used for validation
 nVal, nVD = 1e7, 4
-
+MVD = int(25e5)
 # Specifics for the expansion operator
 Exp_bin = 'linear'
 bin_param = 2
@@ -36,7 +36,8 @@ bin_param = 2
 # %%
 t1 = time.time()
 nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, nTD + nVD)
+                                 Exp_bin, bin_param, nTD + nVD,
+                                 MaxVoxDataset=MVD)
 print('Creating training and validation datasets took', time.time() - t1,
       'seconds')
 
@@ -75,9 +76,9 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 #for i in range(1):
 t2 = time.time()
 for i in range(5):
-    case.NNFDK.train(4, retrain=True)
-    print('Training network took', time.time() - t2, 'seconds')
-    case.NNFDK.do(node_output=False)
+    case.NNFDK.train(2 ** i, retrain=False)
+    case.NNFDK.do(node_output=True)
+
 #case.FDK.do('Hann')
 #case.SIRT_NN.do([50, 100, 200])
 
@@ -105,6 +106,6 @@ case.show_phantom()
 #case.FDK.show()
 #case.SIRT_NN.show(-2)
 
-#case.NNFDK.show_filters()
-#case.NNFDK.show_node_output()
+case.NNFDK.show_filters()
+case.NNFDK.show_node_output()
 

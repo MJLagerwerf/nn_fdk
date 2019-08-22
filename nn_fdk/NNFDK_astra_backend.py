@@ -35,7 +35,8 @@ def Exp_op_FFT(Exp_op, h, filter2d, Resize_Op, w_du):
 
 
 # %%
-def NNFDK_astra(g, NW, geom, reco_space, Exp_op, node_output, ang_freq=None):
+def NNFDK_astra(g, NW, geom, reco_space, w_du, Exp_op, node_output,
+                ang_freq=None):
     # %% Create geometry
     # Make a circular scanning geometry
     ang, u, v = g.shape
@@ -51,6 +52,7 @@ def NNFDK_astra(g, NW, geom, reco_space, Exp_op, node_output, ang_freq=None):
     elif type(geom) == odl.tomo.geometry.conebeam.ConeFlatGeometry:
         vecs = ddf.astra_conebeam_3d_geom_to_vec(geom)
     proj_geom = astra.create_proj_geom('cone_vec', v, u, vecs)
+    
     g = np.transpose(np.asarray(g), (2, 0, 1))
     # %%
     proj_id = astra.data3d.create('-proj3d', proj_geom, g)
