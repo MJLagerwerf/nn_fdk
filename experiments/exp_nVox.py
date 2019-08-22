@@ -179,7 +179,7 @@ def main(it_i, retrain, nNodes, nTests, nD, filts, specifics):
         case.NNFDK.do()
         save_and_add_artifact(WV_path + '_NNFDK'+  str(nNodes) + '_' + str(i) + 
                                '_rec.npy', case.NNFDK.results.rec_axis[-1])
-
+    
 
     save_and_add_artifact(WV_path + '_TT.npy', TT)
     Q, RT = log_variables(case.NNFDK.results, Q, RT)

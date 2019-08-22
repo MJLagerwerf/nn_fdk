@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Created on Thu May  9 15:02:43 2019
-
 @author: lagerwer
 """
 
@@ -19,8 +18,9 @@ ex = Experiment()
 
 @ex.config
 def cfg():
-    dsets = 'tubeV2'
-    path = '/export/scratch2/lagerwer/data/FleXray/Walnuts/'
+    dsets = ['good', 'noisy']
+    path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/'
+    ang_freqs = [32, 16, 8]
     sc = 1
     Exp_bin = 'linear'
     bin_param = 2
@@ -45,23 +45,36 @@ def Create_dataset(dataset, meta, ang_freq, Exp_bin, bin_param):
 # %%
 @ex.automain
 def main(it_i, path, dsets, ang_freqs, sc):
-
-    case = f'Walnut{it_i}/'
+    if it_i < 10:
+        case = 'walnut_0' + str(it_i) + '/'
+    else:
+        case = 'walnut_' + str(it_i) + '/'
 
     if sc == 1:
         scaling = ''
     else:
         scaling = '_sc' + str(sc)
+
+    dataset, meta = load_and_preprocess(path + case, dsets[0], redo=False)
+    # do the high dose sparse view cases  
+    for af in ang_freqs:
+        t = time.time()
+        B = Create_dataset(dataset, meta, af)
+        save_path = path + 'NNFDK/' + dsets[0] + '_ang_freq' + str(af) + scaling
+#        print(save_path + '/Dataset'+ str(it_i-1))
+        np.save(save_path + 'Dataset'+ str(it_i-1), B)
+        print('Finished creating Dataset'+ str(it_i-1) + '_' + dsets[0] + \
+                '_ang_freq' + str(af) + scaling, time.time() - t)
             
 #     Do the low dose case
     t = time.time()
     ang_freq = 1
     dataset, meta = load_and_preprocess(path + case, dsets[1], redo=False)
     B = Create_dataset(dataset, meta, ang_freq)
-    save_path = f'{path}NNFDK/{dsets}{scaling}'
-    np.save(f'{save_path}/Dataset{it_i-1}', B)
-    print(f'Finished creating Dataset{it_i-1}_{dsets}{scaling}',
-          time.time() - t, 'seconds')
+    save_path = path + 'NNFDK/' + dsets[1] + scaling
+#    print(save_path + '/Dataset'+ str(it_i-1))
+    np.save(save_path + '/Dataset' + str(it_i-1), B)
+    print('Finished creating Dataset' + str(it_i-1) + '_' + dsets[1] + scaling,
+          time.time() - t)
 
     return case
-

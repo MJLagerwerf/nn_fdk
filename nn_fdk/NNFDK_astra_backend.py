@@ -41,8 +41,9 @@ def NNFDK_astra(g, NW, geom, reco_space, Exp_op, node_output, ang_freq=None):
     ang, u, v = g.shape
     minvox = reco_space.min_pt[0]
     maxvox = reco_space.max_pt[0]
-    vol_geom = astra.create_vol_geom(v, v, v, minvox, maxvox, minvox, maxvox,
-                                     minvox, maxvox)
+    vox = np.shape(reco_space)[0]
+    vol_geom = astra.create_vol_geom(vox, vox, vox, minvox, maxvox, minvox,
+                                     maxvox, minvox, maxvox)
 
     # Build a vecs vector from the geometry, or load it
     if type(geom) == np.ndarray:
@@ -69,7 +70,7 @@ def NNFDK_astra(g, NW, geom, reco_space, Exp_op, node_output, ang_freq=None):
     # %% Make a filter geometry
 
     filter_geom = astra.create_proj_geom('parallel', w_du,  halfFilterSize,
-                                         angles)
+                                         np.zeros(ang))
 
 
     cfg = astra.astra_dict('FDK_CUDA')

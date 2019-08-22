@@ -80,7 +80,7 @@ def do_AGD(meta, vecs, sc, g, niter):
     src_rad = meta['s2o']
     det_rad = meta['o2d']   
     magn = src_rad / (src_rad + det_rad)
-    bounds = vox * pix_size * magn / 2
+    bounds = vox * pix_size * magn / 2 
     vol_geom = astra.create_vol_geom(vox, vox, vox, -bounds, bounds, -bounds,
                                      bounds, -bounds, bounds)    
     
@@ -138,8 +138,8 @@ def load_and_preprocess(path, dset, redo=False):
     dataset = {'g' : f'{pp}g_{dset}.npy',
                'ground_truth' : f'{pp}ground_truth.npy',
                'mask' : f'{pp}mask.npy'}
-    vecs_path = f'{path}{dset}scan_geom_corrected.geom'
-    return dataset, vecs_path
+    vecs = np.loadtxt(f'{path}{dset}/scan_geom_corrected.geom')[:-1, :] / 10
+    return dataset, vecs
     
 
 # %%

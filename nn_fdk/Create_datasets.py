@@ -24,45 +24,27 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     # The size of the measured objects in voxels
     voxels = [pix, pix, pix]
     dpix = [voxels[0] * 2, voxels[1]]
-
+    # ! ! ! This will lead to some problems later on ! ! !
     det_rad = 0
     data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)
-
-
-    src_radius = src_rad * data_obj.volumesize[0] * 2
-    det_radius = det_rad * data_obj.volumesize[0] * 2
-
+    w_du = data_obj.w_detu
     WV_obj = ddf.support_functions.working_var_map()
     WV_path = WV_obj.WV_path
 
     data_obj.make_mask(WV_path)
 
     Smat = Make_Smat(voxels, MaxVoxDataset, WV_path)
-#    SmatT = np.transpose(Smat, (2, 1, 0))
 
     # %% Create geometry
     # Make a circular scanning geometry
-    angle_partition = odl.uniform_partition(0, 2 * np.pi, angles)
-
-    # Make a flat detector space
-    det_partition = odl.uniform_partition(-data_obj.detecsize,
-                                           data_obj.detecsize, dpix)
-
-    geom = odl.tomo.ConeFlatGeometry(angle_partition, det_partition,
-                                     src_radius=src_radius,
-                                     det_radius=det_radius, axis=[0, 0, 1])
-
     minvox = data_obj.reco_space.min_pt[0]
     maxvox = data_obj.reco_space.max_pt[0]
-
-
-    vol_geom = astra.create_vol_geom(voxels[0], voxels[1], voxels[2], minvox,
-                                     maxvox, minvox, maxvox, minvox, maxvox)
-    w_du, w_dv = (geom.detector.partition.max_pt \
-                    -geom.detector.partition.min_pt)/ np.array(dpix)
-
-    proj_geom = astra.create_proj_geom('cone', w_du, w_dv, dpix[1], dpix[0],
-                                       ang, geom.src_radius, geom.det_radius)
+    vox = np.shape(data_obj.reco_space)[0]
+    vol_geom = astra.create_vol_geom(vox, vox, vox, minvox, maxvox, minvox,
+                                     maxvox, minvox, maxvox)
+    # Build a vecs vector from the geometry, or load it
+    vecs = ddf.astra_conebeam_3d_geom_to_vec(data_obj.geometry)
+    proj_geom = astra.create_proj_geom('cone_vec', dpix[1], dpix[0], vecs)
 
     filter_part = odl.uniform_partition(-data_obj.detecsize[0],
                                         data_obj.detecsize[0], dpix[0])
@@ -71,7 +53,6 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
                                                          filter_space,
                                                          interp=Exp_bin)
-
     nParam = np.size(spf_space)
 
     fullFilterSize = int(2 ** (np.ceil(np.log2(dpix[0])) + 1))
@@ -234,37 +215,43 @@ def Make_Smat(voxels, MaxVoxDataset, WV_path, **kwargs):
 
 # %%
 def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
-                         Exp_bin, bin_param, vecs=False):
+                         Exp_bin, bin_param, vox=None, vecs=None):
     
+    # ! ! ! We overide 'vox' and 'vecs' later on
     # The size of the measured objects in voxels
-    data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq)
-    
-    
-    
+    data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq,
+                             vox=vox, vecs=vecs)
     angles = data_obj.angles_in
     g = np.ascontiguousarray(np.transpose(np.asarray(data_obj.g.copy()),
-                                          (2, 0, 1)))
-    voxels = data_obj.voxels
+                                          (2, 0, 1)), dtype=np.float32)
+    v, ang, u = g.shape
+    if vox is None:
+        voxels = data_obj.voxels
+        
+    else:
+        voxels = [vox, vox, vox]
     
     MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 2 * 10 ** 7])
-    
+
     Smat = Make_Smat(voxels, MaxVoxDataset, '', real_data=dataset['mask'])
 
 
     # %% Create geometry
     geom = data_obj.geometry
-    dpix = [voxels[0] * 2 , voxels[0]]
+    w_du = data_obj.pix_size
+    dpix = [u, v]
+    
     minvox = data_obj.reco_space.min_pt[0]
     maxvox = data_obj.reco_space.max_pt[0]
-
-    vol_geom = astra.create_vol_geom(voxels[0], voxels[1], voxels[2], minvox,
-                                     maxvox, minvox, maxvox, minvox, maxvox)
-    
-    w_du, w_dv = (geom.detector.partition.max_pt \
-                    -geom.detector.partition.min_pt)/ np.array(dpix)
-
-    proj_geom = astra.create_proj_geom('cone', w_du, w_dv, dpix[1], dpix[0],
-                                       ang, geom.src_radius, geom.det_radius)
+    vox = np.shape(data_obj.reco_space)[0]
+    vol_geom = astra.create_vol_geom(vox, vox, vox, minvox, maxvox, minvox,
+                                     maxvox, minvox, maxvox)
+    # Build a vecs vector from the geometry, or load it
+    if type(geom) == np.ndarray:
+        vecs = geom
+    elif type(geom) == odl.tomo.geometry.conebeam.ConeFlatGeometry:
+        vecs = ddf.astra_conebeam_3d_geom_to_vec(geom)
+    proj_geom = astra.create_proj_geom('cone_vec', v, u, vecs)
 
     filter_part = odl.uniform_partition(-data_obj.detecsize[0],
                                         data_obj.detecsize[0], dpix[0])
@@ -303,7 +290,7 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
 
         # %% Make a filter geometry
         filter_geom = astra.create_proj_geom('parallel', w_du,  halfFilterSize,
-                                             ang)
+                                             np.zeros(ang))
         filter_id = astra.data2d.create('-sino', filter_geom, filter2d)
         #
 
