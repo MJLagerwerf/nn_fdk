@@ -221,7 +221,6 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
     # The size of the measured objects in voxels
     data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq,
                              vox=vox, vecs=vecs)
-    angles = data_obj.angles_in
     g = np.ascontiguousarray(np.transpose(np.asarray(data_obj.g.copy()),
                                           (2, 0, 1)), dtype=np.float32)
     v, ang, u = g.shape
@@ -284,8 +283,8 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
         rs_filt = Resize_Op(filt)
 
         f_filt = np.real(np.fft.rfft(np.fft.ifftshift(rs_filt)))
-        filter2d = np.zeros((angles, halfFilterSize))
-        for i in range(angles):
+        filter2d = np.zeros((ang, halfFilterSize))
+        for i in range(ang):
             filter2d[i, :] = f_filt * 4 * w_du
 
         # %% Make a filter geometry
