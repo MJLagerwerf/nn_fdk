@@ -99,7 +99,7 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
                                                          CT_obj.filter_space,
                                                          interp=Exp_bin)
     # Create the FDK binned operator
-    CT_obj.FDK_bin_nn = CT_obj.FDK_op * Exp_op
+#    CT_obj.FDK_bin_nn = CT_obj.FDK_op * Exp_op
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
