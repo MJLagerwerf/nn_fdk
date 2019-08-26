@@ -160,15 +160,15 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     save_and_add_artifact(WV_path + '_g.npy', case.g)
 
 
-    for i in range(len(filts)):
-        case.FDK.do(filts[i])
-    Q, RT = log_variables(case.FDK.results, Q, RT)
-
-    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
-            case.FDK.results.rec_axis[-1])
-    
-    
-    print('Finished FDKs')
+#    for i in range(len(filts)):
+#        case.FDK.do(filts[i])
+#    Q, RT = log_variables(case.FDK.results, Q, RT)
+#
+#    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
+#            case.FDK.results.rec_axis[-1])
+#    
+#    
+#    print('Finished FDKs')
     TT = np.zeros(nTests)
     for i in range(nTests):
         DS_list = [[], []]
