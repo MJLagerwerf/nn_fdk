@@ -154,7 +154,10 @@ def main(it_i, retrain, filts, specifics):
     print('Finished FDKs')
     TT = np.zeros(5)
     for i in range(5):
-        case.NNFDK.train(2 ** i, retrain=retrain)
+        if i == 0:
+            case.NNFDK.train(2 ** i, retrain=retrain)
+        else:
+            case.NNFDK.train(2 ** i, retrain, preprocess=False)
     
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')

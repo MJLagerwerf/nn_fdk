@@ -55,10 +55,11 @@ def make_data_path(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param,
 def make_data_path_RD(dset, ang_freq,
     base_path='/export/scratch2/lagerwer/data/FlexRay/walnuts_10MAY/NNFDK/'):
     if dset == 'good':
-        
-        data_path = base_path + dset + '_ang_freq' + str(ang_freq) + '/'
+        data_path = f'{base_path}walnuts_10MAY/NNFDK/{dset}_ang_freq{ang_freq}/'
     elif dset == 'noisy':
-        data_path = base_path + dset + '/'
+        data_path = f'{base_path}walnuts_10MAY/NNFDK/{dset}/'
+    elif dset == 'tubeV2':
+        data_path = f'{base_path}Walnuts/NNFDK/{dset}/'
     else:
         raise ValueError(dset, 'is not a valid dataset type')
     

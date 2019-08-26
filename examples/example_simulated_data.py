@@ -107,5 +107,5 @@ case.show_phantom()
 #case.SIRT_NN.show(-2)
 
 case.NNFDK.show_filters()
-case.NNFDK.show_node_output()
+case.NNFDK.show_node_output(3)
 
