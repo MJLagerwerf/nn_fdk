@@ -34,12 +34,12 @@ def cfg():
     # Specific phantom
     phantom = 'Fourshape_test'
     # Number of angles
-    angles = 32
+    angles = 16
     # Source radius
     src_rad = 10
     # Noise specifics
     I0 = 2 ** 10
-    noise = ['Poisson', I0]
+    noise = None #['Poisson', I0]
     
     # Load data?
     f_load_path = None
@@ -47,8 +47,8 @@ def cfg():
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
-    nVox = [1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10]
-    nD = 100
+    nVox = [1e4, 1e5, 1e6, 1e7, 1e8]
+    nD = 10
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox[it_i]
     nTD = nD
@@ -57,7 +57,7 @@ def cfg():
     nVD = nD
     nNodes = 4
     nTests = 10
-    
+    bpath = '/export/scratch3/lagerwer/data/NNFDK/'
 
     # Specifics for the expansion operator
     Exp_bin = 'linear'
@@ -68,14 +68,15 @@ def cfg():
 # %%
 @ex.capture
 def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
-                    bin_param, nTests):
+                    bin_param, nTests, bpath):
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, nTD + nVD)
+                                 Exp_bin, bin_param, nTD + nVD, 
+                                 base_path=bpath)
 
         
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, f_load_path, g_load_path):
+              Exp_bin, bin_param, f_load_path, g_load_path, bpath):
     
     voxels = [pix, pix, pix]
     det_rad = 0
@@ -102,7 +103,7 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
-                                   Exp_op, bin_param)
+                                   Exp_op, bin_param, base_path=bpath)
     CT_obj.rec_methods += [CT_obj.NNFDK]
     return CT_obj
 

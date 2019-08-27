@@ -31,7 +31,7 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                   base_path='/export/scratch2/lagerwer/data/NNFDK/',
                                   **kwargs):
     data_path = sup.make_data_path(pix, phantom, angles, src_rad, noise,
-                                   Exp_bin, bin_param)
+                                   Exp_bin, bin_param, base_path)
     if not os.path.exists(data_path):
         os.makedirs(data_path)
     
