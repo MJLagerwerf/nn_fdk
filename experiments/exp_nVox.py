@@ -110,10 +110,10 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 # %%
 @ex.capture
 def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param):
+              Exp_bin, bin_param, bpath):
     data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
                                              noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param)
+                                             Exp_bin, bin_param, bpath)
     return data_path, full_path
 
 @ex.capture
