@@ -68,7 +68,7 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'nVox{:.0f}'.format(nVox[it_i])
+    specifics = 'nNodes'
     filts = ['Hann']
 
 # %%
@@ -187,7 +187,8 @@ def main(it_i, retrain, nNodes, nTests, nD, filts, specifics):
         save_network(case, full_path,  '.hdf5')
         
         case.NNFDK.do()
-        save_and_add_artifact(, case.NNFDK.results.rec_axis[-1])
+        save_and_add_artifact(f'{WV_path}{specifics}NNFDK{i}_rec.npy',
+                              case.NNFDK.results.rec_axis[-1])
     
 
     save_and_add_artifact(WV_path + '_TT.npy', TT)
