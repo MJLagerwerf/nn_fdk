@@ -153,7 +153,7 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(it_i, retrain, nNodes, nTests, nD, filts, specifics):
+def main(it_i, retrain, nNodes, nD, filts, specifics):
     t = time.time()
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
@@ -176,7 +176,7 @@ def main(it_i, retrain, nNodes, nTests, nD, filts, specifics):
     print('Finished setting up the inverse problem. Took:', (t1 - t0) / 60,
           'minutes')
 
-    TT = np.zeros(nTests)
+    TT = np.zeros(len(nNodes))
     for i in nNodes:
         if i == 0:
             case.NNFDK.train(i, retrain=retrain)
