@@ -48,7 +48,7 @@ def cfg():
     retrain = True
     # Total number of voxels used for training
     nVox = 1e6
-    nD = 4
+    nD = 8
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
     nTD = nD
