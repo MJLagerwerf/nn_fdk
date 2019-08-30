@@ -23,9 +23,9 @@ det_rad = 0
 # Noise specifics
 noise = ['Poisson', 2 ** 10]
 # Number of voxels used for training, number of datasets used for training
-nTrain, nTD = 1e7, 4
+nTrain, nTD = 1e6, 4
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e7, 4
+nVal, nVD = 1e6, 4
 MVD = int(25e5)
 # Specifics for the expansion operator
 Exp_bin = 'linear'
