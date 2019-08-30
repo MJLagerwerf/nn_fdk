@@ -48,7 +48,7 @@ def cfg():
     # Noise specifics
     I0 = 2 ** 10
     noise = ['Poisson', I0]
-    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    bpath = '/export/scratch3/lagerwer/data/NNFDK/'
     # Load data?
     f_load_path = None
     g_load_path = None
