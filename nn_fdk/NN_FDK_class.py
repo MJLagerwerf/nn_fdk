@@ -39,7 +39,7 @@ def outer_layer(x, b, sc2_1, sc2_2):
 def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
                   **kwargs):
     # Set a path to save the network
-    fnNetwork = full_path + '/network_' + str(nHiddenNodes) + name
+    fnNetwork = full_path + 'network_' + str(nHiddenNodes) + name
     # Check how many TD and VD datasets we have
     TD_dn = 'TD'
     VD_dn = 'VD'

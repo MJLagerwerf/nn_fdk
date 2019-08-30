@@ -23,8 +23,6 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
         
     else:
         MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 2 * 10 ** 7])
-    ang = np.linspace((1 / angles) * np.pi, (2 + 1 / angles) * np.pi, angles,
-                      False)
 
     # The size of the measured objects in voxels
     voxels = [pix, pix, pix]
@@ -99,7 +97,7 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
 
         # %% Make a filter geometry
         filter_geom = astra.create_proj_geom('parallel', w_du,  halfFilterSize,
-                                             ang)
+                                             np.zeros(np.shape(angles)))
         filter_id = astra.data2d.create('-sino', filter_geom, filter2d)
         #
 

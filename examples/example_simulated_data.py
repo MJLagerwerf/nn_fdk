@@ -14,7 +14,7 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Fourshape_test'
+phantom = 'Defrise'
 # Number of angles
 angles = 180
 # Source radius
@@ -45,6 +45,7 @@ print('Creating training and validation datasets took', time.time() - t1,
 voxels = [pix, pix, pix]
 # Create a data object
 t2 = time.time()
+print('Making phantom and mask took', time.time() -t2, 'seconds')
 data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
@@ -75,9 +76,9 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
 #for i in range(1):
 t2 = time.time()
-for i in range(5):
-    case.NNFDK.train(2 ** i, retrain=False)
-    case.NNFDK.do(node_output=True)
+
+case.NNFDK.train(4, retrain=False)
+case.NNFDK.do(node_output=True)
 
 #case.FDK.do('Hann')
 #case.SIRT_NN.do([50, 100, 200])
