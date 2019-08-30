@@ -157,7 +157,7 @@ def main(it_i, retrain, filts, specifics):
         if i == 0:
             case.NNFDK.train(2 ** i, retrain=retrain)
         else:
-            case.NNFDK.train(2 ** i, retrain, preprocess=False)
+            case.NNFDK.train(2 ** i, retrain=retrain, preprocess=False)
     
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')
