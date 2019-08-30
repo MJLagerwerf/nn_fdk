@@ -183,8 +183,8 @@ def main(it_i, retrain, nNodes, nD, filts, specifics):
             case.NNFDK.train(i, retrain=retrain, preprocess=False)
         
         TT[i] = case.NNFDK.train_time
-        save_network(case, full_path,  f'network_{nNodes}.hdf5')
-        'network_' + str(nNodes) + '_' + str(i) +
+        save_network(case, full_path,  f'network_{i}.hdf5')
+
         case.NNFDK.do()
         save_and_add_artifact(f'{WV_path}{specifics}NNFDK{i}_rec.npy',
                               case.NNFDK.results.rec_axis[-1])
