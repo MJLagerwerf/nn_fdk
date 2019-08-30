@@ -177,8 +177,7 @@ def main(it_i, retrain, nNodes, nD, filts, specifics):
 
     TT = np.zeros(len(nNodes))
     for i in nNodes:
-        if i == 0:
-            print('hoi')
+        if i == 1:
             case.NNFDK.train(i, retrain=retrain, preprocess=True)
         else:
             case.NNFDK.train(i, retrain=retrain, preprocess=False)
