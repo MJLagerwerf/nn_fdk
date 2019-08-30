@@ -48,7 +48,7 @@ def cfg():
     # Noise specifics
     I0 = 2 ** 10
     noise = ['Poisson', I0]
-    bpath = '/export/scratch3/lagerwer/data/NNFDK/'
+    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
     # Load data?
     f_load_path = None
     g_load_path = None
@@ -163,10 +163,9 @@ def main(it_i, retrain, nNodes, nD, filts, specifics):
     t0 = time.time()
     print('It took', (t0 - t) / 60, 'minutes to finish creating the datasets')
     
-    if it_i == 0:
-        case = CT()
-    else:
-        case = CT(g_load_path=f"{FSpath}/1/nVox10000_g.npy")
+
+    case = CT()
+
     # Create the paths where the objects are saved
     data_path, full_path = make_map_path()
     WV_path = case.WV_path + specifics
