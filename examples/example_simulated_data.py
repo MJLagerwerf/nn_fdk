@@ -14,7 +14,7 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Defrise'
+phantom = 'Fourshape_test'
 # Number of angles
 angles = 180
 # Source radius
@@ -45,7 +45,6 @@ print('Creating training and validation datasets took', time.time() - t1,
 voxels = [pix, pix, pix]
 # Create a data object
 t2 = time.time()
-print('Making phantom and mask took', time.time() -t2, 'seconds')
 data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
