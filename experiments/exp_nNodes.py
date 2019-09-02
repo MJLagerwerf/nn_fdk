@@ -176,19 +176,20 @@ def main(it_i, retrain, nNodes, nD, filts, specifics):
           'minutes')
 
     TT = np.zeros(len(nNodes))
+    teller = 0
     for i in nNodes:
         if i == 1:
             case.NNFDK.train(i, retrain=retrain, preprocess=True)
         else:
             case.NNFDK.train(i, retrain=retrain, preprocess=False)
         
-        TT[i] = case.NNFDK.train_time
+        TT[teller] = case.NNFDK.train_time
         save_network(case, full_path,  f'network_{i}.hdf5')
 
         case.NNFDK.do()
         save_and_add_artifact(f'{WV_path}{specifics}NNFDK{i}_rec.npy',
                               case.NNFDK.results.rec_axis[-1])
-    
+        teller += 1
 
     save_and_add_artifact(WV_path + '_TT.npy', TT)
     Q, RT = log_variables(case.NNFDK.results, Q, RT)
