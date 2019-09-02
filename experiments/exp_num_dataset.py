@@ -100,10 +100,10 @@ def cfg():
     nD = [1, 2, 5, 10, 20, 50, 100]
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
-    nTD = nD
+    nTD = nD[it_i]
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = nD
+    nVD = nD[it_i]
     nNodes = 4
     nTests = 10
     bpath = '/export/scratch3/lagerwer/data/NNFDK/'
