@@ -106,7 +106,7 @@ def cfg():
     nVD = nD
     nNodes = 4
     nTests = 10
-
+    bpath = '/export/scratch3/lagerwer/data/NNFDK/'
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
@@ -114,18 +114,10 @@ def cfg():
     filts = ['Hann']
 
 # %%
-@ex.capture
-def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
-                    bin_param, nTests):
-    print('Making the IID datasets')
-    make_custom_data(CT_obj.NNFDK.data_path, nTests, nTrain, nTD, nVal, nVD)
-    print('Finished')
 
-
-        
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, f_load_path, g_load_path):
+              Exp_bin, bin_param, f_load_path, g_load_path, nTests, bpath):
     
     voxels = [pix, pix, pix]
     det_rad = 0
@@ -152,17 +144,22 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
-                                   Exp_op, bin_param)
+                                   Exp_op, bin_param, base_path=bpath)
     CT_obj.rec_methods += [CT_obj.NNFDK]
+    
+    print('Making the IID datasets')
+    make_custom_data(CT_obj.NNFDK.data_path, nTests, nTrain, nTD, nVal, nVD)
+    print('Finished')
     return CT_obj
 
 # %%
 @ex.capture
 def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param):
+              Exp_bin, bin_param, bpath):
     data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
                                              noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param)
+                                             Exp_bin, bin_param,
+                                             bpath=bpath)
     return data_path, full_path
 
 @ex.capture
@@ -200,7 +197,7 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
-    create_datasets()
+#    create_datasets()
     # Create a test dataset
     case = CT()
     # Create the paths where the objects are saved
