@@ -53,7 +53,7 @@ def make_data_path(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param,
     return data_path
 
 def make_data_path_RD(dset, ang_freq,
-    base_path='/export/scratch2/lagerwer/data/FlexRay/walnuts_10MAY/NNFDK/'):
+    base_path='/export/scratch2/lagerwer/data/FlexRay/'):
     if dset == 'good':
         data_path = f'{base_path}walnuts_10MAY/NNFDK/{dset}_ang_freq{ang_freq}/'
     elif dset == 'noisy':
@@ -86,7 +86,7 @@ def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
 
 def make_map_path_RD(dset, ang_freq, nTrain, nTD, nVal, nVD,
-    base_path='/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/NNFDK/'):
+    base_path='/export/scratch2/lagerwer/data/FleXray/'):
 
     data_path = make_data_path_RD(dset, ang_freq, base_path=base_path)
     

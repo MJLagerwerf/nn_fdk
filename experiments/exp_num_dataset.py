@@ -16,6 +16,7 @@ import time
 import pylab
 import os
 import gc
+import scipy.io as sp
 
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
@@ -27,6 +28,53 @@ FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
 ex.observers.append(FileStorageObserver.create(FSpath))
 #url=mongo_url, db_name='sacred'))
 # %%
+def load_dataset_adapt_voxels_mult(data_path, idData, nVox, num_dat):
+    # Load the dataset
+    Ds = np.load(data_path + 'Dataset' + str(idData) + '.npy')
+    
+    DS_out = np.zeros((num_dat, int(nVox), np.size(Ds, 1)))
+    # Make an array with all the possible voxels
+    idVox = np.arange(np.shape(Ds)[0])
+    # Make an array with all the possible voxels
+    np.random.shuffle(idVox)
+    for i in range(num_dat):
+        DS_out[i, :, :] = Ds[i * int(nVox):(i + 1) * int(nVox), :]
+    
+    return DS_out
+
+
+def make_custom_data(data_path, nTests, nTrain, nTD, nVal, nVD):
+    # Walnut 21 is our test data, we cannot use that one
+    curData = nn.number_of_datasets(data_path, 'Dataset') - 1
+    # The total number of datasets we need
+    nDtotal = 2 * nTests * nTD
+    
+    if nDtotal % curData == 0:
+        num_dat = nDtotal // curData
+    else:
+        num_dat = nDtotal // curData + 1
+    full_path = data_path + nn.make_full_path(nTrain, nTD, nVal, nVD)
+    voxTD = nTrain // nTD
+    voxVD = nVal // nVD
+
+    if not os.path.exists(full_path):
+        os.makedirs(full_path)
+
+    DD = curData // 2
+    for i in range(DD):
+        TDs = load_dataset_adapt_voxels_mult(data_path, i, voxTD, num_dat)
+        for j in range(num_dat):
+            sp.savemat(full_path + 'TD' + str(i + j * DD),
+                       {'TD': TDs[j, :, :]})
+            
+    for i in range(DD, 2 * DD):
+        VDs = load_dataset_adapt_voxels_mult(data_path, i, voxVD, num_dat)
+        for j in range(num_dat):
+            sp.savemat(full_path + 'VD' + str((i- DD) + j * DD),
+                       {'VD': VDs[j, :, :]})
+# %%
+            
+            
 @ex.config
 def cfg():
     it_i = 0
@@ -48,8 +96,8 @@ def cfg():
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
-    nVox = 1e7
-    nD = 10
+    nVox = 5e5
+    nD = [1, 2, 5, 10, 20, 50, 100]
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
     nTD = nD
@@ -69,8 +117,10 @@ def cfg():
 @ex.capture
 def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
                     bin_param, nTests):
-    nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, 2 * nTests)
+    print('Making the IID datasets')
+    make_custom_data(CT_obj.NNFDK.data_path, nTests, nTrain, nTD, nVal, nVD)
+    print('Finished')
+
 
         
 @ex.capture
@@ -172,10 +222,11 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     for i in range(nTests):
         DS_list = [[], []]
         for j in range(nD):
-            DS_list[0] += [2 * (i + j * nTests)]
-            DS_list[1] += [2 * (i + j * nTests) + 1]
+            DS_list[0] += [j + i * nD]
+            DS_list[1] += [j + i * nD]
         case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
-                         DS_list=DS_list)
+                         preprocess=False, d_fls=DS_list)
+        
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
                      '.hdf5')
