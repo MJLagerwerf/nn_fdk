@@ -159,7 +159,7 @@ def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
     data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
                                              noise, nTrain, nTD, nVal, nVD,
                                              Exp_bin, bin_param,
-                                             bpath=bpath)
+                                             base_path=bpath)
     return data_path, full_path
 
 @ex.capture
