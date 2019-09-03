@@ -193,7 +193,7 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(retrain, nNodes, nTests, nD, filts, specifics):
+def main(retrain, nNodes, nTests, nTD, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
@@ -218,9 +218,9 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     TT = np.zeros(nTests)
     for i in range(nTests):
         DS_list = [[], []]
-        for j in range(nD):
-            DS_list[0] += [j + i * nD]
-            DS_list[1] += [j + i * nD]
+        for j in range(nTD):
+            DS_list[0] += [j + i * nTD]
+            DS_list[1] += [j + i * nTD]
         case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
                          preprocess=False, d_fls=DS_list)
         
