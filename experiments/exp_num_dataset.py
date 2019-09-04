@@ -40,7 +40,7 @@ def cfg():
     it_j = 0
     pix = 256
     # Specific phantom
-    phantom = 'Fourshape_test'
+    phantom = 'Defrise'
     # Number of angles
     angles = 32
     # Source radius
