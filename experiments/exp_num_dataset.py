@@ -175,7 +175,7 @@ def main(it_i, retrain, nTests, nTD, filts, specifics):
     print('Finished setting up the inverse problem. Took:', (t1 - t0) / 60,
           'minutes')
 
-    TT = np.zeros(len(nTests))
+    TT = np.zeros((nTests))
     for i in range(nTests):
         case.NNFDK.train(4, retrain=retrain, preprocess=True)
         
