@@ -1,19 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jul 23 10:30:45 2019
+Created on Fri Aug 23 10:34:48 2019
 
 @author: lagerwer
 """
-
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Jul 23 10:30:45 2019
+Created on Thu Aug 15 10:33:37 2019
+
 @author: lagerwer
 """
-
 
 import numpy as np
 import ddf_fdk as ddf
@@ -28,7 +27,7 @@ import gc
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'num_datasets'
+name_exp = 'nNodes'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
@@ -37,7 +36,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 # %%
 @ex.config
 def cfg():
-    it_i = 0
+    it_i = 1
     it_j = 0
     pix = 256
     # Specific phantom
@@ -48,42 +47,42 @@ def cfg():
     src_rad = 10
     # Noise specifics
     I0 = 2 ** 10
-    noise = ['Poisson', I0]
-    
+    noise = None #['Poisson', I0]
+    bpath = '/export/scratch3/lagerwer/data/NNFDK/'
     # Load data?
     f_load_path = None
     g_load_path = None
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
-    nVox = 1e7
-    nD = 10
+    nVox = 1e6
+    nD = [1, 2, 5, 10, 20, 50, 100]
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
-    nTD = nD
+    nTD = nD[it_i]
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = nD
+    nVD = nD[it_i]
     nNodes = 4
-    nTests = 10
 
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    specifics = 'num_dat'
+    specifics = 'nNodes'
     filts = ['Hann']
 
 # %%
 @ex.capture
 def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
-                    bin_param, nTests):
+                    bin_param, bpath):
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, 2 * nTests)
+                                 Exp_bin, bin_param, nTD + nVD,
+                                 base_path=bpath)
 
         
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, f_load_path, g_load_path):
+              Exp_bin, bin_param, f_load_path, g_load_path, bpath):
     
     voxels = [pix, pix, pix]
     det_rad = 0
@@ -110,17 +109,17 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
-                                   Exp_op, bin_param)
+                                   Exp_op, bin_param, base_path=bpath)
     CT_obj.rec_methods += [CT_obj.NNFDK]
     return CT_obj
 
 # %%
 @ex.capture
 def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param):
+              Exp_bin, bin_param, bpath):
     data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
                                              noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param)
+                                             Exp_bin, bin_param, bpath)
     return data_path, full_path
 
 @ex.capture
@@ -154,29 +153,38 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(retrain, nNodes, nTests, nD, filts, specifics):
+def main(it_i, retrain, nTests, nTD, filts, specifics):
+    t = time.time()
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
     create_datasets()
     # Create a test dataset
+    t0 = time.time()
+    print('It took', (t0 - t) / 60, 'minutes to finish creating the datasets')
+    
+
     case = CT()
+
     # Create the paths where the objects are saved
     data_path, full_path = make_map_path()
-    WV_path = case.WV_path + specifics 
+    WV_path = case.WV_path + specifics
     save_and_add_artifact(WV_path + '_g.npy', case.g)
 
+    t1 = time.time()
+    print('Finished setting up the inverse problem. Took:', (t1 - t0) / 60,
+          'minutes')
 
-    TT = np.zeros(nTests)
+    TT = np.zeros(len(nTests))
     for i in range(nTests):
-        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain)
-        TT[i] = case.NNFDK.train_time
-        save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
-                     '.hdf5')
+        case.NNFDK.train(4, retrain=retrain, preprocess=True)
         
+        TT[i] = case.NNFDK.train_time
+        save_network(case, full_path,  f'network_{i}.hdf5')
+
         case.NNFDK.do()
-        save_and_add_artifact(WV_path + '_NNFDK'+  str(nNodes) + '_' + str(i) + 
-                               '_rec.npy', case.NNFDK.results.rec_axis[-1])
+        save_and_add_artifact(f'{WV_path}{specifics}NNFDK{i}_rec.npy',
+                              case.NNFDK.results.rec_axis[-1])
 
 
     save_and_add_artifact(WV_path + '_TT.npy', TT)
@@ -184,11 +192,10 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
-
-    print('Finished NNFDKs')
+    t2 = time.time()
+    print('Finished NNFDKs. Took:', (t2 - t1) / 60, 'minutes')
     save_table(case, WV_path)
 
-    
     case = None
     gc.collect()
     return Q
