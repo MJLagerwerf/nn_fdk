@@ -59,7 +59,7 @@ def cfg():
     bin_param = 2
     
     filts = ['Hann']
-    specifics = 'num_dsets_' + str(nD)
+    specifics = 'num_dsets_' + str(nD[it_i])
 
 # %%  
 @ex.capture
