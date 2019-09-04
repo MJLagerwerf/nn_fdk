@@ -40,7 +40,7 @@ def cfg():
     it_j = 0
     pix = 256
     # Specific phantom
-    phantom = 'Defrise'
+    phantom = 'Fourshape_test'
     # Number of angles
     angles = 32
     # Source radius
@@ -177,7 +177,7 @@ def main(it_i, retrain, nTests, nTD, filts, specifics):
     nNodes = 4
     TT = np.zeros((nTests))
     for i in range(nTests):
-        case.NNFDK.train(nNodes, retrain=retrain, preprocess=True, name=f'{i}')
+        case.NNFDK.train(nNodes, retrain=retrain, preprocess=True, name=f'_{i}')
         
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path,  f'network_{nNodes}_{i}.hdf5')
