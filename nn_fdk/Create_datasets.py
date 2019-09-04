@@ -22,7 +22,7 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
         MaxVoxDataset = kwargs['MaxVoxDataset']
         
     else:
-        MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 2 * 10 ** 7])
+        MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 1 * 10 ** 6])
 
     # The size of the measured objects in voxels
     voxels = [pix, pix, pix]
@@ -129,7 +129,7 @@ def Create_dataset(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param):
     if phantom == 'Fourshape_test':
         phantom = 'Fourshape'
     # Maximum number of voxels considered per dataset
-    MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 2 * 10 ** 7])
+    MaxVoxDataset = np.max([int(pix ** 3 * 0.005), 1 * 10 ** 6])
 
     # The size of the measured objects in voxels
     voxels = [pix, pix, pix]
@@ -233,7 +233,7 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
     else:
         voxels = [vox, vox, vox]
     
-    MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 2 * 10 ** 7])
+    MaxVoxDataset = np.max([int(voxels[0] ** 3 * 0.005), 1 * 10 ** 6])
 
     Smat = Make_Smat(voxels, MaxVoxDataset, '', real_data=dataset['mask'])
 

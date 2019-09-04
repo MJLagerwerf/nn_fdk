@@ -23,54 +23,6 @@ import os
 # %%
 path = 'python_data/results/'
 ex = Experiment()
-# %% Some functions for data preprocessing
-def load_dataset_adapt_voxels_mult(data_path, idData, nVox, num_dat):
-    # Load the dataset
-    Ds = np.load(data_path + 'Dataset' + str(idData) + '.npy')
-    
-    DS_out = np.zeros((num_dat, int(nVox), np.size(Ds, 1)))
-    # Make an array with all the possible voxels
-    idVox = np.arange(np.shape(Ds)[0])
-    # Make an array with all the possible voxels
-    np.random.shuffle(idVox)
-    for i in range(num_dat):
-        DS_out[i, :, :] = Ds[i * int(nVox):(i + 1) * int(nVox), :]
-    
-    return DS_out
-
-
-def make_custom_data(data_path, nTests, nTrain, nTD, nVal, nVD):
-    # Walnut 21 is our test data, we cannot use that one
-    curData = nn.number_of_datasets(data_path, 'Dataset') - 1
-    # The total number of datasets we need
-    nDtotal = 2 * nTests * nTD
-    
-    if nDtotal % curData == 0:
-        num_dat = nDtotal // curData
-    else:
-        num_dat = nDtotal // curData + 1
-    full_path = data_path + nn.make_full_path(nTrain, nTD, nVal, nVD)
-    voxTD = nTrain // nTD
-    voxVD = nVal // nVD
-
-    if not os.path.exists(full_path):
-        os.makedirs(full_path)
-
-    DD = curData // 2
-    for i in range(DD):
-        TDs = load_dataset_adapt_voxels_mult(data_path, i, voxTD, num_dat)
-        for j in range(num_dat):
-            sp.savemat(full_path + 'TD' + str(i + j * DD),
-                       {'TD': TDs[j, :, :]})
-            
-    for i in range(DD, 2 * DD):
-        VDs = load_dataset_adapt_voxels_mult(data_path, i, voxVD, num_dat)
-        for j in range(num_dat):
-            sp.savemat(full_path + 'VD' + str((i- DD) + j * DD),
-                       {'VD': VDs[j, :, :]})
-
-
-
 # %%
 @ex.config
 def cfg():
@@ -81,7 +33,7 @@ def cfg():
     sc = 1
     ang_freq = 1
     pix = 768 // sc
-
+    it_i = 0
     # Load data?
     f_load_path = None
     g_load_path = None
@@ -92,14 +44,14 @@ def cfg():
     retrain = True
     # Total number of voxels used for training
     nVox = 1e6
-    nD = 2
+    nD = [1, 2, 4, 6, 8, 10]
     # Number of voxels used for training, number of datasets used for training
     nNodes = 4
     nTrain = nVox
-    nTD = nD
+    nTD = nD[it_i]
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = nD
+    nVD = nD[it_i]
     nTests = 10
     
     # Specifics for the expansion operator
@@ -134,9 +86,7 @@ def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
                                    Exp_op, bin_param, dset=dset)
     CT_obj.rec_methods += [CT_obj.NNFDK]
-    print('Making the IID datasets')
-    make_custom_data(CT_obj.NNFDK.data_path, nTests, nTrain, nTD, nVal, nVD)
-    print('Finished')
+    
     return CT_obj
 
 # %%
@@ -199,12 +149,7 @@ def main(retrain, filts, specifics, nTests, nNodes, nD):
 
     TT = np.zeros(nTests)
     for i in range(nTests):
-        DS_list = [[], []]
-        for j in range(nD):
-            DS_list[0] += [j + i * nD]
-            DS_list[1] += [j + i * nD]
-        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
-                         preprocess=False, d_fls=DS_list)
+        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain)
         
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
