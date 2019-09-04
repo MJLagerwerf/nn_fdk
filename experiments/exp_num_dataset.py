@@ -191,5 +191,5 @@ def main(retrain, nNodes, nTests, nD, filts, specifics):
     
     case = None
     gc.collect()
-return Q
+    return Q
 
