@@ -177,7 +177,7 @@ def main(it_i, retrain, nTests, nTD, filts, specifics):
 
     TT = np.zeros((nTests))
     for i in range(nTests):
-        case.NNFDK.train(4, retrain=retrain, preprocess=True)
+        case.NNFDK.train(4, retrain=retrain, preprocess=True, name=f'{i}')
         
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path,  f'network_{i}.hdf5')
