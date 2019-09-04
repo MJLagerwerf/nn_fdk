@@ -64,7 +64,7 @@ def cfg():
     nVal = nVox
     nVD = nD[it_i]
     nNodes = 4
-
+    nTests = 10
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
