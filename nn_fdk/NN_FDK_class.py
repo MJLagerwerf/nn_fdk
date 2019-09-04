@@ -166,12 +166,14 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
 
     def train(self, nHiddenNodes, name='', retrain=False, DS_list=False, 
               preprocess=True, **kwargs):
+        tt = time.time()
         if preprocess:
             PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
                                self.nTD, self.nVal, self.nVD, DS_list=DS_list,
                                **kwargs)
 
         t = time.time()
+        print('It took', t - tt, 'seconds to preprocess the data')
         if hasattr(self, 'network'):
             self.network += [train_network(nHiddenNodes, self.nTD, self.nVD,
                                            self.full_path, name, retrain,

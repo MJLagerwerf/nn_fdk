@@ -7,6 +7,14 @@ Created on Tue Jul 23 10:30:45 2019
 """
 
 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Jul 23 10:30:45 2019
+@author: lagerwer
+"""
+
+
 import numpy as np
 import ddf_fdk as ddf
 ddf.import_astra_GPU()
@@ -16,7 +24,6 @@ import time
 import pylab
 import os
 import gc
-import scipy.io as sp
 
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
@@ -28,53 +35,6 @@ FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
 ex.observers.append(FileStorageObserver.create(FSpath))
 #url=mongo_url, db_name='sacred'))
 # %%
-def load_dataset_adapt_voxels_mult(data_path, idData, nVox, num_dat):
-    # Load the dataset
-    Ds = np.load(data_path + 'Dataset' + str(idData) + '.npy')
-    
-    DS_out = np.zeros((num_dat, int(nVox), np.size(Ds, 1)))
-    # Make an array with all the possible voxels
-    idVox = np.arange(np.shape(Ds)[0])
-    # Make an array with all the possible voxels
-    np.random.shuffle(idVox)
-    for i in range(num_dat):
-        DS_out[i, :, :] = Ds[i * int(nVox):(i + 1) * int(nVox), :]
-    
-    return DS_out
-
-
-def make_custom_data(data_path, nTests, nTrain, nTD, nVal, nVD):
-    # Walnut 21 is our test data, we cannot use that one
-    curData = nn.number_of_datasets(data_path, 'Dataset') - 1
-    # The total number of datasets we need
-    nDtotal = 2 * nTests * nTD
-    
-    if nDtotal % curData == 0:
-        num_dat = nDtotal // curData
-    else:
-        num_dat = nDtotal // curData + 1
-    full_path = data_path + nn.make_full_path(nTrain, nTD, nVal, nVD)
-    voxTD = nTrain // nTD
-    voxVD = nVal // nVD
-
-    if not os.path.exists(full_path):
-        os.makedirs(full_path)
-
-    DD = curData // 2
-    for i in range(DD):
-        TDs = load_dataset_adapt_voxels_mult(data_path, i, voxTD, num_dat)
-        for j in range(num_dat):
-            sp.savemat(full_path + 'TD' + str(i + j * DD),
-                       {'TD': TDs[j, :, :]})
-            
-    for i in range(DD, 2 * DD):
-        VDs = load_dataset_adapt_voxels_mult(data_path, i, voxVD, num_dat)
-        for j in range(num_dat):
-            sp.savemat(full_path + 'VD' + str((i- DD) + j * DD),
-                       {'VD': VDs[j, :, :]})
-# %%
-            
-            
 @ex.config
 def cfg():
     it_i = 0
@@ -96,17 +56,17 @@ def cfg():
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
-    nVox = 5e5
-    nD = [1, 2, 5, 10, 20, 50, 100]
+    nVox = 1e7
+    nD = 10
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
-    nTD = nD[it_i]
+    nTD = nD
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = nD[it_i]
+    nVD = nD
     nNodes = 4
     nTests = 10
-    bpath = '/export/scratch3/lagerwer/data/NNFDK/'
+
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
@@ -114,10 +74,16 @@ def cfg():
     filts = ['Hann']
 
 # %%
+@ex.capture
+def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
+                    bin_param, nTests):
+    nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
+                                 Exp_bin, bin_param, 2 * nTests)
 
+        
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, f_load_path, g_load_path, nTests, bpath):
+              Exp_bin, bin_param, f_load_path, g_load_path):
     
     voxels = [pix, pix, pix]
     det_rad = 0
@@ -144,22 +110,17 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
-                                   Exp_op, bin_param, base_path=bpath)
+                                   Exp_op, bin_param)
     CT_obj.rec_methods += [CT_obj.NNFDK]
-    
-    print('Making the IID datasets')
-    make_custom_data(CT_obj.NNFDK.data_path, nTests, nTrain, nTD, nVal, nVD)
-    print('Finished')
     return CT_obj
 
 # %%
 @ex.capture
 def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, bpath):
+              Exp_bin, bin_param):
     data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
                                              noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param,
-                                             base_path=bpath)
+                                             Exp_bin, bin_param)
     return data_path, full_path
 
 @ex.capture
@@ -193,11 +154,11 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(retrain, nNodes, nTests, nTD, filts, specifics):
+def main(retrain, nNodes, nTests, nD, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
-#    create_datasets()
+    create_datasets()
     # Create a test dataset
     case = CT()
     # Create the paths where the objects are saved
@@ -206,24 +167,9 @@ def main(retrain, nNodes, nTests, nTD, filts, specifics):
     save_and_add_artifact(WV_path + '_g.npy', case.g)
 
 
-#    for i in range(len(filts)):
-#        case.FDK.do(filts[i])
-#    Q, RT = log_variables(case.FDK.results, Q, RT)
-#
-#    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
-#            case.FDK.results.rec_axis[-1])
-#    
-#    
-#    print('Finished FDKs')
     TT = np.zeros(nTests)
     for i in range(nTests):
-        DS_list = [[], []]
-        for j in range(nTD):
-            DS_list[0] += [j + i * nTD]
-            DS_list[1] += [j + i * nTD]
-        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain,
-                         preprocess=False, d_fls=DS_list)
-        
+        case.NNFDK.train(nNodes, name='_' + str(i), retrain=retrain)
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(nNodes) + '_' + str(i) +
                      '.hdf5')
@@ -245,5 +191,5 @@ def main(retrain, nNodes, nTests, nTD, filts, specifics):
     
     case = None
     gc.collect()
-    return Q
+return Q
 

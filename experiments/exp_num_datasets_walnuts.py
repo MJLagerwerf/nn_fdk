@@ -92,7 +92,7 @@ def cfg():
     retrain = True
     # Total number of voxels used for training
     nVox = 1e6
-    nD = 8
+    nD = 2
     # Number of voxels used for training, number of datasets used for training
     nNodes = 4
     nTrain = nVox
@@ -192,7 +192,18 @@ def main(retrain, filts, specifics, nTests, nNodes, nD):
         case.FDK.do(filts[i])
     Q, RT = log_variables(case.FDK.results, Q, RT)
 
-    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
+    save_and_add_artifact(WV_path + '_FDKHN_refNW = f'{case.NNFDK.full_path}network_4_{0}'
+N = [load_network(fNW, 4)]
+print(f'Case:{0}')
+print(f"training error: {N[-1]['tE']}")
+print(f"validation error: {N[-1]['vE']}")
+for i in range(9):
+    fNW = f'{case.NNFDK.full_path}network_4_{i+1}'
+    N += [load_network(fNW, 4)]
+    print(f'Case:{i+1}')
+    print(f"training error: {N[-1]['tE']}")
+    print(f"validation error: {N[-1]['vE']}")
+c.npy',
             case.FDK.results.rec_axis[-1])
     
     print('Finished FDKs')
