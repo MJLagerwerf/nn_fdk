@@ -174,13 +174,13 @@ def main(it_i, retrain, nTests, nTD, filts, specifics):
     t1 = time.time()
     print('Finished setting up the inverse problem. Took:', (t1 - t0) / 60,
           'minutes')
-
+    nNodes = 4
     TT = np.zeros((nTests))
     for i in range(nTests):
-        case.NNFDK.train(4, retrain=retrain, preprocess=True, name=f'{i}')
+        case.NNFDK.train(nNodes, retrain=retrain, preprocess=True, name=f'{i}')
         
         TT[i] = case.NNFDK.train_time
-        save_network(case, full_path,  f'network_{i}.hdf5')
+        save_network(case, full_path,  f'network_{nNodes}_{i}.hdf5')
 
         case.NNFDK.do()
         save_and_add_artifact(f'{WV_path}{specifics}NNFDK{i}_rec.npy',
