@@ -98,6 +98,8 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
         # %% Make a filter geometry
         filter_geom = astra.create_proj_geom('parallel', w_du,  halfFilterSize,
                                              np.zeros(np.shape(angles)))
+        print(np.shape(filter_geom))
+        print(np.shape(filter2d))
         filter_id = astra.data2d.create('-sino', filter_geom, filter2d)
         #
 
