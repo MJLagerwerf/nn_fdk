@@ -27,7 +27,7 @@ import gc
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'nNodes'
+name_exp = 'num_datasets'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
