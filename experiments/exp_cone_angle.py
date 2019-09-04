@@ -56,7 +56,7 @@ def cfg():
     nVal = nVox
     nVD = nD
     nNodes = 4
-    
+    bpath = '/export/scratch3/lagerwer/data/NNFDK/'
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
@@ -66,14 +66,14 @@ def cfg():
 # %%
 @ex.capture
 def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
-                    bin_param):
+                    bin_param, bpath):
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, nTD + nVD)
-
+                                 Exp_bin, bin_param, nTD + nVD,
+                                 base_path=bpath)
         
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, f_load_path, g_load_path):
+              Exp_bin, bin_param, f_load_path, g_load_path, bpath):
     
     voxels = [pix, pix, pix]
     det_rad = 0
@@ -100,17 +100,17 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
-                                   Exp_op, bin_param)
+                                   Exp_op, bin_param, base_path=bpath)
     CT_obj.rec_methods += [CT_obj.NNFDK]
     return CT_obj
 
 # %%
 @ex.capture
 def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param):
+              Exp_bin, bin_param, bpath):
     data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
                                              noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param)
+                                             Exp_bin, bin_param, bpath)
     return data_path, full_path
 
 @ex.capture
@@ -144,7 +144,7 @@ def log_variables(results, Q, RT):
     
 # %%
 @ex.automain
-def main(retrain, nNodes, nD, filts, specifics):
+def main(retrain, nD, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
