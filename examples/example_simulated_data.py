@@ -14,7 +14,7 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Fourshape_test'
+phantom = 'Defrise random'
 # Number of angles
 angles = 180
 # Source radius
@@ -35,9 +35,9 @@ bin_param = 2
 #'/export/scratch1/home/voxels-gpu0/data/NNFDK/'
 # %%
 t1 = time.time()
-nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, nTD + nVD,
-                                 MaxVoxDataset=MVD)
+#nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
+#                                 Exp_bin, bin_param, nTD + nVD,
+#                                 MaxVoxDataset=MVD)
 print('Creating training and validation datasets took', time.time() - t1,
       'seconds')
 
@@ -76,8 +76,8 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 #for i in range(1):
 t2 = time.time()
 
-case.NNFDK.train(4, retrain=False)
-case.NNFDK.do(node_output=True)
+#case.NNFDK.train(4, retrain=False)
+#case.NNFDK.do(node_output=True)
 
 #case.FDK.do('Hann')
 #case.SIRT_NN.do([50, 100, 200])
@@ -97,15 +97,15 @@ case.NNFDK.do(node_output=True)
 #NW_full.copy(str(case.NNFDK.network[-1]['nNW']), NW, name='NW')
 #
 ## %%
-#case.FDK.do('Hann')
+case.FDK.do('Hann')
 # %%
 pylab.close('all')
 case.table()
 case.show_phantom()
 #case.NNFDK.show()
-#case.FDK.show()
+case.FDK.show()
 #case.SIRT_NN.show(-2)
 
-case.NNFDK.show_filters()
-case.NNFDK.show_node_output(3)
+#case.NNFDK.show_filters()
+#case.NNFDK.show_node_output(3)
 
