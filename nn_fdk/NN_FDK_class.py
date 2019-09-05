@@ -162,7 +162,8 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
             self.data_path, self.full_path = sup.make_map_path_RD(self.dset,
                                                 self.CT_obj.phantom.ang_freq,
                                                 self.nTrain, self.nTD,
-                                                self.nVal, self.nVD)
+                                                self.nVal, self.nVD,
+                                                base_path=self.base_path)
 
     def train(self, nHiddenNodes, name='', retrain=False, DS_list=False, 
               preprocess=True, **kwargs):
