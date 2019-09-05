@@ -26,9 +26,8 @@ ex = Experiment()
 @ex.config
 def cfg():
     it_i = 1
-
-    load_path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_21/'
-    
+    bpath = '/export/scratch3/lagerwer/data/FleXray/'
+    load_path = f'{bpath}walnuts_10MAY/walnut_21/'
     
     dsets = ['noisy', 'good', 'good', 'good']
     dset = dsets[it_i]
@@ -43,7 +42,6 @@ def cfg():
     g_load_path = None
     
     # Noise specifics
-
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
@@ -70,7 +68,7 @@ def cfg():
 # %%  
 @ex.capture
 def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
-       nVD):
+       nVD, bpath):
     dataset = ddf.load_and_preprocess_real_data(load_path, dset, sc)
     meta = ddf.load_meta(load_path + dset + '/', sc)
     pix_size = meta['pix_size']
@@ -90,16 +88,17 @@ def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
-                                   Exp_op, bin_param, dset=dset)
+                                   Exp_op, bin_param, dset=dset,
+                                   base_path=bpath)
     CT_obj.rec_methods += [CT_obj.NNFDK]
     return CT_obj
 
 # %%
 @ex.capture
 def make_map_path(dset, ang_freq, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param):
+              Exp_bin, bin_param, bpath):
     data_path, full_path = nn.make_map_path_RD(dset, ang_freq, nTrain, nTD,
-                                               nVal, nVD)
+                                               nVal, nVD, base_path=bpath)
     return data_path, full_path
 
 @ex.capture
