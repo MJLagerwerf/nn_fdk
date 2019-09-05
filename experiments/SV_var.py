@@ -45,8 +45,8 @@ def cfg():
     # Should we retrain the networks?
     retrain = True
     # Total number of voxels used for training
-    nVox = 1e7
-    nD = 8
+    nVox = 1e6
+    nD = 10
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
     nTD = nD
@@ -164,10 +164,9 @@ def main(retrain, filts, specifics):
     print('Finished FDKs')
     TT = np.zeros(5)
     for i in range(5):
-        if i == 0:
-            case.NNFDK.train(2 ** i, retrain=retrain)
-        else:
-            case.NNFDK.train(2 ** i, retrain=retrain, preprocess=False)
+
+        case.NNFDK.train(2 ** i, retrain=retrain)
+
     
         TT[i] = case.NNFDK.train_time
         save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')
