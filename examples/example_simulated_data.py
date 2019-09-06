@@ -14,14 +14,14 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Defrise random'
+phantom = 'Defrise'
 # Number of angles
 angles = 180
 # Source radius
-src_rad = 10
+src_rad = 1
 det_rad = 0
 # Noise specifics
-noise = ['Poisson', 2 ** 10]
+noise = None#['Poisson', 2 ** 10]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 4
 # Number of voxels used for validation, number of datasets used for validation
