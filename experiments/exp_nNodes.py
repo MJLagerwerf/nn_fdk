@@ -6,13 +6,6 @@ Created on Fri Aug 23 10:34:48 2019
 @author: lagerwer
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug 15 10:33:37 2019
-
-@author: lagerwer
-"""
 
 import numpy as np
 import ddf_fdk as ddf
@@ -185,7 +178,7 @@ def main(it_i, retrain, nNodes, nD, filts, specifics):
         save_network(case, full_path,  f'network_{i}.hdf5')
 
         case.NNFDK.do()
-        save_and_add_artifact(f'{WV_path}{specifics}NNFDK{i}_rec.npy',
+        save_and_add_artifact(f'{WV_path}_NNFDK{i}_rec.npy',
                               case.NNFDK.results.rec_axis[-1])
         teller += 1
 
