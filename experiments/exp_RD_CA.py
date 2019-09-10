@@ -149,7 +149,7 @@ def main(it_i, retrain, filts, specifics):
     print('Finished FDKs')
     TT = np.zeros(5)
     for i in range(5):
-        case.NNFDK.train(2 ** i, retrain=retrain)
+        case.NNFDK.train(2 ** i, retrain=retrain, preprocess=False)
 
     
         TT[i] = case.NNFDK.train_time
