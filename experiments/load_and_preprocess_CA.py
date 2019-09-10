@@ -125,7 +125,7 @@ def do_AGD(meta, vecs, sc, g, niter):
     return rec
 
 # %%
-def load_and_preprocess(path, dset, redo=False):
+def load_and_preprocess(path, dset, redo=False, ang_freq=None):
     preprocess_data_portrait(path, dset, redo)
     pp = f'{path}processed_data/'
     if not (os.path.exists(f'{pp}ground_truth.npy') and \
@@ -139,6 +139,8 @@ def load_and_preprocess(path, dset, redo=False):
                'ground_truth' : f'{pp}ground_truth.npy',
                'mask' : f'{pp}mask.npy'}
     vecs = np.loadtxt(f'{path}{dset}/scan_geom_corrected.geom')[:-1, :] / 10
+    if ang_freq is not None:
+        vecs = vecs[::ang_freq, :]
     return dataset, vecs
     
 

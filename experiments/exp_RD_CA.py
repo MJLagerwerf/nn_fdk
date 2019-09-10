@@ -33,7 +33,7 @@ def cfg():
     dset = f'tubeV{2}'
     pd = 'processed_data/'
     sc = 2
-    ang_freq = 1
+    ang_freq = 4
     vox = 1024 // sc
 
     # Load data?
@@ -66,7 +66,7 @@ def cfg():
 @ex.capture
 def CT(path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
        nVD, vox, bp):
-    dataset, vecs = cap.load_and_preprocess(path, dset)
+    dataset, vecs = cap.load_and_preprocess(path, dset, ang_freq=ang_freq)
     meta = ddf.load_meta(f'{path}{dset}/', 1)
     pix_size = sc * meta['pix_size']
     src_rad = meta['s2o']

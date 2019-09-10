@@ -14,7 +14,7 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Fourshape_test'
+phantom = 'Defrise'
 # Number of angles
 angles = 180
 # Source radius
@@ -101,8 +101,9 @@ case.FDK.do('Hann')
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.NNFDK.show()
+
 case.FDK.show()
+case.NNFDK.show()
 #case.SIRT_NN.show(-2)
 
 #case.NNFDK.show_filters()
