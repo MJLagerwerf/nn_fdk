@@ -28,8 +28,8 @@ ex = Experiment()
 @ex.config
 def cfg():
     it_i = 0
-    bp = '/export/scratch2/lagerwer/data/FleXray/Walnuts/' 
-    path = f'{bp}Walnut21/Projections/'
+    bp = '/export/scratch2/lagerwer/data/FleXray/' 
+    path = f'{bp}Walnuts/Walnut21/Projections/'
     dset = f'tubeV{2}'
     pd = 'processed_data/'
     sc = 2
@@ -65,7 +65,7 @@ def cfg():
 # %%  
 @ex.capture
 def CT(path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
-       nVD, vox):
+       nVD, vox, bp):
     dataset, vecs = cap.load_and_preprocess(path, dset)
     meta = ddf.load_meta(f'{path}{dset}/', 1)
     pix_size = sc * meta['pix_size']
@@ -85,16 +85,17 @@ def CT(path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
-                                   Exp_op, bin_param, dset=dset)
+                                   Exp_op, bin_param, dset=dset,
+                                   base_path=bp)
     CT_obj.rec_methods += [CT_obj.NNFDK]
     return CT_obj
 
 # %%
 @ex.capture
 def make_map_path(dset, ang_freq, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param):
+              Exp_bin, bin_param, bp):
     data_path, full_path = nn.make_map_path_RD(dset, ang_freq, nTrain, nTD,
-                                               nVal, nVD)
+                                               nVal, nVD, base_path=bp)
     return data_path, full_path
 
 @ex.capture
@@ -138,18 +139,18 @@ def main(it_i, retrain, filts, specifics):
     WV_path = case.WV_path + specifics 
     save_and_add_artifact(WV_path + '_g.npy', case.g)
 
-#
-#    for i in range(len(filts)):
-#        case.FDK.do(filts[i])
-#    Q, RT = log_variables(case.FDK.results, Q, RT)
 
-#    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
-#            case.FDK.results.rec_axis[-1])
+    for i in range(len(filts)):
+        case.FDK.do(filts[i])
+    Q, RT = log_variables(case.FDK.results, Q, RT)
+
+    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
+            case.FDK.results.rec_axis[-1])
     
     print('Finished FDKs')
     TT = np.zeros(5)
     for i in range(5):
-        case.NNFDK.train(2 ** i, retrain=retrain, preprocess=False)
+        case.NNFDK.train(2 ** i, retrain=retrain)
 
     
         TT[i] = case.NNFDK.train_time
@@ -164,14 +165,14 @@ def main(it_i, retrain, filts, specifics):
     Q, RT = log_variables(case.NNFDK.results, Q, RT)
     
 
-#    niter = [50, 100, 200]
-#    case.SIRT_NN.do(niter)
-#    for ni in range(len(niter)):
-#        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
-#                              case.SIRT_NN.results.rec_axis[ni])
-#
-#
-#    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
+    niter = [50, 100, 200]
+    case.SIRT_NN.do(niter)
+    for ni in range(len(niter)):
+        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
+                              case.SIRT_NN.results.rec_axis[ni])
+
+
+    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
 
