@@ -164,8 +164,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
                                                 self.nTrain, self.nTD,
                                                 self.nVal, self.nVD,
                                                 base_path=self.base_path)
-            print(self.data_path)
-            print(self.full_path)
+
 
     def train(self, nHiddenNodes, name='', retrain=False, DS_list=False, 
               preprocess=True, **kwargs):
