@@ -14,19 +14,19 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Defrise'
+phantom = 'Fourshape_test'
 # Number of angles
 angles = 180
 # Source radius
 src_rad = 1
 det_rad = 0
 # Noise specifics
-noise = None#['Poisson', 2 ** 10]
+noise = ['Poisson', 2 ** 12]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 4
 # Number of voxels used for validation, number of datasets used for validation
 nVal, nVD = 1e6, 4
-MVD = int(25e5)
+
 # Specifics for the expansion operator
 Exp_bin = 'linear'
 bin_param = 2
@@ -35,9 +35,8 @@ bin_param = 2
 #'/export/scratch1/home/voxels-gpu0/data/NNFDK/'
 # %%
 t1 = time.time()
-#nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-#                                 Exp_bin, bin_param, nTD + nVD,
-#                                 MaxVoxDataset=MVD)
+nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
+                                 Exp_bin, bin_param, nTD + nVD)
 print('Creating training and validation datasets took', time.time() - t1,
       'seconds')
 
@@ -76,8 +75,8 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 #for i in range(1):
 t2 = time.time()
 
-#case.NNFDK.train(4, retrain=False)
-#case.NNFDK.do(node_output=True)
+case.NNFDK.train(4, retrain=False)
+case.NNFDK.do()
 
 #case.FDK.do('Hann')
 #case.SIRT_NN.do([50, 100, 200])
@@ -102,7 +101,7 @@ case.FDK.do('Hann')
 pylab.close('all')
 case.table()
 case.show_phantom()
-#case.NNFDK.show()
+case.NNFDK.show()
 case.FDK.show()
 #case.SIRT_NN.show(-2)
 
