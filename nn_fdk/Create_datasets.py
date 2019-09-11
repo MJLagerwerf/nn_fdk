@@ -27,6 +27,7 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     # The size of the measured objects in voxels
     voxels = [pix, pix, pix]
     dpix = [voxels[0] * 2, voxels[1]]
+    u, v = dpix
     # ! ! ! This will lead to some problems later on ! ! !
     det_rad = 0
     data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)
@@ -45,12 +46,15 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     vox = np.shape(data_obj.reco_space)[0]
     vol_geom = astra.create_vol_geom(vox, vox, vox, minvox, maxvox, minvox,
                                      maxvox, minvox, maxvox)
-    # Build a vecs vector from the geometry, or load it
-    vecs = ddf.astra_conebeam_3d_geom_to_vec(data_obj.geometry)
-    proj_geom = astra.create_proj_geom('cone_vec', dpix[1], dpix[0], vecs)
 
+    ang = np.linspace((1 / angles) * np.pi, (2 + 1 / angles) * np.pi, angles,
+                  False)
+    w_du, w_dv = 2 * data_obj.geometry.detector.partition.max_pt / [u, v]
+    proj_geom = astra.create_proj_geom('cone', w_dv, w_du, v, u,
+                                       ang, data_obj.geometry.src_radius,
+                                       data_obj.geometry.det_radius)
     filter_part = odl.uniform_partition(-data_obj.detecsize[0],
-                                        data_obj.detecsize[0], dpix[0])
+                                        data_obj.detecsize[0], u)
 
     filter_space = odl.uniform_discr_frompartition(filter_part, dtype='float64')
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,

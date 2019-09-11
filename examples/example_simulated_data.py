@@ -16,16 +16,16 @@ pix = 256
 # Specific phantom
 phantom = 'Defrise'
 # Number of angles
-angles = 180
+angles = 360
 # Source radius
-src_rad = 1
+src_rad = 2
 det_rad = 0
 # Noise specifics
-noise = ['Poisson', 2 ** 12]
+noise = None#['Poisson', 2 ** 12]
 # Number of voxels used for training, number of datasets used for training
-nTrain, nTD = 1e6, 4
+nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 4
+nVal, nVD = 1e6, 1
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -75,11 +75,11 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 #for i in range(1):
 t2 = time.time()
 
-case.NNFDK.train(4, retrain=False)
+case.NNFDK.train(4, retrain=True)
 case.NNFDK.do()
 
-#case.FDK.do('Hann')
-#case.SIRT_NN.do([50, 100, 200])
+case.FDK.do('Hann')
+case.SIRT_NN.do([50])
 
 
 
@@ -95,16 +95,15 @@ case.NNFDK.do()
 #
 #NW_full.copy(str(case.NNFDK.network[-1]['nNW']), NW, name='NW')
 #
-## %%
-case.FDK.do('Hann')
+
 # %%
 pylab.close('all')
 case.table()
 case.show_phantom()
 
 case.FDK.show()
-case.NNFDK.show()
-#case.SIRT_NN.show(-2)
+#case.NNFDK.show()
+case.SIRT_NN.show()
 
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
