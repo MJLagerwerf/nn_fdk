@@ -6,7 +6,7 @@
 
 for i in {1..21}
 do
-    python create_datasets_CA -p -F \
+    python create_datasets_CA.py -p -F \
     NNFDK_results/CD_CA with it_i=$i
 done
 
