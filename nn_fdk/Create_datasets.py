@@ -256,10 +256,17 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
     # Build a vecs vector from the geometry, or load it
     if type(geom) == np.ndarray:
         vecs = geom
+        proj_geom = astra.create_proj_geom('cone_vec', v, u, vecs)
     elif type(geom) == odl.tomo.geometry.conebeam.ConeFlatGeometry:
-        vecs = ddf.astra_conebeam_3d_geom_to_vec(geom)
-    proj_geom = astra.create_proj_geom('cone_vec', v, u, vecs)
-
+        angles = np.linspace((1 / ang) * np.pi, (2 + 1 / ang) * np.pi,
+                          ang, False)
+        w_du, w_dv = 2 * data_obj.geometry.detector.partition.max_pt / [u, v]
+        proj_geom = astra.create_proj_geom('cone', w_dv, w_du, v, u,
+                                           angles, data_obj.geometry.src_radius,
+                                           data_obj.geometry.det_radius)
+    
+    
+    
     filter_part = odl.uniform_partition(-data_obj.detecsize[0],
                                         data_obj.detecsize[0], dpix[0])
 

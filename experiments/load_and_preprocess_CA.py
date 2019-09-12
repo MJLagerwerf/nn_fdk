@@ -162,9 +162,9 @@ def compute_GS_and_mask(path, redo):
         if i == 2:
             meta = ddf.load_meta(lp, 1)
             
+
     rec = do_AGD(meta, vecs, sc, g, niter)
     
-    rec = np.transpose(rec, (2, 1, 0))
     vox = np.shape(rec)[0]
     
     save = np.zeros((3, vox, vox))
