@@ -25,7 +25,7 @@ def cfg():
     bp = '/export/scratch2/lagerwer/data/FleXray/Walnuts/' 
     path = f'{bp}Walnut{it_i}/Projections/'
     dset = f'tubeV{2}'
-    redo = False
+    redo = True
     sc = 2
     vox = 1024 // sc
     Exp_bin = 'linear'
