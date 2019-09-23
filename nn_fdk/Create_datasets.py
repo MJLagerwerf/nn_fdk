@@ -254,12 +254,11 @@ def Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, ang_freq,
     vox = np.shape(data_obj.reco_space)[0]
     vol_geom = astra.create_vol_geom(vox, vox, vox, minvox, maxvox, minvox,
                                      maxvox, minvox, maxvox)
-    print(ang)
+
 
     # Build a vecs vector from the geometry, or load it
     if type(geom) == np.ndarray:
         vecs = geom
-        print(np.shape(vecs))
         proj_geom = astra.create_proj_geom('cone_vec', v, u, vecs)
     elif type(geom) == odl.tomo.geometry.conebeam.ConeFlatGeometry:
         angles = np.linspace((1 / ang) * np.pi, (2 + 1 / ang) * np.pi,
