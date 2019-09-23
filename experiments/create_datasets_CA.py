@@ -25,7 +25,7 @@ def cfg():
     bp = '/export/scratch3/lagerwer/data/FleXray/Walnuts/' 
     path = f'{bp}Walnut{it_i}/Projections/'
     dset = f'tubeV{2}'
-    redo = True
+    redo = False
     sc = 2
     vox = 1024 // sc
     Exp_bin = 'linear'
@@ -34,8 +34,9 @@ def cfg():
 
 # %%
 @ex.capture
-def load_and_preprocess(path, dset, redo):
-    dataset, vecs = cap.load_and_preprocess(path, dset, redo=redo)
+def load_and_preprocess(path, dset, redo, ang_freq):
+    dataset, vecs = cap.load_and_preprocess(path, dset, redo=redo,
+                                            ang_freq=ang_freq)
     meta = ddf.load_meta(path + dset + '/', 1)
     return dataset, vecs, meta
 
