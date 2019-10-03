@@ -6,8 +6,9 @@
 
 for i in {1..21}
 do
-    python create_datasets_CA.py -p -F \
-    NNFDK_results/CD_CA with it_i=$i
+    python exp_RD_CA.py -p -F  \
+    /export/scratch2/lagerwer/NNFDK_results/FDK_RD_CA/ \ 
+    with ang_freq=4 it_i=$i
 done
 
-python exp_RD_CA.py -p -F /export/scratch2/lagerwer/NNFDK_results/RD_CA/ with ang_freq=4
+
