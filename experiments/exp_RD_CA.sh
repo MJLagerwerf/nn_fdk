@@ -7,8 +7,7 @@
 for i in {1..21}
 do
     python exp_RD_CA.py -p -F  \
-    /export/scratch2/lagerwer/NNFDK_results/FDK_RD_CA/ \ 
-    with ang_freq=4 it_i=$i
+    /export/scratch2/lagerwer/NNFDK_results/FDK_RD_CA/ with ang_freq=4 it_i=$i
 done
 
 
