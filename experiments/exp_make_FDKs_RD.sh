@@ -6,8 +6,11 @@
 
 for i in {01..21}
 do
-    python exp_make_FDKs_RD.py -p -F  \
-    /export/scratch2/lagerwer/NNFDK_results/FDK_RD/ with ang_freq=4 it_i=$i
+    for j in {0..3}
+    do
+        python exp_make_FDKs_RD.py -p -F  \
+        /export/scratch2/lagerwer/NNFDK_results/FDK_RD/ with it_j=$j it_i=$i
+    done
 done
 
 
