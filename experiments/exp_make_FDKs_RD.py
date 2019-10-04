@@ -149,13 +149,13 @@ def main(it_i, retrain, filts, specifics):
     case = CT()
     # Create the paths where the objects are saved
     data_path, full_path = make_map_path()
-#    WV_path = case.WV_path + specifics 
-##    save_and_add_artifact(WV_path + '_g.npy', case.g)
-#
-#    rec = case.FDK.do(filts[0], compute_results=False)
-##    Q, RT = log_variables(case.FDK.results, Q, RT)
-#    save_and_add_artifact(WV_path + '_FDKHN_obj.npy',
-#            rec)
+    WV_path = case.WV_path + specifics 
+#    save_and_add_artifact(WV_path + '_g.npy', case.g)
+
+    rec = case.FDK.do(filts[0], compute_results=False)
+#    Q, RT = log_variables(case.FDK.results, Q, RT)
+    save_and_add_artifact(WV_path + '_FDKHN_obj.npy',
+            rec)
     print('Finished FDKs')
 
     
