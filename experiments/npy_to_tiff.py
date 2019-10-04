@@ -21,7 +21,7 @@ rfiles = [4 * i + 1 for i in range(21)]
 dfiles = ['{:02d}'.format(1 + i) for i in range(21)]
 for i in range(21):
     arr = np.load(f'{lpath}{rfiles[i]}/RD_{dset}_AF{AF}_FDKHN_obj.npy')
-    sp = f'{path1}{dfiles[i]}{path2}FDK/'
+    sp = f'{path1}{dfiles[i]}/{dset}{path2}FDK/'
 #    print(arr)
 #    print(sp)
     os.makedirs(sp)
@@ -30,9 +30,9 @@ for i in range(21):
 
 
 for f in dfiles:
-    lpath = f'{path1}{f}/Projections/processed_data/'
+    lpath = f'{path1}{f}/processed_data/'
     arr = np.load(f'{lpath}ground_truth.npy')
-    sp = f'{path1}{f}{path2}GS/'
+    sp = f'{path1}{dfiles[i]}/{dset}{path2}GS/'
 #    print(arr)
 #    print(sp)
     os.makedirs(sp)
