@@ -27,7 +27,7 @@ flsin = []
 flstg = []
 files = ['{:02d}'.format(i + 1) for i in range(21)]
 path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY'
-dset = 'noisy'
+dset = 'good_AF8'
 for i in range(1,16):
     flsin.extend(Path(path + '/walnut_{}/{}/tiffs/FDK/'.format(files[i], dset)).glob('*.tiff'))
     flstg.extend(Path(path + '/walnut_{}/{}/tiffs/GS/'.format(files[i], dset)).glob('*.tiff'))
