@@ -106,9 +106,9 @@ def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
 # %%
 @ex.capture
 def make_map_path(dset, ang_freq, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, bp):
+              Exp_bin, bin_param, bpath):
     data_path, full_path = nn.make_map_path_RD(dset, ang_freq, nTrain, nTD,
-                                               nVal, nVD, base_path=bp)
+                                               nVal, nVD, base_path=bpath)
     return data_path, full_path
 
 @ex.capture
