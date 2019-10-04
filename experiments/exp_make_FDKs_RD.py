@@ -6,17 +6,10 @@ Created on Fri Oct  4 10:12:33 2019
 @author: lagerwer
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug  8 16:16:56 2019
-
-@author: lagerwer
-"""
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 import nn_fdk as nn
 from sacred import Experiment
 from sacred.observers import FileStorageObserver

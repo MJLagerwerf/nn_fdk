@@ -53,7 +53,7 @@ bprov = msdnet.data.BatchProvider(dats,1)
 # Define validation data (not using augmentation)
 flsin = []
 flstg = []
-for i in range(16,21):
+for i in range(16, 21):
     flsin.extend(Path('/export/scratch2/lagerwer/data/FleXray/Walnuts/Walnut{}/tiffs/FDK/'.format(i)).glob('*.tiff'))
     flstg.extend(Path('/export/scratch2/lagerwer/data/FleXray/Walnuts/Walnut{}/tiffs/GS/'.format(i)).glob('*.tiff'))
     
