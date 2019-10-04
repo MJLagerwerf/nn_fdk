@@ -21,7 +21,7 @@ for f in files:
     sp = f'{path1}{f}{path2}FDK/'
     os.makedirs(sp)
     for i in range(np.size(arr, axis=-1)):        
-        io.imsave(f'{}stack_{:05d}.tiff'.format(sp, i), arr[:, :, i])
+        io.imsave('{}stack_{:05d}.tiff'.format(sp, i), arr[:, :, i])
 
 for f in files:
     lpath = f'{path1}{f}/Projections/processed_data/'
@@ -29,4 +29,4 @@ for f in files:
     sp = f'{path1}{f}{path2}GS/'
     os.makedirs(sp)
     for i in range(np.size(arr, axis=-1)):        
-        io.imsave(f'{}stack_{:05d}.tiff'.format(sp, i), arr[:, :, i])
+        io.imsave('{}stack_{:05d}.tiff'.format(sp, i), arr[:, :, i])
