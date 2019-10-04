@@ -24,7 +24,7 @@ for f in files:
         io.imsave(f'{sp}stack_{i}.tiff', arr[:, :, i])
 
 for f in files:
-    lpath = f'{path1}{f}/processed_data/
+    lpath = f'{path1}{f}/processed_data/'
     arr = np.load(f'{lpath}ground_truth.npy')
     sp = f'{path1}{f}{path2}GS/'
     os.makedirs(sp)
