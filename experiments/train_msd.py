@@ -25,11 +25,12 @@ n.initialize()
 # First, create lists of input files (noisy) and target files (noiseless)
 flsin = []
 flstg = []
-files = ['{02d}'.format(i + 1) for i in range(21)]
+files = ['{:02d}'.format(i + 1) for i in range(21)]
 path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY'
+dset = 'noisy'
 for i in range(1,16):
-    flsin.extend(Path(path + '/walnut_{}/tiffs/FDK/'.format(files(i))).glob('*.tiff'))
-    flsin.extend(Path(path + '/walnut_{}/tiffs/GS/'.format(files(i))).glob('*.tiff'))
+    flsin.extend(Path(path + '/walnut_{}/{}/tiffs/FDK/'.format(files[i], dset)).glob('*.tiff'))
+    flstg.extend(Path(path + '/walnut_{}/{}/tiffs/GS/'.format(files[i], dset)).glob('*.tiff'))
     
 flsin = sorted(flsin)
 flstg = sorted(flstg)
@@ -56,9 +57,10 @@ bprov = msdnet.data.BatchProvider(dats,1)
 flsin = []
 flstg = []
 for i in range(16, 21):
-    flsin.extend(Path('/export/scratch2/lagerwer/data/FleXray/Walnuts/Walnut{}/tiffs/FDK/'.format(i)).glob('*.tiff'))
-    flstg.extend(Path('/export/scratch2/lagerwer/data/FleXray/Walnuts/Walnut{}/tiffs/GS/'.format(i)).glob('*.tiff'))
+    flsin.extend(Path(path + '/walnut_{}/{}/tiffs/FDK/'.format(files[i], dset)).glob('*.tiff'))
+    flstg.extend(Path(path + '/walnut_{}/{}/tiffs/GS/'.format(files[i], dset)).glob('*.tiff'))
     
+  
 flsin = sorted(flsin)
 flstg = sorted(flstg)
 
@@ -78,12 +80,14 @@ t = msdnet.train.AdamAlgorithm(n)
 # Log error metrics to console
 consolelog = msdnet.loggers.ConsoleLogger()
 # Log error metrics to file
-filelog = msdnet.loggers.FileLogger('log_regr.txt')
+filelog = msdnet.loggers.FileLogger('log_regr{}.txt'.format(dset))
 # Log typical, worst, and best images to image files
-imagelog = msdnet.loggers.ImageLogger('log_regr', onlyifbetter=True)
+imagelog = msdnet.loggers.ImageLogger('log_regr{}'.format(dset), onlyifbetter=True)
 
 # Train network until program is stopped manually
 # Network parameters are saved in regr_params.h5
 # Validation is run after every len(datsv) (=25)
 # training steps.
-msdnet.train.train(n, t, val, bprov, 'regr_params.h5',loggers=[consolelog,filelog,imagelog], val_every=len(datsv))
+msdnet.train.train(n, t, val, bprov, 'regr_params{}.h5'.format(dset),
+                   loggers=[consolelog,filelog,imagelog], val_every=len(datsv))
+
