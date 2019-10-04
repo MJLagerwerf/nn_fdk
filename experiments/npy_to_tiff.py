@@ -15,7 +15,7 @@ lpath = '/export/scratch2/lagerwer/NNFDK_results/FDK_RD_CA/'
 path1 = '/export/scratch2/lagerwer/data/FleXray/Walnuts/Walnut'
 path2 = '/tiffs/'
 
-files = [i + 1 for i in range(11)]
+files = [i + 1 for i in range(11, 21)]
 for f in files:
     arr = np.load(f'{lpath}{f}/CA_RD_FDKHN_obj.npy')
     sp = f'{path1}{f}{path2}FDK/'
