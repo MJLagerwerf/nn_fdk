@@ -25,9 +25,11 @@ n.initialize()
 # First, create lists of input files (noisy) and target files (noiseless)
 flsin = []
 flstg = []
+files = ['{02d}'.format(i + 1) for i in range(21)]
+path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY'
 for i in range(1,16):
-    flsin.extend(Path('/export/scratch2/lagerwer/data/FleXray/Walnuts/Walnut{}/tiffs/FDK/'.format(i)).glob('*.tiff'))
-    flstg.extend(Path('/export/scratch2/lagerwer/data/FleXray/Walnuts/Walnut{}/tiffs/GS/'.format(i)).glob('*.tiff'))
+    flsin.extend(Path(path + '/walnut_{}/tiffs/FDK/'.format(files(i))).glob('*.tiff'))
+    flsin.extend(Path(path + '/walnut_{}/tiffs/GS/'.format(files(i))).glob('*.tiff'))
     
 flsin = sorted(flsin)
 flstg = sorted(flstg)
