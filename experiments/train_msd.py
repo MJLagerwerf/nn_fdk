@@ -61,7 +61,7 @@ flsin = sorted(flsin)
 flstg = sorted(flstg)
 
 datsv = []
-for i in range(4, len(flsin), 8)):
+for i in range(4, len(flsin), 8):
     d = msdnet.data.ImageFileDataPoint(str(flsin[i]),str(flstg[i]))
     datsv.append(d)
 # Note: The above can also be achieved using a utility function for such 'simple' cases:
