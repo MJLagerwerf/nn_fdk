@@ -12,7 +12,7 @@ from pathlib import Path
 import tifffile
 from tqdm import tqdm
 
-dset = 'noisy'
+dset = ''
 # Make folder for output
 outfolder = Path('/export/scratch2/lagerwer/NNFDK_results/MSD/{}/'.format(dset))
 outfolder.mkdir(exist_ok=True)
