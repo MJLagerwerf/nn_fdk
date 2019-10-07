@@ -10,6 +10,7 @@ Created on Fri Oct  4 12:13:42 2019
 import msdnet
 from pathlib import Path
 import tifffile
+from tqdm import tqdm
 
 dset = 'good_AF8'
 # Make folder for output
@@ -21,7 +22,7 @@ n = msdnet.network.MSDNet.from_file('regr_params{}.h5'.format(dset), gpu=True)
 
 # Process all test images
 flsin = sorted(Path('/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_21/tiffs/FDK/').glob('*.tiff'))
-for i in range(len(flsin)):
+for i in tqdum(range(len(flsin))):
     # Create datapoint with only input image
     d = msdnet.data.ImageFileDataPoint(str(flsin[i]))
     # Compute network output
