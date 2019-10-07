@@ -12,16 +12,17 @@ from pathlib import Path
 import tifffile
 from tqdm import tqdm
 
-dset = 'good_AF8'
+dset = 'noisy'
 # Make folder for output
-outfolder = Path('/export/scratch2/lagerwer/NNFDK_results/MSD/good_AF8/')
+outfolder = Path('/export/scratch2/lagerwer/NNFDK_results/MSD/{}/'.format(dset))
 outfolder.mkdir(exist_ok=True)
 
 # Load network from file
 n = msdnet.network.MSDNet.from_file('regr_params{}.h5'.format(dset), gpu=True)
 
 # Process all test images
-flsin = sorted(Path('/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_21/good_AF8/tiffs/FDK/').glob('*.tiff'))
+flsin = sorted(Path('/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/' \
+                    'walnut_21/{}/tiffs/FDK/'.format(dset)).glob('*.tiff'))
 for i in tqdm(range(len(flsin))):
     # Create datapoint with only input image
     d = msdnet.data.ImageFileDataPoint(str(flsin[i]))
