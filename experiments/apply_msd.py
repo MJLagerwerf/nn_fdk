@@ -11,12 +11,13 @@ import msdnet
 from pathlib import Path
 import tifffile
 
+dset = 'good_AF8'
 # Make folder for output
-outfolder = Path('/export/scratch2/lagerwer/NNFDK_results/MSD')
+outfolder = Path('/export/scratch2/lagerwer/NNFDK_results/MSD/good_AF8/')
 outfolder.mkdir(exist_ok=True)
 
 # Load network from file
-n = msdnet.network.MSDNet.from_file('regr_params.h5', gpu=True)
+n = msdnet.network.MSDNet.from_file('regr_params{}.h5'.format{dset}, gpu=True)
 
 # Process all test images
 flsin = sorted(Path('/export/scratch2/lagerwer/data/FleXray/Walnuts/Walnut21/tiffs/FDK/').glob('*.tiff'))
