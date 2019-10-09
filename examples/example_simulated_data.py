@@ -16,7 +16,7 @@ pix = 256
 # Specific phantom
 phantom = 'Fourshape_test'
 # Number of angles
-angles = 180
+angles = 360
 # Source radius
 src_rad = 10
 det_rad = 0
@@ -44,7 +44,8 @@ print('Creating training and validation datasets took', time.time() - t1,
 voxels = [pix, pix, pix]
 # Create a data object
 t2 = time.time()
-data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)
+data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad,
+                       compute_xHQ=True)
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
@@ -84,7 +85,7 @@ pylab.close('all')
 case.table()
 case.show_phantom()
 case.NNFDK.show()
-#case.show_xHQ()
+case.show_xHQ()
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
 

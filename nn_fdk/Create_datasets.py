@@ -124,6 +124,7 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     # Clean up. Note that GPU memory is tied up in the algorithm object,
     # and main RAM in the data objects.
     B[:, -1] = data_obj.xHQ[Smat]
+#    B[:, -1] = data_obj.f[Smat]
     astra.algorithm.delete(alg_id)
     astra.data3d.delete(rec_id)
     astra.data3d.delete(proj_id)
