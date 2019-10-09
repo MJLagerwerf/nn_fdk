@@ -31,7 +31,7 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     # ! ! ! This will lead to some problems later on ! ! !
     det_rad = 0
     data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad,
-                           compute_xHQ=True)
+                           compute_xHQ=True, samp_fac=1)
     
     w_du = data_obj.w_detu
     WV_obj = ddf.support_functions.working_var_map()

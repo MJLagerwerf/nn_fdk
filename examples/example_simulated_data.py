@@ -5,8 +5,10 @@ Created on Mon Mar 11 13:53:20 2019
 
 @author: lagerwer
 """
+
 import numpy as np
 import ddf_fdk as ddf
+ddf.import_astra_GPU()
 import nn_fdk as nn
 import time
 import pylab
@@ -84,7 +86,7 @@ case.NNFDK.do()
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.show_xHQ()
+#case.show_xHQ()
 case.NNFDK.show()
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
