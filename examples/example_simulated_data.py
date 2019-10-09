@@ -14,14 +14,14 @@ t = time.time()
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Defrise'
+phantom = 'Fourshape_test'
 # Number of angles
-angles = 360
+angles = 180
 # Source radius
-src_rad = 2
+src_rad = 10
 det_rad = 0
 # Noise specifics
-noise = None#['Poisson', 2 ** 12]
+noise = ['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
@@ -75,36 +75,16 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 #for i in range(1):
 t2 = time.time()
 
-case.NNFDK.train(4, retrain=True)
+case.NNFDK.train(4)
 case.NNFDK.do()
 
-case.FDK.do('Hann')
-case.SIRT_NN.do([50])
-
-
-
-# %%
-#pylab.figure()
-#
-#pylab.plot(case.NNFDK.network[0]['l_tE'][5:], label= 'training error')
-#pylab.plot(case.NNFDK.network[0]['l_vE'][5:], label= 'validation error')
-##pylab.ylim([-0.00000001, 0.0001])
-#pylab.legend()
-#NW_full = h5py.File(full_path + 'network_' + str(1) + '.hdf5', 'r')
-#NW = h5py.File(case.WV_path +  'network_' + str(1) + '.hdf5', 'w')
-#
-#NW_full.copy(str(case.NNFDK.network[-1]['nNW']), NW, name='NW')
-#
 
 # %%
 pylab.close('all')
 case.table()
 case.show_phantom()
-
-case.FDK.show()
-#case.NNFDK.show()
-case.SIRT_NN.show()
-
+case.NNFDK.show()
+#case.show_xHQ()
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
 

@@ -11,8 +11,10 @@ import os
 import gc
 import time
 
+
 from . import support_functions as sup
 from . import Create_datasets as CD
+
 # %%
 def load_dataset_adapt_voxels(data_path, idData, nVox):
     # Load the dataset
@@ -34,6 +36,7 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                    Exp_bin, bin_param, base_path)
     if not os.path.exists(data_path):
         os.makedirs(data_path)
+    
     
     # Check how many datasets we have
     nD = sup.number_of_datasets(data_path, 'Dataset')

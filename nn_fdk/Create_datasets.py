@@ -30,7 +30,9 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     u, v = dpix
     # ! ! ! This will lead to some problems later on ! ! !
     det_rad = 0
-    data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)
+    data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad,
+                           compute_xHQ=True)
+    
     w_du = data_obj.w_detu
     WV_obj = ddf.support_functions.working_var_map()
     WV_path = WV_obj.WV_path
@@ -67,12 +69,13 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
 
     Resize_Op = odl.ResizingOperator(Exp_op.range, ran_shp=(fullFilterSize,))
     # %% Create forward and backward projector
-    project_id = astra.create_projector('cuda3d', proj_geom, vol_geom)
-    W = astra.OpTomo(project_id)
+#    project_id = astra.create_projector('cuda3d', proj_geom, vol_geom)
+#    W = astra.OpTomo(project_id)
 
 
     # %% Create data
-    proj_data = W.FP(np.transpose(np.asarray(data_obj.f), (2, 1, 0)))
+    proj_data = np.transpose(np.asarray(data_obj.g), (2, 0, 1)).copy()
+#    W.FP(np.transpose(np.asarray(data_obj.f), (2, 1, 0)))
     if noise is not None:
         g = add_poisson_noise(proj_data, noise[1])
     else:
@@ -120,7 +123,7 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     # %%
     # Clean up. Note that GPU memory is tied up in the algorithm object,
     # and main RAM in the data objects.
-    B[:, -1] = data_obj.f[Smat]
+    B[:, -1] = data_obj.xHQ[Smat]
     astra.algorithm.delete(alg_id)
     astra.data3d.delete(rec_id)
     astra.data3d.delete(proj_id)

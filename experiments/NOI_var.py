@@ -51,7 +51,7 @@ def cfg():
     retrain = True
     # Total number of voxels used for training
     nVox = 1e6
-    nD = 100
+    nD = 10
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
     nTD = nD
@@ -64,19 +64,20 @@ def cfg():
     bin_param = 2
     specifics = 'I0' + str(I0[it_i])
     filts = ['Ram-Lak', 'Hann']
-
+    bpath = '/bigstore/lagerwer/data/NNFDK/'
 
 # %%
 @ex.capture
 def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
-                    bin_param):
+                    bin_param, bpath):
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, nTD + nVD)
+                                 Exp_bin, bin_param, nTD + nVD,
+                                 base_path=bpath)
 
         
 @ex.capture
 def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, f_load_path, g_load_path):
+              Exp_bin, bin_param, f_load_path, g_load_path, bpath):
     
     voxels = [pix, pix, pix]
     det_rad = 0
@@ -103,17 +104,18 @@ def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
-                                   Exp_op, bin_param)
+                                   Exp_op, bin_param, base_path=bpath)
     CT_obj.rec_methods += [CT_obj.NNFDK]
     return CT_obj
 
 # %%
 @ex.capture
 def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param):
+              Exp_bin, bin_param, bpath):
     data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
                                              noise, nTrain, nTD, nVal, nVD,
-                                             Exp_bin, bin_param)
+                                             Exp_bin, bin_param,
+                                             base_path=bpath)
     return data_path, full_path
 
 @ex.capture
