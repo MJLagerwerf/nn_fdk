@@ -8,6 +8,6 @@
 for i in {0..4}
 do
     python SV_var.py -p -F \
-    /export/scratch2/lagewer/NNFDK_results/SV_var_1024 with it_i=$i pix=1024
+    /export/scratch2/lagerwer/NNFDK_results/SV_var_1024 with it_i=$i pix=1024
 done
 
