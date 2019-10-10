@@ -88,8 +88,8 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 #for i in range(1):
 t2 = time.time()
 
-#case.NNFDK.train(4, retrain=True)
-#case.NNFDK.do()
+case.NNFDK.train(4, retrain=True)
+case.NNFDK.do()
 
 
 # %%
@@ -97,7 +97,7 @@ pylab.close('all')
 case.table()
 case.show_phantom()
 case.show_xHQ()
-#case.NNFDK.show()
+case.NNFDK.show()
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
 
