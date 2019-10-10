@@ -14,6 +14,14 @@ import time
 import pylab
 t = time.time()
 # %%
+def make_hann_filt(voxels, w_detu):
+    rs_detu = int(2 ** (np.ceil(np.log2(voxels[0] * 2)) + 1))
+    filt = np.real(np.fft.rfft(ddf.ramp_filt(rs_detu)))
+    freq = 2 * np.arange(len(filt))/(rs_detu)
+    filt = filt * (np.cos(freq * np.pi / 2) ** 2)  / 2 / w_detu
+    filt = filt / 2 / w_detu
+    return filt
+# %%
 pix = 256
 # Specific phantom
 phantom = 'Fourshape_test'
@@ -51,8 +59,10 @@ data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad,
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
-
-
+filt = make_hann_filt(data_obj.voxels, data_obj.w_detu)
+xFDK = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, filt,
+                                           data_obj.geometry, 
+                                           data_obj.reco_space, None)
 t3 = time.time()
 # %% Create the circular cone beam CT class
 case = ddf.CCB_CT(data_obj)#, angles, src_rad, det_rad, noise)
@@ -78,16 +88,16 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 #for i in range(1):
 t2 = time.time()
 
-case.NNFDK.train(4)
-case.NNFDK.do()
+#case.NNFDK.train(4, retrain=True)
+#case.NNFDK.do()
 
 
 # %%
 pylab.close('all')
 case.table()
 case.show_phantom()
-#case.show_xHQ()
-case.NNFDK.show()
+case.show_xHQ()
+#case.NNFDK.show()
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
 

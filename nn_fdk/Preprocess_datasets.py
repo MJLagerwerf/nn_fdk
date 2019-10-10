@@ -10,10 +10,18 @@ import scipy.io as sp
 import os
 import gc
 import time
+from tqdm import tqdm
+import imageio as io
 
 
 from . import support_functions as sup
 from . import Create_datasets as CD
+# %%
+def save_as_tiffs(rec, spath):
+    if not os.path.exists(spath):
+        os.makedirs(spath)
+    for i in tqdm(range(np.shape(rec)[-1])):
+        io.imsave('{}stack_{:05d}.tiff'.format(spath, i), rec[:, :, i])
 
 # %%
 def load_dataset_adapt_voxels(data_path, idData, nVox):
@@ -36,7 +44,9 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                    Exp_bin, bin_param, base_path)
     if not os.path.exists(data_path):
         os.makedirs(data_path)
-    
+    tiff_path = f'{data_path}tiffs/'
+    if not os.path.exists(tiff_path):
+        os.makedirs(tiff_path)
     
     # Check how many datasets we have
     nD = sup.number_of_datasets(data_path, 'Dataset')
@@ -45,10 +55,15 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
         print('Creating new datasets')
         # Make extra datasets till we have enough
         for i in range(nDatasets - nD):
-            Dataset = CD.Create_dataset_ASTRA_sim(pix, phantom, angles,
-                                                  src_rad, noise, Exp_bin,
-                                                  bin_param, **kwargs)
+            Dataset, xHQ, xFDK = CD.Create_dataset_ASTRA_sim(pix, phantom,
+                                                             angles, src_rad,
+                                                             noise, Exp_bin,
+                                                             bin_param,
+                                                             **kwargs)
             np.save(data_path + 'Dataset' + str(i + nD), Dataset)
+            save_as_tiffs(xHQ, f'{tiff_path}Dataset{i + nD}/HQ/')
+            save_as_tiffs(xFDK, f'{tiff_path}Dataset{i + nD}/FDK/')
+            Dataset, xHQ, xFDK = None, None, None
             print('Finished making Dataset', str(i + nD))
             gc.collect()
     else:

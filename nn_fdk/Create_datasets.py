@@ -9,8 +9,21 @@ import numpy as np
 import odl
 import ddf_fdk as ddf
 import astra
+import imageio as io
+import os
+from tqdm import tqdm
 
+from . import support_functions as sup
 # %%
+def make_hann_filt(voxels, w_detu):
+    rs_detu = int(2 ** (np.ceil(np.log2(voxels[0] * 2)) + 1))
+    filt = np.real(np.fft.rfft(ddf.ramp_filt(rs_detu)))
+    freq = 2 * np.arange(len(filt))/(rs_detu)
+    filt = filt * (np.cos(freq * np.pi / 2) ** 2)  / 2 / w_detu
+    filt = filt / 2 / w_detu
+    return filt
+
+
 def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
                          bin_param, **kwargs):
     if phantom == 'Defrise':
@@ -31,15 +44,17 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     # ! ! ! This will lead to some problems later on ! ! !
     det_rad = 0
     data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad,
-                           compute_xHQ=True, samp_fac=1)
-    
-    w_du = data_obj.w_detu
+                           compute_xHQ=True)
     WV_obj = ddf.support_functions.working_var_map()
     WV_path = WV_obj.WV_path
-
     data_obj.make_mask(WV_path)
-
     Smat = Make_Smat(voxels, MaxVoxDataset, WV_path)
+    # %% saving tiffs for CNNs
+    w_du = data_obj.w_detu
+    filt = make_hann_filt(voxels, w_du)
+    xFDK = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, filt,
+                                               data_obj.geometry, 
+                                               data_obj.reco_space, None)
 
     # %% Create geometry
     # Make a circular scanning geometry
@@ -128,7 +143,7 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     astra.algorithm.delete(alg_id)
     astra.data3d.delete(rec_id)
     astra.data3d.delete(proj_id)
-    return B
+    return B, data_obj.xHQ, xFDK
 
 
 # %%
