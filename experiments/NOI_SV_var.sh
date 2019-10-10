@@ -7,6 +7,6 @@
 
 for i in {1 2 3 5 7.5 10}
 do
-    python exp_cone_angle.py -p -F with src_rad=$i pix=1024
+    python exp_cone_angle.py -p with src_rad=$i pix=1024
 done
 
