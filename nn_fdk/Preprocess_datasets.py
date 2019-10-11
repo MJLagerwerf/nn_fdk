@@ -16,12 +16,6 @@ import imageio as io
 
 from . import support_functions as sup
 from . import Create_datasets as CD
-# %%
-def save_as_tiffs(rec, spath):
-    if not os.path.exists(spath):
-        os.makedirs(spath)
-    for i in tqdm(range(np.shape(rec)[-1])):
-        io.imsave('{}stack_{:05d}.tiff'.format(spath, i), rec[:, :, i])
 
 # %%
 def load_dataset_adapt_voxels(data_path, idData, nVox):
@@ -61,8 +55,8 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
                                                              bin_param,
                                                              **kwargs)
             np.save(data_path + 'Dataset' + str(i + nD), Dataset)
-            save_as_tiffs(xHQ, f'{tiff_path}Dataset{i + nD}/HQ/')
-            save_as_tiffs(xFDK, f'{tiff_path}Dataset{i + nD}/FDK/')
+            sup.save_as_tiffs(xHQ, f'{tiff_path}Dataset{i + nD}/HQ/')
+            sup.save_as_tiffs(xFDK, f'{tiff_path}Dataset{i + nD}/FDK/')
             Dataset, xHQ, xFDK = None, None, None
             print('Finished making Dataset', str(i + nD))
             gc.collect()

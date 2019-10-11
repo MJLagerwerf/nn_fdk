@@ -8,9 +8,15 @@ Created on Thu Feb 28 14:52:52 2019
 import numpy as np
 import os
 from itertools import compress
-
+from tqdm import tqdm
+import imageio as io
 import sys
-
+# %%
+def save_as_tiffs(rec, spath):
+    if not os.path.exists(spath):
+        os.makedirs(spath)
+    for i in tqdm(range(np.shape(rec)[-1])):
+        io.imsave('{}stack_{:05d}.tiff'.format(spath, i), rec[:, :, i])
 # %%
 def text_to_acronym(text):
     PHs = ['SL', 'CS', '22El', 'C', '3S', '4S', 'HC', 'D', 'DF', 'FB']

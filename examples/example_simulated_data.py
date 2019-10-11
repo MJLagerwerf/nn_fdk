@@ -54,8 +54,8 @@ print('Creating training and validation datasets took', time.time() - t1,
 voxels = [pix, pix, pix]
 # Create a data object
 t2 = time.time()
-data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad,
-                       compute_xHQ=True)
+data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)#,
+#                       compute_xHQ=True)
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
@@ -85,19 +85,22 @@ case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
-#for i in range(1):
-t2 = time.time()
-
-case.NNFDK.train(4, retrain=True)
-case.NNFDK.do()
 
 
+case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
+case.rec_methods += [case.MSD]
+list_tr, list_v = [0], [1]
+case.MSD.train(list_tr, list_v)
+#case.MSD.add2sp_list(list_tr, list_v)
+case.MSD.do()
+case.FDK.do('Hann')
 # %%
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.show_xHQ()
-case.NNFDK.show()
+case.MSD.show(clim=False)
+#case.show_xHQ()
+#case.NNFDK.show()
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
 
