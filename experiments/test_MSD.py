@@ -16,14 +16,14 @@ t = time.time()
 # %%
 pix = 1024
 # Specific phantom
-phantom = 'Defrise'
+phantom = 'Fourshape_test'
 # Number of angles
 angles = 360
 # Source radius
-src_rad = 2
+src_rad = 10
 det_rad = 0
 # Noise specifics
-noise = None#['Poisson', 2 ** 8]
+noise = ['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
