@@ -8,21 +8,13 @@ Created on Mon Mar 11 13:53:20 2019
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 import nn_fdk as nn
 import time
 import pylab
 t = time.time()
 # %%
-def make_hann_filt(voxels, w_detu):
-    rs_detu = int(2 ** (np.ceil(np.log2(voxels[0] * 2)) + 1))
-    filt = np.real(np.fft.rfft(ddf.ramp_filt(rs_detu)))
-    freq = 2 * np.arange(len(filt))/(rs_detu)
-    filt = filt * (np.cos(freq * np.pi / 2) ** 2)  / 2 / w_detu
-    filt = filt / 2 / w_detu
-    return filt
-# %%
-pix = 256
+pix = 1024
 # Specific phantom
 phantom = 'Fourshape_test'
 # Number of angles
@@ -40,13 +32,14 @@ nVal, nVD = 1e6, 1
 # Specifics for the expansion operator
 Exp_bin = 'linear'
 bin_param = 2
+bpath = '/bigstore/lagerwer/data/NNFDK/'
 
 
-#'/export/scratch1/home/voxels-gpu0/data/NNFDK/'
 # %%
 t1 = time.time()
 nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, nTD + nVD)
+                                 Exp_bin, bin_param, nTD + nVD,
+                                 base_path=bpath)
 print('Creating training and validation datasets took', time.time() - t1,
       'seconds')
 
@@ -59,10 +52,7 @@ data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)#,
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
-filt = make_hann_filt(data_obj.voxels, data_obj.w_detu)
-xFDK = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, filt,
-                                           data_obj.geometry, 
-                                           data_obj.reco_space, None)
+
 t3 = time.time()
 # %% Create the circular cone beam CT class
 case = ddf.CCB_CT(data_obj)#, angles, src_rad, det_rad, noise)
@@ -81,7 +71,7 @@ case.FDK_bin_nn = case.FDK_op * Exp_op
 
 # Create the NN-FDK object
 case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
-                             bin_param)
+                             bin_param, base_path=bpath)
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
@@ -90,7 +80,7 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
 case.rec_methods += [case.MSD]
 list_tr, list_v = [0], [1]
-case.MSD.train(list_tr, list_v)
+case.MSD.train(list_tr, list_v, stop_crit=50_000)
 #case.MSD.add2sp_list(list_tr, list_v)
 case.MSD.do()
 case.FDK.do('Hann')
@@ -102,8 +92,6 @@ pylab.close('all')
 case.table()
 case.show_phantom()
 case.MSD.show(clim=False)
-#case.show_xHQ()
-#case.NNFDK.show()
-#case.NNFDK.show_filters()
-#case.NNFDK.show_node_output(3)
+case.NNFDK.show()
+
 
