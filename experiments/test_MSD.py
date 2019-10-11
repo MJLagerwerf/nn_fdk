@@ -27,7 +27,7 @@ noise = None#['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 1
+nVal, nVD = 1e6, 0
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -75,18 +75,17 @@ case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
-
-
-case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
-case.rec_methods += [case.MSD]
-list_tr, list_v = [0], [1]
-case.MSD.train(list_tr, list_v, stop_crit=50_000)
-#case.MSD.add2sp_list(list_tr, list_v)
-case.MSD.do()
 case.FDK.do('Hann')
-# %%
 case.NNFDK.train(4)
 case.NNFDK.do()
+# %%
+case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
+case.rec_methods += [case.MSD]
+list_tr, list_v = [0], None
+case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
+#case.MSD.add2sp_list(list_tr, list_v)
+case.MSD.do()
+
 # %%
 pylab.close('all')
 case.table()

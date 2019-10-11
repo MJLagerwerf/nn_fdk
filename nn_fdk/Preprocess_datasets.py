@@ -18,16 +18,23 @@ from . import support_functions as sup
 from . import Create_datasets as CD
 
 # %%
-def load_dataset_adapt_voxels(data_path, idData, nVox):
+def load_dataset_adapt_voxels(data_path, idData, nVox, one_dset=False):
     # Load the dataset
     Ds = np.load(data_path + 'Dataset' + str(idData) + '.npy')
     # Make an array with all the possible voxels
     idVox = np.arange(np.shape(Ds)[0])
     # Shuffle the voxel ids
     np.random.shuffle(idVox)
-    # Take the desired number of voxels for the dataset
-    Ds = Ds[idVox[:int(nVox)], :]
-    return Ds
+    if not one_dset:
+        # Take the desired number of voxels for the dataset
+        Ds = Ds[idVox[:int(nVox)], :]
+        return Ds
+    else:
+        # Take the desired number of voxels for the dataset
+        Ds1 = Ds[idVox[:int(nVox[0])], :]
+        Ds2 = Ds[idVox[int(nVox[0]):int(nVox[1] + nVox[0])], :]
+        return Ds1, Ds2
+
 
 
 def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
@@ -64,18 +71,27 @@ def Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
         print('We have enough datasets')
 
 def random_lists(nTD, nVD):
-    nData = np.arange(nTD + nVD)
-    np.random.shuffle(nData)
-    idTrain = nData[:nTD]
-    idVal = nData[nTD:]
+    if nVD == 0:
+        idTrain = 0
+        idVal = 0
+    else:
+        nData = np.arange(nTD + nVD)
+        np.random.shuffle(nData)
+        idTrain = nData[:nTD]
+        idVal = nData[nTD:nVD]
     return idTrain, idVal
 
 
 def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
                     **kwargs):       
     full_path = data_path + sup.make_full_path(nTrain, nTD, nVal, nVD)
-    voxTD = nTrain // nTD
-    voxVD = nVal // nVD
+    if nVD == 0:
+        voxTD = nTrain
+        voxVD = nVal
+    else:
+        voxTD = nTrain // nTD
+        voxVD = nVal // nVD
+        
     if not 'voxMaxData' in kwargs:
         voxMaxData = np.max([int(pix ** 3 * 0.005), 1 * 10 ** 6])
     
@@ -91,15 +107,22 @@ def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
         idTrain = DS_list[0]
         idVal = DS_list[1]
         print('Tlist', idTrain, 'Vlist', idVal)
-
-    count = 0
-    for i in idTrain:
-        TD = load_dataset_adapt_voxels(data_path, i, voxTD)
-        sp.savemat(full_path + 'TD' + str(count), {'TD': TD})
-        count += 1
-    count = 0
-    for i in idVal:
-        VD = load_dataset_adapt_voxels(data_path, i, voxVD)
-        sp.savemat(full_path + 'VD' + str(count), {'VD': VD})
-        count += 1
+    if nVD == 0:
+        TD, VD = load_dataset_adapt_voxels(data_path, idTrain, [nTrain, nVal],
+                                           one_dset=True)
+        print(np.shape(TD))
+        print(np.shape(VD))
+        sp.savemat(full_path + 'TD0', {'TD': TD})
+        sp.savemat(full_path + 'VD0', {'VD': VD})
+    else:
+        count = 0
+        for i in idTrain:
+            TD = load_dataset_adapt_voxels(data_path, i, voxTD)
+            sp.savemat(full_path + 'TD' + str(count), {'TD': TD})
+            count += 1
+        count = 0
+        for i in idVal:
+            VD = load_dataset_adapt_voxels(data_path, i, voxVD)
+            sp.savemat(full_path + 'VD' + str(count), {'VD': VD})
+            count += 1
 
