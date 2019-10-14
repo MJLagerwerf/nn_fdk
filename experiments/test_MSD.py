@@ -16,14 +16,14 @@ t = time.time()
 # %%
 pix = 1024
 # Specific phantom
-phantom = 'Defrise'
+phantom = 'Fourshape_test'
 # Number of angles
 angles = 360
 # Source radius
-src_rad = 2
+src_rad = 10
 det_rad = 0
 # Noise specifics
-noise = None #['Poisson', 2 ** 8]
+noise = ['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
@@ -82,7 +82,7 @@ case.NNFDK.do()
 # %%
 case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
 case.rec_methods += [case.MSD]
-list_tr, list_v = [0], None
+list_tr, list_v = [0], [1]
 #case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
 case.MSD.add2sp_list(list_tr, list_v)
 case.MSD.do()
@@ -95,7 +95,7 @@ save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.MSD.show(clim=False, save_name=f'{save_path}MSD_DF_nTD1_nVD1.pdf')
-case.NNFDK.show(save_name=f'{save_path}NNFDK_DF_nTD1_nVD1.pdf')
-case.FDK.show(save_name=f'{save_path}FDK_DF_nTD1_nVD1.pdf')
+case.MSD.show(clim=False, save_name=f'{save_path}MSD_4S_nTD1_nVD1.pdf')
+case.NNFDK.show(save_name=f'{save_path}NNFDK_4S_nTD1_nVD1.pdf')
+case.FDK.show(save_name=f'{save_path}FDK_4S_nTD1_nVD1.pdf')
 
