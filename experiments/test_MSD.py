@@ -27,7 +27,7 @@ noise = None#['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 0
+nVal, nVD = 1e6, 1
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -92,7 +92,7 @@ save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.MSD.show(clim=False, save_name=f'{save_path}MSD_DF_nTD1_nVD0.pdf')
-case.NNFDK.show(save_name=f'{save_path}NNFDK_DF_nTD1_nVD0.pdf')
-case.FDK.show(save_name=f'{save_path}FDK_DF_nTD1_nVD0.pdf')
+case.MSD.show(clim=False, save_name=f'{save_path}MSD_DF_nTD1_nVD1.pdf')
+case.NNFDK.show(save_name=f'{save_path}NNFDK_DF_nTD1_nVD1.pdf')
+case.FDK.show(save_name=f'{save_path}FDK_DF_nTD1_nVD1.pdf')
 
