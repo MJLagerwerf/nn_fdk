@@ -16,14 +16,14 @@ t = time.time()
 # %%
 pix = 1024
 # Specific phantom
-phantom = 'Fourshape_test'
+phantom = 'Defrise'
 # Number of angles
 angles = 360
 # Source radius
-src_rad = 10
+src_rad = 2
 det_rad = 0
 # Noise specifics
-noise = ['Poisson', 2 ** 8]
+noise = None#['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
@@ -95,7 +95,7 @@ save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.MSD.show(clim=False, save_name=f'{save_path}MSD_4S_nTD1_nVD1')
-case.NNFDK.show(save_name=f'{save_path}NNFDK_4S_nTD1_nVD1')
-case.FDK.show(save_name=f'{save_path}FDK_4S_nTD1_nVD1')
+case.MSD.show(clim=False, save_name=f'{save_path}MSD_DF_nTD1_nVD1')
+case.NNFDK.show(save_name=f'{save_path}NNFDK_DF_nTD1_nVD1')
+case.FDK.show(save_name=f'{save_path}FDK_DF_nTD1_nVD1')
 
