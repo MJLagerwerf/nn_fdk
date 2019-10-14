@@ -87,6 +87,9 @@ list_tr, list_v = [0], None
 case.MSD.add2sp_list(list_tr, list_v)
 case.MSD.do()
 
+print('MSD rec time:', case.MSD.results.rec_time[0])
+print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
+print('FDK rec time:', case.FDK.results.rec_time[0])
 # %%
 save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
 pylab.close('all')
