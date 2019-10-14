@@ -20,7 +20,7 @@ phantom = 'Defrise'
 # Number of angles
 angles = 360
 # Source radius
-src_rad = 10
+src_rad = 2
 det_rad = 0
 # Noise specifics
 noise = None#['Poisson', 2 ** 8]
