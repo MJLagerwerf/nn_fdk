@@ -92,7 +92,7 @@ save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.MSD.show(clim=False, save_name=f'{save_path}MSD_DF_nTD1_nVD0.pdf')
-case.NNFDK.show(save_name=f'{save_path}NNFDK_DF_nTD1_nVD0.pdf')
-case.FDK.show(save_name=f'{save_path}FDK_DF_nTD1_nVD0.pdf')
+case.MSD.show(clim=False, save_name=f'{save_path}MSD_4S_nTD1_nVD0.pdf')
+case.NNFDK.show(save_name=f'{save_path}NNFDK_4S_nTD1_nVD0.pdf')
+case.FDK.show(save_name=f'{save_path}FDK_4S_nTD1_nVD0.pdf')
 
