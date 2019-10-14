@@ -78,7 +78,7 @@ def random_lists(nTD, nVD):
         nData = np.arange(nTD + nVD)
         np.random.shuffle(nData)
         idTrain = nData[:nTD]
-        idVal = nData[nTD:nVD]
+        idVal = nData[nTD:]
     return idTrain, idVal
 
 
@@ -103,10 +103,12 @@ def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
     
     if not DS_list:
         idTrain, idVal = random_lists(nTD, nVD)
+        print('Tlist', idTrain, 'Vlist', idVal)
     else:
         idTrain = DS_list[0]
         idVal = DS_list[1]
         print('Tlist', idTrain, 'Vlist', idVal)
+        
     if nVD == 0:
         TD, VD = load_dataset_adapt_voxels(data_path, idTrain, [nTrain, nVal],
                                            one_dset=True)
