@@ -15,7 +15,7 @@ import ddf_fdk as ddf
 import numpy as np
 import time
 
-#from . import support_functions as sup
+from . import support_functions as sup
 
 # %%
 def sort_files(fls_path, dset_one=False, ratio=None):
