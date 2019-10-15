@@ -8,7 +8,7 @@ Created on Mon Mar 11 13:53:20 2019
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 import nn_fdk as nn
 import time
 import pylab
