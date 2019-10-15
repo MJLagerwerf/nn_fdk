@@ -17,18 +17,27 @@ t = time.time()
 pix = 1024
 # Specific phantom
 phantom = 'Fourshape_test'
-PH = '4S'
+
+if phantom == 'Fourshape_test':
+    PH = '4S'
+    src_rad = 10
+    noise = ['Poisson', 2 ** 8]
+elif phantom == 'Defrise':
+    PH = 'DF'
+    src_rad = 2
+    noise = None
+
+
 # Number of angles
 angles = 360
 # Source radius
-src_rad = 10
 det_rad = 0
 # Noise specifics
-noise = ['Poisson', 2 ** 8]
+
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 0
+nVal, nVD = 1e6, 1
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
