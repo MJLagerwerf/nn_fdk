@@ -17,6 +17,7 @@ t = time.time()
 pix = 1024
 # Specific phantom
 phantom = 'Fourshape_test'
+PH = '4S'
 # Number of angles
 angles = 360
 # Source radius
@@ -27,7 +28,7 @@ noise = ['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 1
+nVal, nVD = 1e6, 0
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -74,18 +75,22 @@ case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
                              bin_param, base_path=bpath)
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
-# %%
-case.FDK.do('Hann')
-case.NNFDK.train(4)
-case.NNFDK.do()
 
 # %%
 case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
 case.rec_methods += [case.MSD]
-list_tr, list_v = [0], [1]
-#case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
-case.MSD.add2sp_list(list_tr, list_v)
+if nVD == 0:
+    list_tr, list_v = [0], None
+else:
+    list_tr, list_v = [0], [1]
+case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
+#case.MSD.add2sp_list(list_tr, list_v)
 case.MSD.do()
+
+# %%
+case.FDK.do('Hann')
+case.NNFDK.train(4)
+case.NNFDK.do()
 
 print('MSD rec time:', case.MSD.results.rec_time[0])
 print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
@@ -95,7 +100,7 @@ save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.MSD.show(clim=False, save_name=f'{save_path}MSD_4S_nTD1_nVD1')
-case.NNFDK.show(save_name=f'{save_path}NNFDK_4S_nTD1_nVD1')
-case.FDK.show(save_name=f'{save_path}FDK_4S_nTD1_nVD1')
+case.MSD.show(clim=False, save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
+case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
+case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
 
