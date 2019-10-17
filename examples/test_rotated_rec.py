@@ -19,11 +19,11 @@ def make_hann_filt(voxels, w_detu):
     filt = np.real(np.fft.rfft(ddf.ramp_filt(rs_detu)))
     freq = 2 * np.arange(len(filt))/(rs_detu)
     filt = filt * (np.cos(freq * np.pi / 2) ** 2)  / 2 / w_detu
-    filt = filt / 2 / w_detu
+#    filt = filt / 2 / w_detu
     return filt
 # %%
-#path = '/export/scratch2/lagerwer/data/FleXray/pomegranate1_02MAR/'
-path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_21/'
+path = '/export/scratch2/lagerwer/data/FleXray/pomegranate1_02MAR/'
+#path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_21/'
 dset = 'noisy'
 dset2 = 'good'
 pd = 'processed_data/'
@@ -87,7 +87,7 @@ def show_diff(rec1, rec2, title, sp):
     
 # %%    
 def show(rec1, title):
-    midvox = np.shape(rec)[0] // 2
+    midvox = np.shape(rec1)[0] // 2
     fig, (ax1, ax2, ax3) = pylab.subplots(1, 3, figsize=[20, 6])
     fig.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
     ax1.imshow(np.rot90(rec1[:, :, midvox]))
@@ -102,5 +102,5 @@ show_diff(data_obj.f, rec1, 'GS - og rec', 'diff_GS_OG')
 
 show_diff(data_obj.f, rec, 'GS - new rec', 'diff_GS_NEW')
 
-show_diff(rec1, rec2,  'new rec - og rec', 'diff_NEW_PG')
+show_diff(rec1, rec,  'new rec - og rec', 'diff_NEW_PG')
 
