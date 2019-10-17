@@ -92,8 +92,8 @@ if nVD == 0:
     list_tr, list_v = [0], None
 else:
     list_tr, list_v = [0], [1]
-case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
-#case.MSD.add2sp_list(list_tr, list_v)
+#case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
+case.MSD.add2sp_list(list_tr, list_v)
 case.MSD.do()
 
 # %%
