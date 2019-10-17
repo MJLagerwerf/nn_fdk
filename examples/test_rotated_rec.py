@@ -49,7 +49,7 @@ bin_param = 2
 # Create a data object
 t2 = time.time()
 data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq,
-                 zoom=False)
+                 zoom=True)
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
