@@ -71,7 +71,7 @@ voxels = np.shape(rec1)
 hann = make_hann_filt(voxels, case.w_detu)
 rec = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, hann, case.geometry,
                                           case.reco_space, case.w_detu,
-                                          ang_offset= -0.72/360 * 2 * np.pi)
+                                          ang_offset= 1.26/360 * 2 * np.pi)
 # %%
 def show_diff(rec1, rec2, title, sp):
     midvox = np.shape(rec1)[0] // 2
