@@ -16,7 +16,7 @@ t = time.time()
 # %%
 pix = 1024
 # Specific phantom
-phantom = 'Defrise'
+phantom = 'Fourshape_test'
 
 if phantom == 'Fourshape_test':
     PH = '4S'
