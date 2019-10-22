@@ -185,18 +185,20 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',
                                             gpu=True)
         
-        rec = self.CT_obj.FDK.do('Hann', compute_results=False)
+        rec = self.CT_obj.FDK.do('Hann', compute_results=False) / \ 
+                     2 / self.CT_obj.w_detu
         sup.save_as_tiffs(rec, f'{infolder}/')
         # Process all test images
-
+        
         flsin = sorted(Path(infolder).glob('*.tiff'))
+#        print(flsin)
         rec = np.zeros(np.shape(rec))
         for i in tqdm(range(len(flsin))):
             # Create datapoint with only input image
             d = msdnet.data.ImageFileDataPoint(str(flsin[i]))
             # Compute network output
             output = n.forward(d.input)
-            rec[:, :, i] = output[0]
+            rec[:, :, i] = output[0] * 2 * self.CT_obj.w_detu
             # Save network output to file
             tifffile.imsave(outfolder / 'msd_{:05d}.tiff'.format(i), output[0])
         

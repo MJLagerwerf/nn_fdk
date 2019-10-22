@@ -19,7 +19,7 @@ def make_hann_filt(voxels, w_detu):
     filt = np.real(np.fft.rfft(ddf.ramp_filt(rs_detu)))
     freq = 2 * np.arange(len(filt))/(rs_detu)
     filt = filt * (np.cos(freq * np.pi / 2) ** 2)  / 2 / w_detu
-    filt = filt / 2 / w_detu
+#    filt = filt / 2 / w_detu
     return filt
 # %%
 pix = 256
@@ -91,19 +91,19 @@ case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
 case.rec_methods += [case.MSD]
 list_tr, list_v = [0], None
 #case.MSD.train(list_tr, list_v, ratio=3)
-#case.MSD.add2sp_list(list_tr, list_v)
-#case.MSD.do()
-case.FDK.do('Hann')
+case.MSD.add2sp_list(list_tr, list_v)
+case.MSD.do()
+#case.FDK.do('Hann')
 # %%
-case.NNFDK.train(4)
-case.NNFDK.do()
+#case.NNFDK.train(4)
+#case.NNFDK.do()
 # %%
-pylab.close('all')
+#pylab.close('all')
 case.table()
 case.show_phantom()
-#case.MSD.show(clim=False)
+case.MSD.show(clim=False)
 #case.show_xHQ()
-case.NNFDK.show()
+#case.NNFDK.show()
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
 

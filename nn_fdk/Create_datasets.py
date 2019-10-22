@@ -20,7 +20,7 @@ def make_hann_filt(voxels, w_detu):
     filt = np.real(np.fft.rfft(ddf.ramp_filt(rs_detu)))
     freq = 2 * np.arange(len(filt))/(rs_detu)
     filt = filt * (np.cos(freq * np.pi / 2) ** 2)  / 2 / w_detu
-    filt = filt / 2 / w_detu
+#    filt = filt / 2 / w_detu
     return filt
 
 
