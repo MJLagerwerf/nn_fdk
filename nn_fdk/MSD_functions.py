@@ -185,7 +185,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',
                                             gpu=True)
         
-        rec = self.CT_obj.FDK.do('Hann', compute_results=False) 
+        rec = self.CT_obj.FDK.do('Hann', compute_results=False) / 2 / self.CT_obj.w_detu
         sup.save_as_tiffs(rec, f'{infolder}/')
         # Process all test images
         
