@@ -97,19 +97,19 @@ case.MSD.add2sp_list(list_tr, list_v)
 case.MSD.do()
 
 # %%
-case.FDK.do('Hann')
-case.NNFDK.train(4)
-case.NNFDK.do()
+#case.FDK.do('Hann')
+#case.NNFDK.train(4)
+#case.NNFDK.do()
 
-print('MSD rec time:', case.MSD.results.rec_time[0])
-print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-print('FDK rec time:', case.FDK.results.rec_time[0])
+#print('MSD rec time:', case.MSD.results.rec_time[0])
+#print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
+#print('FDK rec time:', case.FDK.results.rec_time[0])
 # %%
 save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
 pylab.close('all')
 case.table()
 case.show_phantom()
 case.MSD.show(clim=False, save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
-case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
+#case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
+#case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
 
