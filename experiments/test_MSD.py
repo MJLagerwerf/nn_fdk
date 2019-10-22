@@ -96,22 +96,22 @@ if nVD == 0:
     list_tr, list_v = [0], None
 else:
     list_tr, list_v = [0], [1]
-case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
-#case.MSD.add2sp_list(list_tr, list_v)
-#case.MSD.do()
+#case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
+case.MSD.add2sp_list(list_tr, list_v)
+case.MSD.do()
 
 # %%
 
 
-#print('MSD rec time:', case.MSD.results.rec_time[0])
-#print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-#print('FDK rec time:', case.FDK.results.rec_time[0])
-## %%
-#save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
-#pylab.close('all')
-#case.table()
-#case.show_phantom()
-#case.MSD.show(clim=False, save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
-#case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-#case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
+print('MSD rec time:', case.MSD.results.rec_time[0])
+print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
+print('FDK rec time:', case.FDK.results.rec_time[0])
+# %%
+save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
+pylab.close('all')
+case.table()
+case.show_phantom()
+case.MSD.show(clim=False, save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
+case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
+case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
 
