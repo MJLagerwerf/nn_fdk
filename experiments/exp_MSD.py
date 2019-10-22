@@ -8,7 +8,6 @@ Created on Mon Mar 11 13:53:20 2019
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
 import nn_fdk as nn
 import time
 import pylab
@@ -29,11 +28,12 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 def cfg():
     phantom = 'Fourshape_test'
     nVD = 1
+    nTD = 1
     train = True
 # %%
     
 @ex.automain
-def main(phantom, nVD, train):
+def main(phantom, nTD, nVD, train):
     pix = 1024
     # Specific phantom
     
@@ -54,7 +54,7 @@ def main(phantom, nVD, train):
     # Noise specifics
     
     # Number of voxels used for training, number of datasets used for training
-    nTrain, nTD = 1e6, 1
+    nTrain = 1e6
     # Number of voxels used for validation, number of datasets used for validation
     nVal = 1e6
     
@@ -133,7 +133,7 @@ def main(phantom, nVD, train):
         pylab.close('all')
         case.table()
         case.show_phantom()
-        case.MSD.show(clim=False, save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
+        case.MSD.show(save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
         case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
         case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
     return    
