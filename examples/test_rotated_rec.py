@@ -22,8 +22,8 @@ def make_hann_filt(voxels, w_detu):
 #    filt = filt / 2 / w_detu
     return filt
 # %%
-path = '/bigstore/lagerwer/data/FleXray/pomegranate1_02MAR/'
-#path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_21/'
+#path = '/bigstore/lagerwer/data/FleXray/pomegranate1_02MAR/'
+path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/'
 dset = 'noisy'
 dset2 = 'good'
 pd = 'processed_data/'
@@ -49,7 +49,7 @@ bin_param = 2
 # Create a data object
 t2 = time.time()
 data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq,
-                 zoom=True)
+                 zoom=False)
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
@@ -65,13 +65,13 @@ case.init_algo()
 
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
-
+offset = -.24/360 * 2 * np.pi
 rec1 = case.FDK.do('Hann', compute_results=False)
 voxels = np.shape(rec1)
 hann = make_hann_filt(voxels, case.w_detu)
 rec = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, hann, case.geometry,
                                           case.reco_space, case.w_detu,
-                                          ang_offset= 1.26/360 * 2 * np.pi)
+                                          ang_offset= offset)
 # %%
 def show_diff(rec1, rec2, title, sp):
     midvox = np.shape(rec1)[0] // 2

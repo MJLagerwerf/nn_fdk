@@ -196,7 +196,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
             d = msdnet.data.ImageFileDataPoint(str(flsin[i]))
             # Compute network output
             output = n.forward(d.input)
-            rec[:, :, i] = output
+            rec[:, :, i] = output[0]
             # Save network output to file
             tifffile.imsave(outfolder / 'msd_{:05d}.tiff'.format(i), output[0])
         
@@ -209,7 +209,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         
 
 # %%        
-        
+
 #path = '/export/scratch2/lagerwer/data/NNFDK/4S_V256_A360_SR10_I0256/L2/'
 #path1 = f'{path}tiffs/'
 #fls_tr_path = [[f'{path1}/Dataset0/FDK/'],
