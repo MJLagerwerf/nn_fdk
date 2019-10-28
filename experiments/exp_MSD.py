@@ -34,7 +34,7 @@ def cfg():
     
 @ex.automain
 def main(phantom, nTD, nVD, train):
-    pix = 256
+    pix = 1024
     # Specific phantom
     
     if phantom == 'Fourshape_test':
