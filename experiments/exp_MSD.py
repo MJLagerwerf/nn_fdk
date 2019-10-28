@@ -27,14 +27,14 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 @ex.config
 def cfg():
     phantom = 'Fourshape_test'
-    nVD = 1
-    nTD = 1
+    nVD = 10
+    nTD = 10
     train = True
 # %%
     
 @ex.automain
 def main(phantom, nTD, nVD, train):
-    pix = 1024
+    pix = 256
     # Specific phantom
     
     if phantom == 'Fourshape_test':
@@ -113,10 +113,13 @@ def main(phantom, nTD, nVD, train):
     case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.MSD]
     
+    l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
     if nVD == 0:
-        list_tr, list_v = [0], None
+        list_tr = [0]
+        list_v = None
     else:
-        list_tr, list_v = [0], [1]
+        list_tr = list(l_tr)
+        list_v = list(l_v)
         
     if train:
         case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
