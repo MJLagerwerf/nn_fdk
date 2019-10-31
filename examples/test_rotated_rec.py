@@ -74,8 +74,8 @@ rec = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, hann, case.geometry,
                                           case.reco_space, case.w_detu,
                                           ang_offset= offset)
 
-case.FDK.comp_results(rec1, ['MSE', 'MAE_msk', 'SSIM_msk'], 'no_rot', 0, 0)
-case.FDK.comp_results(rec, ['MSE', 'MAE_msk', 'SSIM_msk'], 'rot', 0, 0)
+case.FDK.comp_results(rec1, ['MSE', 'MAE_msk', 'SSIM_msk'], 0, 'no_rot', 0)
+case.FDK.comp_results(rec, ['MSE', 'MAE_msk', 'SSIM_msk'], 0, 'rot', 0)
 
 case.table()
 # %%
