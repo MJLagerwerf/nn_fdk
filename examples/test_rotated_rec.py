@@ -12,6 +12,7 @@ import nn_fdk as nn
 import time
 import pylab
 import h5py
+ddf.import_astra_GPU()
 t = time.time()
 # %%
 def make_hann_filt(voxels, w_detu):
