@@ -122,6 +122,7 @@ def main(phantom, nTD, nVD, train):
         list_v = list(l_v)
         
     if train:
+        print('training')
         case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
     
     else:
