@@ -23,8 +23,8 @@ def make_hann_filt(voxels, w_detu):
 #    filt = filt / 2 / w_detu
     return filt
 # %%
-#path = '/bigstore/lagerwer/data/FleXray/pomegranate1_02MAR/'
-path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/'
+path = '/bigstore/lagerwer/data/FleXray/pomegranate1_02MAR/'
+#path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/'
 dset = 'noisy'
 #dset2 = 'good'
 pd = 'processed_data/'
