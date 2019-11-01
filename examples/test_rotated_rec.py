@@ -23,8 +23,8 @@ def make_hann_filt(voxels, w_detu):
 #    filt = filt / 2 / w_detu
     return filt
 # %%
-path = '/bigstore/lagerwer/data/FleXray/pomegranate1_02MAR/'
-#path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/'
+#path = '/bigstore/lagerwer/data/FleXray/pomegranate1_02MAR/'
+path = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/'
 dset = 'noisy'
 #dset2 = 'good'
 pd = 'processed_data/'
@@ -49,8 +49,9 @@ bin_param = 2
 # %% Create a test phantom
 # Create a data object
 t2 = time.time()
+offset = 1.26/360 * 2 * np.pi
 data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq,
-                 zoom=True)
+                 zoom=True, offset=offset)
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
@@ -72,9 +73,9 @@ voxels = np.shape(rec1)
 hann = make_hann_filt(voxels, case.w_detu)
 rec = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, hann, case.geometry,
                                           case.reco_space, case.w_detu,
-                                          ang_offset= offset)
+                                          ang_offset=offset)
 
-case.FDK.comp_results(rec1, ['MSE', 'MAE', 'SSIM'], 0, 'no_rot', 0)
+case.FDK.comp_results(rec1, ['MSE', 'MAE', 'SSIM'], 0, 'rot internally', 0)
 case.FDK.comp_results(rec, ['MSE', 'MAE', 'SSIM'], 0, 'rot', 0)
 
 case.table()
