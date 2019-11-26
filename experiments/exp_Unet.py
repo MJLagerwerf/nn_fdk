@@ -92,9 +92,8 @@ def main(phantom, nTD, nVD, train, epochs):
     # %% Create NN-FDK algorithm setup
     # Create binned filter space and expansion operator
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
-                                                    NL
-     case.filter_space,
-                                                         interp=Exp_bin)
+                                                            case.filter_space,
+                                                            interp=Exp_bin)
     # Create the FDK binned operator
     case.FDK_bin_nn = case.FDK_op * Exp_op
     
