@@ -62,7 +62,6 @@ def main(phantom, nTD, nVD, train, epochs):
     bin_param = 2
     bpath = '/bigstore/lagerwer/data/NNFDK/'
     
-    NL
 
     # %%
     t1 = time.time()
