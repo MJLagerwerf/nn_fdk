@@ -13,7 +13,7 @@ import time
 import pylab
 t = time.time()
 
-
+ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
@@ -29,10 +29,11 @@ def cfg():
     phantom = 'Fourshape_test'
     nTD = 1
     nVD = None
+    epochs = 1000
 # %%
     
 @ex.automain
-def main(phantom, nTD, nVD, train):
+def main(phantom, nTD, nVD, train, epochs):
     pix = 1024
     # Specific phantom
     
@@ -118,7 +119,7 @@ def main(phantom, nTD, nVD, train):
     list_tr = list(l_tr)
     
     print('training')
-    case.Unet.train(list_tr, epochs=1000)
+    case.Unet.train(list_tr, epochs=epochs)
     
     case.Unet.do()
     # %%
