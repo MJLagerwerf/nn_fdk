@@ -28,7 +28,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 def cfg():
     phantom = 'Fourshape_test'
     nTD = 1
-    nVD = None
+    nVD = 0
     epochs = 1000
 # %%
     
@@ -66,7 +66,7 @@ def main(phantom, nTD, nVD, epochs):
     # %%
     t1 = time.time()
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                     Exp_bin, bin_param, nTD,
+                                     Exp_bin, bin_param, nTD + nVD,
                                      base_path=bpath)
     print('Creating training and validation datasets took', time.time() - t1,
           'seconds')
@@ -112,6 +112,7 @@ def main(phantom, nTD, nVD, epochs):
     case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.Unet]
     
+    nVD = None
     l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
 
     list_tr = list(l_tr)
