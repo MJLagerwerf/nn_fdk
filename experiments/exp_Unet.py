@@ -33,7 +33,7 @@ def cfg():
 # %%
     
 @ex.automain
-def main(phantom, nTD, nVD, train, epochs):
+def main(phantom, nTD, nVD, epochs):
     pix = 1024
     # Specific phantom
     
