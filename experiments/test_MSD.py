@@ -14,7 +14,7 @@ import time
 import pylab
 t = time.time()
 # %%
-pix = 1024
+pix = 256
 # Specific phantom
 phantom = 'Fourshape_test'
 
@@ -42,8 +42,8 @@ nVal, nVD = 1e6, 1
 # Specifics for the expansion operator
 Exp_bin = 'linear'
 bin_param = 2
-bpath = '/bigstore/lagerwer/data/NNFDK/'
-
+#bpath = '/bigstore/lagerwer/data/NNFDK/'
+bpath = '/export/scratch2/lagerwer/data/NNFDK'
 
 # %%
 t1 = time.time()

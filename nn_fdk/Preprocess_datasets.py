@@ -74,6 +74,9 @@ def random_lists(nTD, nVD):
     if nVD == 0:
         idTrain = 0
         idVal = 0
+    elif nVD is None:
+        idTrain = np.arange(nTD)
+        idVal = None
     else:
         nData = np.arange(nTD + nVD)
         np.random.shuffle(nData)
@@ -103,17 +106,17 @@ def Preprocess_Data(pix, data_path, nTrain, nTD, nVal, nVD, DS_list=False,
     
     if not DS_list:
         idTrain, idVal = random_lists(nTD, nVD)
-        print('Tlist', idTrain, 'Vlist', idVal)
+#        print('Tlist', idTrain, 'Vlist', idVal)
     else:
         idTrain = DS_list[0]
         idVal = DS_list[1]
-        print('Tlist', idTrain, 'Vlist', idVal)
+#        print('Tlist', idTrain, 'Vlist', idVal)
         
     if nVD == 0:
         TD, VD = load_dataset_adapt_voxels(data_path, idTrain, [nTrain, nVal],
                                            one_dset=True)
-        print(np.shape(TD))
-        print(np.shape(VD))
+#        print(np.shape(TD))
+#        print(np.shape(VD))
         sp.savemat(full_path + 'TD0', {'TD': TD})
         sp.savemat(full_path + 'VD0', {'VD': VD})
     else:
