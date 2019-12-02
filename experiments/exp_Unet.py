@@ -32,12 +32,12 @@ def cfg():
     epochs = 1000
     epoch = 1
     train = False
-    input_training_set = True
+    use_training_set = True
     recon_other = False
 # %%
     
 @ex.automain
-def main(phantom, nTD, nVD, train, recon_training_set, recon_other, epochs,
+def main(phantom, nTD, nVD, train, use_training_set, recon_other, epochs,
          epoch):
     pix = 1024
     # Specific phantom
@@ -131,7 +131,7 @@ def main(phantom, nTD, nVD, train, recon_training_set, recon_other, epochs,
         print(f'Use weights from epoch {epoch}')
         case.Unet.add2sp_list(list_tr)
     
-    case.Unet.do(epoch=epoch, use_training_set=recon_training_set)
+    case.Unet.do(epoch=epoch, use_training_set=use_training_set)
     
     # %%
     case.table()
