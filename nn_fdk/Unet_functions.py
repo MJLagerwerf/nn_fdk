@@ -121,6 +121,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         outfolder.mkdir(exist_ok=True)
         if use_training_set:
             infolder = Path(f'{self.data_path}tiffs/Dataset0/FDK/')
+            rec = self.CT_obj.reco_space.zero()
         else:
             infolder = Path(f'{save_path}Recon/in/')
             infolder.mkdir(exist_ok=True)
