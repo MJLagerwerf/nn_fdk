@@ -105,7 +105,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         return fls_tr_path
 
     def do(self, epoch=None, nr=-1, compute_results=True,
-           measures=['MSE', 'MAE', 'SSIM']):
+           measures=['MSE', 'MAE', 'SSIM'], use_training_set=False):
         t = time.time()
         save_path = self.sp_list[nr]
         if epoch is None:
@@ -117,13 +117,15 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         # Make folder for output
         recfolder = Path(f'{save_path}Recon/')
         recfolder.mkdir(exist_ok=True)        
-        infolder = Path(f'{save_path}Recon/in/')
-        infolder.mkdir(exist_ok=True)
         outfolder = Path(f'{save_path}Recon/out/')
         outfolder.mkdir(exist_ok=True)
-        
-        rec = self.CT_obj.FDK.do('Hann', compute_results=False) 
-        sup.save_as_tiffs(rec, f'{infolder}/')
+        if use_training_set:
+            infolder = Path(f'{self.data_path}tiffs/Dataset0/FDK/')
+        else:
+            infolder = Path(f'{save_path}Recon/in/')
+            infolder.mkdir(exist_ok=True)
+            rec = self.CT_obj.FDK.do('Hann', compute_results=False) 
+            sup.save_as_tiffs(rec, f'{infolder}/')
         
         input_dir = Path(infolder).expanduser().resolve()
         input_spec = input_dir
