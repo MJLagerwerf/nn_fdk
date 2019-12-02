@@ -17,6 +17,7 @@ import ddf_fdk as ddf
 import numpy as np
 import time
 import torch
+import pylab
 from on_the_fly.unet import UNetRegressionModel
 from on_the_fly.dataset import (ImageDataset, BatchSliceDataset,
                                 CroppingDataset)
@@ -52,14 +53,37 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
             training_error += model.get_loss()
     
         training_error = training_error / len(dl)
-        save_network(model, f'{weights_file}_E{epoch}')
+        if epoch % 10 == 0:
+            save_network(model, f'{weights_file}_E{epoch}')
     #    _run.log_scalar("Training error", training_error.item())
 
     # Always save final network parameters
     save_network(model, weights_file)
     
-    
 
+def save_training_results(idx, TrPath, HQPath, OutPath, spath): 
+    inp = tifffile.imread(f'{TrPath}stack_{idx:05d}.tif')
+    tar = tifffile.imread(f'{HQPath}stack_{idx:05d}.tif')
+    out = tifffile.imread(f'{OutPath}unet_{idx:05d}.tif')
+    clim = [np.min(tar), np.max(tar)]
+    fig, (ax1, ax2, ax3) = pylab.subplots(1, 3, figsize=[20, 6])
+    fig.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
+    ima = ax1.imshow((inp), clim=clim,cmap='gray')
+    ax1.set_title('input')   
+    ax1.set_xticks([],[])
+    ax1.set_yticks([],[])
+    ima = ax2.imshow((tar), clim=clim, cmap='gray')
+    ax2.set_title('target')
+    ax2.set_xticks([],[])
+    ax2.set_yticks([],[])
+    ima = ax3.imshow((out), clim=clim, cmap='gray') 
+    ax3.set_xticks([],[])
+    ax3.set_yticks([],[])
+    ax3.set_title('output')
+    fig.colorbar(ima, ax=(ax1, ax2, ax3))
+
+    fig.show()
+    pylab.savefig(spath, bbox_inches='tight')
 
 # %%
 class Unet_class(ddf.algorithm_class.algorithm_class):
@@ -121,7 +145,9 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         outfolder.mkdir(exist_ok=True)
         if use_training_set:
             infolder = Path(f'{self.data_path}tiffs/Dataset0/FDK/')
+            HQfolder = Path(f'{self.data_path}tiffs/Dataset0/HQ/')
             rec = self.CT_obj.reco_space.zero()
+            MSE = np.zeros(np.shape(rec)[0])
         else:
             infolder = Path(f'{save_path}Recon/in/')
             infolder.mkdir(exist_ok=True)
@@ -147,9 +173,26 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
                 output = self.model.net(self.model.input)
                 output = output.detach().cpu().squeeze().numpy()
                 rec[:, :, i] = output
+                if use_training_set:
+                    HQ = tifffile.imread(f'{HQfolder}stack_{i:05d}.tif')
+                    MSE[i] = np.linalg.norm(HQ - output) ** 2
                 output_path = str(output_dir / f"unet_{i:05d}.tif")
                 tifffile.imsave(output_path, output)
         
+        if use_training_set:
+            best = np.argmin(MSE)
+            save_training_results(best, infolder, HQfolder, outfolder,
+                                  f'{self.save_path}best.png')
+            typical = np.argmin(np.abs(MSE - np.median(MSE)))
+            save_training_results(typical, infolder, HQfolder, outfolder,
+                                  f'{self.save_path}typical.png')
+            worst = np.argmax(MSE)
+            save_training_results(worst, infolder, HQfolder, outfolder,
+                                  f'{self.save_path}worst.png')
+            
+        
+            
+            
         if epoch is None:
             param = f'nTD={self.nTD}'
         else:
