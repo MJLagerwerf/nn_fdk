@@ -30,10 +30,12 @@ def cfg():
     nTD = 1
     nVD = 0
     epochs = 1000
+    train = False
+    recon_other = False
 # %%
     
 @ex.automain
-def main(phantom, nTD, nVD, epochs):
+def main(phantom, nTD, nVD, train, recon_other, epochs, epoch):
     pix = 1024
     # Specific phantom
     
@@ -104,33 +106,41 @@ def main(phantom, nTD, nVD, epochs):
     print('Initializing algorithms took', time.time() - t4, 'seconds')
     
     # %%
+    if recon_other:
+        case.FDK.do('Hann')
+        case.NNFDK.train(4)
+        case.NNFDK.do()
 
-    case.FDK.do('Hann')
-    case.NNFDK.train(4)
-    case.NNFDK.do()
     # %%
     case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.Unet]
     
+
     nVD = None
     l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
 
     list_tr = list(l_tr)
     
-    print('training')
-    case.Unet.train(list_tr, epochs=epochs)
+    if train:
+        print('training')
+        case.Unet.train(list_tr, epochs=epochs)
+    else:
+        print(f'Use weights from epoch {epoch}')
+        case.Unet.add2sp_list(list_tr)
     
-    case.Unet.do()
+    case.Unet.do(epoch=epoch)
+    
     # %%
-    print('MSD rec time:', case.MSD.results.rec_time[0])
-    print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-    print('FDK rec time:', case.FDK.results.rec_time[0])
-    # %%
-    save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
-    pylab.close('all')
     case.table()
-    case.show_phantom()
-    case.Unet.show(save_name=f'{save_path}Unet_{PH}_nTD{nTD}_nVD{nVD}')
-    case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-    case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
+    if recon_other:
+        print('Unet rec time:', case.Unet.results.rec_time[0])
+        print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
+        print('FDK rec time:', case.FDK.results.rec_time[0])
+        # %%
+        save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
+        pylab.close('all')
+        case.show_phantom()
+        case.Unet.show(save_name=f'{save_path}Unet_{PH}_nTD{nTD}_nVD{nVD}')
+        case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
+        case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
     return    
