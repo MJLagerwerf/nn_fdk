@@ -45,6 +45,7 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
     model.set_normalization(dl)
 
     print("Training...")
+    
     for epoch in tqdm(range(epochs), mininterval=5.0):
         # Train
         training_error = 0.0
