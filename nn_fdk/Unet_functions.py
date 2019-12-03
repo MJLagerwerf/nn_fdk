@@ -45,7 +45,7 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
     model.set_normalization(dl)
 
     print("Training...")
-    for epoch in tqdm(range(1), mininterval=5.0):
+    for epoch in tqdm(range(epochs), mininterval=5.0):
         # Train
         training_error = 0.0
         for (input, target) in tqdm(dl, mininterval=5.0):
@@ -53,8 +53,6 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
             training_error += model.get_loss()
     
         training_error = training_error / len(dl)
-        
-    for epoch in tqdm(range(epochs), mininterval=5.0):
         save_network(model, f'{weights_file}_E{epoch}')
 
     #    _run.log_scalar("Training error", training_error.item())
