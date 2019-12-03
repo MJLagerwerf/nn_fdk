@@ -43,7 +43,7 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
     
     print("Setting normalization parameters")
     model.set_normalization(dl)
-
+    training_errors = np.zeros(epochs)
     print("Training...")
     for epoch in tqdm(range(epochs), mininterval=5.0):
         # Train
@@ -51,14 +51,24 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
         for (input, target) in tqdm(dl, mininterval=5.0):
             model.learn(input, target)
             training_error += model.get_loss()
-    
+
         training_error = training_error / len(dl)
+        training_errors[epoch] = training_error
+        if epoch % 10 == 0:
+            print('')
+            print(f'Training error at epoch {epoch}: {training_error:e}')
+            print('')
         save_network(model, f'{weights_file}_E{epoch}')
+        
+        
 
     #    _run.log_scalar("Training error", training_error.item())
 
     # Always save final network parameters
     save_network(model, weights_file)
+    np.save(f'{weights_file}_training_error', training_errors)
+
+
     
 
 def save_training_results(idx, TrPath, HQPath, OutPath, spath, title): 
@@ -119,8 +129,8 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         fls_tr_path = [[], []]
         lpath = f'{self.data_path}tiffs/Dataset'
         for i in list_tr:
-            fls_tr_path[0] += [f'{lpath}{i}/FDK/']
-            fls_tr_path[1] += [f'{lpath}{i}/HQ/']
+            fls_tr_path[0] += [f'{lpath}{i}/FDK']
+            fls_tr_path[1] += [f'{lpath}{i}/HQ']
         self.nTD = len(fls_tr_path[0])
         
         
