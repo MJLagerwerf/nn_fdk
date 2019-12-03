@@ -29,8 +29,8 @@ def cfg():
     phantom = 'Fourshape_test'
     nTD = 1
     nVD = 0
-    epochs = 1000
-    epoch = 1
+    epochs = 100
+    epoch = epochs - 1
     train = False
     use_training_set = True
     recon_other = False
