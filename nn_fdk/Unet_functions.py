@@ -61,7 +61,7 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
     save_network(model, weights_file)
     
 
-def save_training_results(idx, TrPath, HQPath, OutPath, spath): 
+def save_training_results(idx, TrPath, HQPath, OutPath, spath, title): 
     inp = tifffile.imread(f'{TrPath}/stack_{idx:05d}.tiff')
     tar = tifffile.imread(f'{HQPath}/stack_{idx:05d}.tiff')
     out = tifffile.imread(f'{OutPath}/unet_{idx:05d}.tiff')
@@ -83,7 +83,7 @@ def save_training_results(idx, TrPath, HQPath, OutPath, spath):
     ax3.set_xticks([],[])
     ax3.set_yticks([],[])
     ax3.set_title('output')
-
+    fig.suptitle(title)
     fig.show()
     pylab.savefig(spath, bbox_inches='tight')
 
@@ -119,8 +119,8 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         fls_tr_path = [[], []]
         lpath = f'{self.data_path}tiffs/Dataset'
         for i in list_tr:
-            fls_tr_path[0] += [f'{lpath}{i}/FDK']
-            fls_tr_path[1] += [f'{lpath}{i}/HQ']
+            fls_tr_path[0] += [f'{lpath}{i}/FDK/']
+            fls_tr_path[1] += [f'{lpath}{i}/HQ/']
         self.nTD = len(fls_tr_path[0])
         
         
@@ -188,13 +188,13 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         if use_training_set:
             best = np.argmin(MSE)
             save_training_results(best, infolder, HQfolder, outfolder,
-                                  f'{save_path}best{es}.png')
+                                  f'{save_path}best{es}.png', 'Best')
             typical = np.argmin(np.abs(MSE - np.median(MSE)))
             save_training_results(typical, infolder, HQfolder, outfolder,
-                                  f'{save_path}typical{es}.png')
+                                  f'{save_path}typical{es}.png', 'Typical')
             worst = np.argmax(MSE)
             save_training_results(worst, infolder, HQfolder, outfolder,
-                                  f'{save_path}worst{es}.png')
+                                  f'{save_path}worst{es}.png', 'Worst')
             
         
             

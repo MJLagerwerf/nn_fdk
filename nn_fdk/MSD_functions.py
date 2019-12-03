@@ -70,10 +70,10 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     for i in range(len(flsin_tr)):
         # Create datapoint with file names
         d = msdnet.data.ImageFileDataPoint(str(flsin_tr[i]), str(flstg_tr[i]))
-        # Augment data by rotating and flipping
-        d_augm = msdnet.data.RotateAndFlipDataPoint(d)
+#        # Augment data by rotating and flipping
+#        d_augm = msdnet.data.RotateAndFlipDataPoint(d)
         # Add augmented datapoint to list
-        dats.append(d_augm)
+        dats.append(d)
     # Note: The above can also be achieved using a utility function for such
     #'simple' cases:
     # dats = msdnet.utils.load_simple_data('train/noisy/*.tiff',

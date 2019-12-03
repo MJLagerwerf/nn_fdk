@@ -34,12 +34,14 @@ def cfg():
     train = False
     use_training_set = True
     recon_other = False
+    pix = 1024
+    bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
 @ex.automain
-def main(phantom, nTD, nVD, train, use_training_set, recon_other, epochs,
-         epoch):
-    pix = 1024
+def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
+         epoch, bpath):
+
     # Specific phantom
     
     if phantom == 'Fourshape_test':
@@ -65,7 +67,6 @@ def main(phantom, nTD, nVD, train, use_training_set, recon_other, epochs,
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    bpath = '/bigstore/lagerwer/data/NNFDK/'
     
 
     # %%
