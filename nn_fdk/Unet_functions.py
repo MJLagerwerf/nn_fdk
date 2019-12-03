@@ -64,9 +64,9 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
     
 
 def save_training_results(idx, TrPath, HQPath, OutPath, spath): 
-    inp = tifffile.imread(f'{TrPath}stack_{idx:05d}.tif')
-    tar = tifffile.imread(f'{HQPath}stack_{idx:05d}.tif')
-    out = tifffile.imread(f'{OutPath}unet_{idx:05d}.tif')
+    inp = tifffile.imread(f'{TrPath}/stack_{idx:05d}.tif')
+    tar = tifffile.imread(f'{HQPath}/stack_{idx:05d}.tif')
+    out = tifffile.imread(f'{OutPath}/unet_{idx:05d}.tif')
     clim = [np.min(tar), np.max(tar)]
     fig, (ax1, ax2, ax3) = pylab.subplots(1, 3, figsize=[20, 6])
     fig.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1)
@@ -176,24 +176,27 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
                 output = output.detach().cpu().squeeze().numpy()
                 rec[:, :, i] = output
                 if use_training_set:
-                    HQ = tifffile.imread(f'{HQfolder}stack_{i:05d}.tif')
+                    HQ = tifffile.imread(f'{HQfolder}/stack_{i:05d}.tif')
                     MSE[i] = np.linalg.norm(HQ - output) ** 2
                 output_path = str(output_dir / f"unet_{i:05d}.tif")
                 tifffile.imsave(output_path, output)
         
+        if epoch is None:
+            es = ''
+        else:
+            es = f'_E{epoch}'
         if use_training_set:
             best = np.argmin(MSE)
             save_training_results(best, infolder, HQfolder, outfolder,
-                                  f'{self.save_path}best.png')
+                                  f'{self.save_path}best{es}.png')
             typical = np.argmin(np.abs(MSE - np.median(MSE)))
             save_training_results(typical, infolder, HQfolder, outfolder,
-                                  f'{self.save_path}typical.png')
+                                  f'{self.save_path}typical{es}.png')
             worst = np.argmax(MSE)
             save_training_results(worst, infolder, HQfolder, outfolder,
-                                  f'{self.save_path}worst.png')
+                                  f'{self.save_path}worst{es}.png')
             
         
-            
             
         if epoch is None:
             param = f'nTD={self.nTD}'
