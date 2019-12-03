@@ -188,13 +188,13 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         if use_training_set:
             best = np.argmin(MSE)
             save_training_results(best, infolder, HQfolder, outfolder,
-                                  f'{self.save_path}best{es}.png')
+                                  f'{save_path}best{es}.png')
             typical = np.argmin(np.abs(MSE - np.median(MSE)))
             save_training_results(typical, infolder, HQfolder, outfolder,
-                                  f'{self.save_path}typical{es}.png')
+                                  f'{save_path}typical{es}.png')
             worst = np.argmax(MSE)
             save_training_results(worst, infolder, HQfolder, outfolder,
-                                  f'{self.save_path}worst{es}.png')
+                                  f'{save_path}worst{es}.png')
             
         
             
