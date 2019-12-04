@@ -170,12 +170,6 @@ class UNetRegressionModel(MSDModel):
         
 
 # %%
-def save_network(model, path):
-    path = Path(path).expanduser().resolve()
-    # Clear the L and G buffers before saving:
-    model.msd.clear_buffers()
-    torch.save(model.net.state_dict(), path)
-
 def load_concat_data(inp, tar):
     if len(inp) == 1 and len(tar) == 1:
         inp = Path(inp[0]).expanduser().resolve()
@@ -262,35 +256,6 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
     np.save(f'{weights_path}_training_error', training_errors)
 #    ex.add_artifact(f"{weights_path}.torch")
 
-#    print("Setting normalization parameters")
-#    model.set_normalization(dl)
-#    training_errors = np.zeros(epochs)
-#    print("Training...")
-#    for epoch in tqdm(range(epochs), mininterval=5.0):
-#        # Train
-#        training_error = 0.0
-#        for (input, target) in tqdm(dl, mininterval=5.0):
-#            model.learn(input, target)
-#            training_error += model.get_loss()
-#
-#        training_error = training_error / len(dl)
-#        training_errors[epoch] = training_error
-#        if epoch % 10 == 0:
-#            print('')
-#            print(f'Training error at epoch {epoch}: {training_error:e}')
-#            print('')
-#        save_network(model, f'{weights_file}_E{epoch}')
-#        
-        
-
-    #    _run.log_scalar("Training error", training_error.item())
-
-    # Always save final network parameters
-
-
-
-
-    
 
 def save_training_results(idx, TrPath, HQPath, OutPath, spath, title): 
     inp = tifffile.imread(f'{TrPath}/stack_{idx:05d}.tiff')
@@ -362,9 +327,11 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         if epoch is None:
             weights_file = Path(f'{save_path}weights').expanduser().resolve()
         else:
-            weights_file = Path(f'{save_path}weights_E{epoch}').expanduser(
-                    ).resolve()
-        self.model.load_network(save_file=weights_file)
+            weights_file = Path(f'{save_path}weights_epoch_{epoch}.torch'
+                                ).expanduser().resolve()
+        print(epoch)
+        print(weights_file)
+        self.model.load(weights_file)
         # Make folder for output
         recfolder = Path(f'{save_path}Recon/')
         recfolder.mkdir(exist_ok=True)        
@@ -383,9 +350,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         
         input_dir = Path(infolder).expanduser().resolve()
         input_spec = input_dir
-        ds = ImageDataset(input_spec, input_spec)
-        ds = BatchSliceDataset(ds, self.slab_size // 2, self.slab_size // 2,
-                               reflect=True)
+        ds = mp.ImageDataset(input_spec, input_spec)
         dl = DataLoader(ds, batch_size=1, shuffle=False, num_workers=2)
         
         # Prepare output directory
@@ -409,7 +374,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         if epoch is None:
             es = ''
         else:
-            es = f'_E{epoch}'
+            es = f'_epoch_{epoch}'
         if use_training_set:
             best = np.argmin(MSE)
             save_training_results(best, infolder, HQfolder, outfolder,
