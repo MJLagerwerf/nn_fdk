@@ -127,7 +127,7 @@ def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
     
     if train:
         print('training')
-        case.Unet.train(list_tr, epochs=epochs, stop_crit=100)
+        case.Unet.train(list_tr, list_v, epochs=epochs, stop_crit=50)
     else:
         print(f'Use weights from epoch {epoch}')
         case.Unet.add2sp_list(list_tr, list_v)
