@@ -122,13 +122,17 @@ def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
     
 
     l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
-
-    list_tr = list(l_tr)
-    list_v = list(l_v)
+    if nVD == 0:
+        list_tr = [0]
+        list_v = None
+    else:
+        list_tr = list(l_tr)
+        list_v = list(l_v)
     
     if train:
         print('training')
-        case.Unet.train(list_tr, list_v, epochs=epochs, stop_crit=stop_crit)
+        case.Unet.train(list_tr, list_v, epochs=epochs, stop_crit=stop_crit, 
+                        ratio=3)
     else:
         print(f'Use weights from epoch {epoch}')
         case.Unet.add2sp_list(list_tr, list_v)
