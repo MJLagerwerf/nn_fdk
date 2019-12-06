@@ -13,7 +13,7 @@ import time
 import pylab
 t = time.time()
 
-
+ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
@@ -27,14 +27,16 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 @ex.config
 def cfg():
     phantom = 'Fourshape_test'
-    nVD = 10
-    nTD = 10
-    train = True
+    nTD = 1
+    nVD = 1
+    train = False
+    pix = 1024
+    stop_crit = 50
+    bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
 @ex.automain
-def main(phantom, nTD, nVD, train):
-    pix = 1024
+def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
     # Specific phantom
     
     if phantom == 'Fourshape_test':
@@ -61,7 +63,6 @@ def main(phantom, nTD, nVD, train):
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    bpath = '/bigstore/lagerwer/data/NNFDK/'
     
     
     # %%
@@ -123,7 +124,7 @@ def main(phantom, nTD, nVD, train):
         
     if train:
         print('training')
-        case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
+        case.MSD.train(list_tr, list_v, stop_crit=stop_crit, ratio=3)
     
     else:
         case.MSD.add2sp_list(list_tr, list_v)
