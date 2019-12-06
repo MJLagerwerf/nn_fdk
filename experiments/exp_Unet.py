@@ -28,12 +28,12 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 def cfg():
     phantom = 'Fourshape_test'
     nTD = 1
-    nVD = 0
-    epochs = 100
+    nVD = 1
+    epochs = 1000
     epoch = epochs - 1
     train = False
-    use_training_set = True
-    recon_other = False
+    use_training_set = False
+    recon_other = True
     pix = 1024
     bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
@@ -120,17 +120,17 @@ def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
     case.rec_methods += [case.Unet]
     
 
-    nVD = None
     l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
 
     list_tr = list(l_tr)
+    list_v = list(l_v)
     
     if train:
         print('training')
-        case.Unet.train(list_tr, epochs=epochs)
+        case.Unet.train(list_tr, epochs=epochs, stop_crit=100)
     else:
         print(f'Use weights from epoch {epoch}')
-        case.Unet.add2sp_list(list_tr)
+        case.Unet.add2sp_list(list_tr, list_v)
     
     case.Unet.do(epoch=epoch, use_training_set=use_training_set)
     

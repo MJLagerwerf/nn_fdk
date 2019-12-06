@@ -11,6 +11,8 @@ from itertools import compress
 from tqdm import tqdm
 import imageio as io
 import sys
+from pathlib import Path
+
 # %%
 def save_as_tiffs(rec, spath):
     if not os.path.exists(spath):
@@ -116,7 +118,14 @@ def number_of_datasets(path, data_type):
         nDatasets = 0
     return nDatasets
 
+def last_epoch(path):
+    all_weights = []
+    all_weights.extend(Path(path).glob('weights_epoch_*'))
+    sorted(all_weights)
+    string = str(all_weights[-1])
+    return int(''.join(c for c in string[-20:] if c.isdigit()))
 
+    
 # %%
 def load_results(path, nMeth, nExp, files, spec, spec_var, **kwargs):
     i = 0

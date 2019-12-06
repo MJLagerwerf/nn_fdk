@@ -63,7 +63,6 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     else:
         # Define training data
         flsin_tr, flstg_tr = sort_files(fls_tr_path)
-    # %%
     
     # Create list of datapoints (i.e. input/target pairs)
     dats = []

@@ -168,47 +168,72 @@ class UNetRegressionModel(MSDModel):
         # Train only MSD parameters:
         self.init_optimizer(self.msd)
         
+# %%
+def sort_files(fls_path, dset_one=False, ratio=None):
+    flsin = []
+    flstg = []
+    for fi, ft in zip(fls_path[0], fls_path[1]):
+        flsin.extend(Path(fi).glob('*.tiff'))
+        flstg.extend(Path(ft).glob('*.tiff'))
 
+    flsin = sorted(flsin)
+    flstg = sorted(flstg)
+
+    if not dset_one:    
+        return flsin, flstg
+    else:
+        flsin_tr, flsin_v, flstg_tr, flstg_v = [], [], [], []
+    
+        for i in range(len(flsin)):
+            if (i % (ratio + 1)) == (ratio):
+                flsin_v += [flsin[i]]
+                flstg_v += [flstg[i]]
+            else:
+                flsin_tr += [flsin[i]]
+                flstg_tr += [flstg[i]]
+        return flsin_tr, flstg_tr, flsin_v, flstg_v
+    
 # %%
 def load_concat_data(inp, tar):
     if len(inp) == 1 and len(tar) == 1:
         inp = Path(inp[0]).expanduser().resolve()
         tar = Path(tar[0]).expanduser().resolve()
-        print(inp)
-        train_ds = mp.ImageDataset(inp / '*tiff', tar / '*.tiff')
+        train_ds = mp.ImageDataset(inp, tar)
     else:
-        ds = []
-        for tig, ttg in inp, tar:
-            ds += mp.ImageDataset(tig, ttg)
-    
-        train_ds = torch.utils.data.ConcatDataset(ds)
+        i = 0
+        for tig, ttg in zip(inp, tar):
+            if i == 0:
+                train_ds = mp.ImageDataset(tig, ttg)
+            else:
+                ds = mp.ImageDataset(tig, ttg)
+                train_ds.input_stack.paths += ds.input_stack.paths
+                train_ds.target_stack.paths += ds.target_stack.paths
+            i += 1
 
     return train_ds
         
 # %%
-def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
+def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
+               stop_crit, ratio):
     batch_size = 1
-    train_input_glob = fls_tr_path[0]
-    train_target_glob = fls_tr_path[1]
-    val_input_glob = False
-    val_target_glob = False
     weights_path = f'{save_path}weights'
-    logging.info("Load training dataset")
-    # Create train (always) and validation (only if specified) datasets.
-    
-
+    if fls_v_path is not None:
+        train_input_glob = fls_tr_path[0]
+        train_target_glob = fls_tr_path[1]
+        # Create train (always) and validation (only if specified) datasets.
+        val_input_glob = fls_v_path[0]
+        val_target_glob = fls_v_path[1]
+    else:
+        print("Validation set from the same dataset")
+        train_input_glob, train_target_glob, val_input_glob, val_target_glob = \
+            sort_files(fls_tr_path, dset_one=True, ratio=ratio)
+    print("Load training dataset")
     train_ds = load_concat_data(train_input_glob, train_target_glob)
     train_dl = DataLoader(train_ds, batch_size, shuffle=True)
-    
-    if val_input_glob:
-        logging.info("Load validation set")
-        val_ds = mp.ImageDataset(val_input_glob, val_target_glob)
-        val_dl = DataLoader(val_ds, batch_size, shuffle=False)
-    else:
-        logging.info("No validation set loaded")
-        val_dl = None
-
-    logging.info("Create network model")
+    print("Load validation set")
+    val_ds = load_concat_data(val_input_glob, val_target_glob)
+    val_dl = DataLoader(val_ds, batch_size, shuffle=False)
+    print("Create network model")
 
     weights_path = Path(weights_path).expanduser().resolve()
     if weights_path.exists():
@@ -219,14 +244,15 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
     # correction parameters from the training data. These parameters are
     # not updated after this step and are stored in the network, so that
     # they are not lost when the network is saved to and loaded from disk.
-    logging.info("Start estimating normalization parameters")
+    print("Start estimating normalization parameters")
     model.set_normalization(train_dl)
-    logging.info("Done estimating normalization parameters")
+    print("Done estimating normalization parameters")
 
-    logging.info("Starting training...")
+    print("Starting training...")
     best_validation_error = np.inf
     validation_error = 0.0
     training_errors = np.zeros(epochs)
+    stop_iter = 0
     for epoch in range(epochs):
         start = timer()
         # Train
@@ -234,22 +260,28 @@ def train_unet(model, slab_size, fls_tr_path, save_path, epochs):
         # Compute training error
         train_error = model.validate(train_dl)
 #        ex.log_scalar("Training error", train_error)
-        logging.info(f"{epoch:05} Training error: {train_error: 0.6f}")
+        print(f"{epoch:05} Training error: {train_error: 0.6f}")
         training_errors[epoch] = train_error
         # Compute validation error
         if val_dl is not None:
             validation_error = model.validate(val_dl)
 #            ex.log_scalar("Validation error", validation_error)
-            logging.info(f"{epoch:05} Validation error: {validation_error: 0.6f}")
+            print(f"{epoch:05} Validation error: {validation_error: 0.6f}")
         # Save network if worthwile
         if validation_error < best_validation_error or val_dl is None:
             best_validation_error = validation_error
             model.save(f"{weights_path}_epoch_{epoch}.torch", epoch)
+            stop_iter = 0
+        else:
+            stop_iter += 1
 #            ex.add_artifact(f"{weights_path}_epoch_{epoch}.torch")
-
+        if stop_iter >= stop_crit:
+            break
+            print(f'{stop_crit} epoch no improvement on the validation error')
+            print('Finished training')
         end = timer()
 #        ex.log_scalar("Iteration time", end - start)
-        logging.info(f"{epoch:05} Iteration time: {end-start: 0.6f}")
+        print(f"{epoch:05} Iteration time: {end-start: 0.6f}")
 
     # Always save final network parameters
     model.save(f"{weights_path}.torch", epoch)
@@ -296,41 +328,51 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         self.model = UNetRegressionModel(1, 1, parallel=False)
 
     
-    def train(self, list_tr, epochs=1):
+    def train(self, list_tr, list_v, epochs=1, stop_crit=None, ratio=None):
         t = time.time()
-        fls_tr_path = self.add2sp_list(list_tr)
-
-        train_unet(self.model, self.slab_size, fls_tr_path, 
-                   self.sp_list[-1], epochs)
+        fls_tr_path, fls_v_path = self.add2sp_list(list_tr, list_v)
+        if (list_v is None) and (ratio is None):
+            raise ValueError('Pass a ratio if you want to train on one dset')
+        train_unet(self.model, self.slab_size, fls_tr_path, fls_v_path,
+                   self.sp_list[-1], epochs, stop_crit, ratio)
         print('Training took:', time.time()-t, 'seconds')
         self.t_train += [time.time() - t]
 
-    def add2sp_list(self, list_tr):
+
+    def add2sp_list(self, list_tr, list_v):
         fls_tr_path = [[], []]
+        fls_v_path = [[], []]
         lpath = f'{self.data_path}tiffs/Dataset'
         for i in list_tr:
             fls_tr_path[0] += [f'{lpath}{i}/FDK']
             fls_tr_path[1] += [f'{lpath}{i}/HQ']
-        self.nTD = len(fls_tr_path[0])
+        self.nTD= len(fls_tr_path[0])
         
-        
-        save_path = f'{self.data_path}Unet/nTD{self.nTD}/'
+        if list_v is None:
+            self.nVD =  0
+            fls_v_path = None
+        else:
+            for i in list_v:
+                fls_v_path[0] += [f'{lpath}{i}/FDK']
+                fls_v_path[1] += [f'{lpath}{i}/HQ']
+            self.nVD =  len(fls_v_path[0])
+        save_path = f'{self.data_path}MSD/nTD{self.nTD}nVD{self.nVD}/'
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         self.sp_list += [save_path]
-        return fls_tr_path
+        return fls_tr_path, fls_v_path
 
     def do(self, epoch=None, nr=-1, compute_results=True,
            measures=['MSE', 'MAE', 'SSIM'], use_training_set=False):
         t = time.time()
         save_path = self.sp_list[nr]
         if epoch is None:
+            epoch = sup.last_epoch(f'{save_path}')
+        if epoch is None:
             weights_file = Path(f'{save_path}weights').expanduser().resolve()
         else:
             weights_file = Path(f'{save_path}weights_epoch_{epoch}.torch'
                                 ).expanduser().resolve()
-        print(epoch)
-        print(weights_file)
         self.model.load(weights_file)
         # Make folder for output
         recfolder = Path(f'{save_path}Recon/')
@@ -371,10 +413,8 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
                 output_path = str(output_dir / f"unet_{i:05d}.tiff")
                 tifffile.imsave(output_path, output)
         
-        if epoch is None:
-            es = ''
-        else:
-            es = f'_epoch_{epoch}'
+
+        es = f'_epoch_{epoch}'
         if use_training_set:
             best = np.argmin(MSE)
             save_training_results(best, infolder, HQfolder, outfolder,
@@ -388,10 +428,8 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
             
         
             
-        if epoch is None:
-            param = f'nTD={self.nTD}'
-        else:
-             param = f'nTD={self.nTD}, epoch = {epoch}'
+
+        param = f'nTD={self.nTD}, epoch = {epoch}'
         t_rec = time.time() - t
         if compute_results:
             self.comp_results(rec, measures, '', param, t_rec)
