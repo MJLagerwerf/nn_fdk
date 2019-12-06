@@ -35,12 +35,13 @@ def cfg():
     use_training_set = False
     recon_other = True
     pix = 1024
+    stop_crit = 50
     bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
 @ex.automain
 def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
-         epoch, bpath):
+         epoch, bpath, stop_crit):
 
     # Specific phantom
     
@@ -127,7 +128,7 @@ def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
     
     if train:
         print('training')
-        case.Unet.train(list_tr, list_v, epochs=epochs, stop_crit=50)
+        case.Unet.train(list_tr, list_v, epochs=epochs, stop_crit=stop_crit)
     else:
         print(f'Use weights from epoch {epoch}')
         case.Unet.add2sp_list(list_tr, list_v)
