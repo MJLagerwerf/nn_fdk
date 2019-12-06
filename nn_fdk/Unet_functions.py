@@ -237,7 +237,7 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
 
     weights_path = Path(weights_path).expanduser().resolve()
     if weights_path.exists():
-        logging.warning(f"Overwriting weights file {weights_path}")
+        print(f"Overwriting weights file {weights_path}")
 
     # The network works best if the input data has mean zero and has a
     # standard deviation of 1. To achieve this, we get a rough estimate of
@@ -348,7 +348,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         for i in list_tr:
             fls_tr_path[0] += [f'{lpath}{i}/FDK']
             fls_tr_path[1] += [f'{lpath}{i}/HQ']
-        self.nTD= len(fls_tr_path[0])
+        self.nTD = len(fls_tr_path[0])
         
         if list_v is None:
             self.nVD =  0
@@ -358,7 +358,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
                 fls_v_path[0] += [f'{lpath}{i}/FDK']
                 fls_v_path[1] += [f'{lpath}{i}/HQ']
             self.nVD =  len(fls_v_path[0])
-        save_path = f'{self.data_path}MSD/nTD{self.nTD}nVD{self.nVD}/'
+        save_path = f'{self.data_path}Unet/nTD{self.nTD}nVD{self.nVD}/'
         if not os.path.exists(save_path):
             os.makedirs(save_path)
         self.sp_list += [save_path]
