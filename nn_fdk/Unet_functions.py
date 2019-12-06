@@ -271,14 +271,16 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
         if validation_error < best_validation_error or val_dl is None:
             best_validation_error = validation_error
             model.save(f"{weights_path}_epoch_{epoch}.torch", epoch)
+            print(f'It took {stop_iter} epochs to improve upon the validation error')
             stop_iter = 0
         else:
             stop_iter += 1
 #            ex.add_artifact(f"{weights_path}_epoch_{epoch}.torch")
         if stop_iter >= stop_crit:
-            break
-            print(f'{stop_crit} epoch no improvement on the validation error')
+            print(f'{stop_crit} epoch no improvement on the validation' + \
+                  'error')
             print('Finished training')
+            break
         end = timer()
 #        ex.log_scalar("Iteration time", end - start)
         print(f"{epoch:05} Iteration time: {end-start: 0.6f}")
