@@ -186,6 +186,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         
         rec = self.CT_obj.FDK.do('Hann', compute_results=False) #/ 2 / self.CT_obj.w_detu
         sup.save_as_tiffs(rec, f'{infolder}/')
+        
         # Process all test images
         
         flsin = sorted(Path(infolder).glob('*.tiff'))

@@ -123,7 +123,7 @@ def main(pix, phantom, nTD, nVD, bpath, stop_crit):
     case.rec_methods += [case.MSD]
     case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.Unet]
-
+    
     l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
     if nVD == 0:
         list_tr = [0]
@@ -131,15 +131,14 @@ def main(pix, phantom, nTD, nVD, bpath, stop_crit):
     else:
         list_tr = list(l_tr)
         list_v = list(l_v)
-        
+    
+    case.Unet.add2sp_list(list_tr, list_v)
+    case.Unet.do()
+    print('Unet rec time:', case.Unet.results.rec_time[0])
 
     case.MSD.add2sp_list(list_tr, list_v)
     case.MSD.do()
     print('MSD rec time:', case.MSD.results.rec_time[0])
-    case.Unet.add2sp_list(list_tr, list_v)
-    case.Unet.do()
-    # %%
-    print('Unet rec time:', case.Unet.results.rec_time[0])
 
 
     # %%
