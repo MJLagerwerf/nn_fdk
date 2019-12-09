@@ -114,8 +114,10 @@ def main(pix, phantom, nTD, nVD, bpath, stop_crit):
     
     # %%
     case.FDK.do('Hann')
-    case.NNFDK.train(4)
+    print('FDK rec time:', case.FDK.results.rec_time[0])
+    case.NNFDK.train(4, retrain=True)
     case.NNFDK.do()
+    print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
     # %%
     case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.MSD]
@@ -133,13 +135,13 @@ def main(pix, phantom, nTD, nVD, bpath, stop_crit):
 
     case.MSD.add2sp_list(list_tr, list_v)
     case.MSD.do()
+    print('MSD rec time:', case.MSD.results.rec_time[0])
     case.Unet.add2sp_list(list_tr, list_v)
     case.Unet.do()
     # %%
-    print('MSD rec time:', case.MSD.results.rec_time[0])
     print('Unet rec time:', case.Unet.results.rec_time[0])
-    print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-    print('FDK rec time:', case.FDK.results.rec_time[0])
+
+
     # %%
     save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
     pylab.close('all')

@@ -122,7 +122,6 @@ def last_epoch(path):
     all_weights = []
     all_weights.extend(Path(path).glob('weights_epoch_*'))
     all_weights = sorted(all_weights)
-    print(all_weights)
     string = str(all_weights[-1])
     return int(''.join(c for c in string[-20:] if c.isdigit()))
 

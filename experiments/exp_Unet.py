@@ -30,7 +30,7 @@ def cfg():
     nTD = 1
     nVD = 1
     epochs = 1000
-    epoch = epochs - 1
+    epoch = None
     train = False
     use_training_set = False
     recon_other = True
