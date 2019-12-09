@@ -115,7 +115,7 @@ def main(pix, phantom, nTD, nVD, bpath, stop_crit):
     # %%
     case.FDK.do('Hann')
     print('FDK rec time:', case.FDK.results.rec_time[0])
-    case.NNFDK.train(4, retrain=True)
+    case.NNFDK.train(4)
     case.NNFDK.do()
     print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
     # %%
