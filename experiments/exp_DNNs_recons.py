@@ -25,7 +25,7 @@ ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'MSD'
+name_exp = 'DNN_recons'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
