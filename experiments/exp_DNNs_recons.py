@@ -132,13 +132,16 @@ def main(pix, phantom, nTD, nVD, bpath, stop_crit):
         list_tr = list(l_tr)
         list_v = list(l_v)
     
+    case.MSD.add2sp_list(list_tr, list_v)
+    print('added lists')
+    case.MSD.do()
+    print('MSD rec time:', case.MSD.results.rec_time[0])
+
+    
     case.Unet.add2sp_list(list_tr, list_v)
     case.Unet.do()
     print('Unet rec time:', case.Unet.results.rec_time[0])
 
-    case.MSD.add2sp_list(list_tr, list_v)
-    case.MSD.do()
-    print('MSD rec time:', case.MSD.results.rec_time[0])
 
 
     # %%
