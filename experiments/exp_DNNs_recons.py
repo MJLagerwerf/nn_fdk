@@ -37,14 +37,13 @@ def cfg():
     phantom = 'Fourshape_test'
     nTD = 1
     nVD = 0
-    train = False
     pix = 1024
     stop_crit = 50
     bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
 @ex.automain
-def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
+def main(pix, phantom, nTD, nVD, bpath, stop_crit):
     # Specific phantom
     
     if phantom == 'Fourshape_test':
@@ -114,10 +113,9 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
     print('Initializing algorithms took', time.time() - t4, 'seconds')
     
     # %%
-    if not train:
-        case.FDK.do('Hann')
-        case.NNFDK.train(4)
-        case.NNFDK.do()
+    case.FDK.do('Hann')
+    case.NNFDK.train(4)
+    case.NNFDK.do()
     # %%
     case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.MSD]
