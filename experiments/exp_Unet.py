@@ -120,14 +120,15 @@ def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
     case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.Unet]
     
-
-    l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
     if nVD == 0:
         list_tr = [0]
         list_v = None
+    elif nVD == 1:
+        list_tr = [0]
+        list_v = [1]
     else:
-        list_tr = list(l_tr)
-        list_v = list(l_v)
+        list_tr = [i for i in range(10)]
+        list_v = [i + 10 for i in range(10)]
     
     if train:
         print('training')
