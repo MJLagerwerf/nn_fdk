@@ -45,6 +45,7 @@ def sort_files(fls_path, dset_one=False, ratio=None):
 
 # %%
 def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
+    t = time.time()
     # Define dilations in [1,10] as in paper.
     dilations = msdnet.dilations.IncrementDilations(10)
     
@@ -63,7 +64,7 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     else:
         # Define training data
         flsin_tr, flstg_tr = sort_files(fls_tr_path)
-    
+    print('Finished defining the data', time.time() - t, 'seconds')
     # Create list of datapoints (i.e. input/target pairs)
     dats = []
     for i in range(len(flsin_tr)):
@@ -80,9 +81,10 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     
     # Normalize input and output of network to zero mean and unit variance using
     # training data images
+    t = time.time()
     print('Started normalizing')
     n.normalizeinout(dats)
-    print('Finished normalizing')
+    print('Finished normalizing', t - time.time(), 'seconds')
     # Use image batches of a single image
     bprov = msdnet.data.BatchProvider(dats, 1)
     # %%

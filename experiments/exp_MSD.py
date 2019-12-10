@@ -123,7 +123,7 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
         list_v = [1]
     else:
         list_tr = [i for i in range(10)]
-        list_v = [i + 10 for i in range(10)]
+        list_v = [i + 10 for i in range(5)]
         
     if train:
         print('Started training function')
