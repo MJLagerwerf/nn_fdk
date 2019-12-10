@@ -80,8 +80,9 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     
     # Normalize input and output of network to zero mean and unit variance using
     # training data images
+    print('Started normalizing')
     n.normalizeinout(dats)
-    
+    print('Finished normalizing')
     # Use image batches of a single image
     bprov = msdnet.data.BatchProvider(dats, 1)
     # %%
@@ -114,13 +115,15 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     # Log error metrics to file
     filelog = msdnet.loggers.FileLogger(f'{save_path}log_regr.txt')
     # Log typical, worst, and best images to image files
-    imagelog = msdnet.loggers.ImageLogger(f'{save_path}log_regr', onlyifbetter=True)
+    imagelog = msdnet.loggers.ImageLogger(f'{save_path}log_regr',
+                                          onlyifbetter=True)
     
     # %%
     # Train network until program is stopped manually
     # Network parameters are saved in regr_params.h5
     # Validation is run after every len(datsv) (=25)
     # training steps.
+    print('Started training')
     msdnet.train.train(n, t, val, bprov, f'{save_path}regr_params.h5',
                        loggers=[consolelog,filelog,imagelog],
                        val_every=len(datsv), stopcrit=stop_crit)

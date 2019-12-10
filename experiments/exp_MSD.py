@@ -126,7 +126,7 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
         list_v = [i + 10 for i in range(10)]
         
     if train:
-        print('training')
+        print('Started training function')
         case.MSD.train(list_tr, list_v, stop_crit=stop_crit, ratio=3)
     
     else:
