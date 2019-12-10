@@ -48,12 +48,12 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     t = time.time()
     # Define dilations in [1,10] as in paper.
     dilations = msdnet.dilations.IncrementDilations(10)
-    
+    print('Finished defining dilations', time.time() - t)
     # Create main network object for regression, with 100 layers,
     # [1,10] dilations, 1 input channel, 1 output channel, using
     # the GPU (set gpu=False to use CPU)
     n = msdnet.network.MSDNet(100, dilations, 1, 1, gpu=True)
-    
+    print('Finished defining msd net', time.time()- t)
     # Initialize network parameters
     n.initialize()
     if fls_v_path is None:
@@ -84,7 +84,7 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     t = time.time()
     print('Started normalizing')
     n.normalizeinout(dats)
-    print('Finished normalizing', t - time.time(), 'seconds')
+    print('Finished normalizing',time.time() - t, 'seconds')
     # Use image batches of a single image
     bprov = msdnet.data.BatchProvider(dats, 1)
     # %%

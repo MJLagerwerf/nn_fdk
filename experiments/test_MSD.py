@@ -86,9 +86,9 @@ case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 
 # %%
-case.FDK.do('Hann')
-case.NNFDK.train(4)
-case.NNFDK.do()
+#case.FDK.do('Hann')
+#case.NNFDK.train(4)
+#case.NNFDK.do()
 # %%
 case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
 case.rec_methods += [case.MSD]
@@ -96,8 +96,8 @@ if nVD == 0:
     list_tr, list_v = [0], None
 else:
     list_tr, list_v = [0], [1]
-#case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
-case.MSD.add2sp_list(list_tr, list_v)
+case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
+#case.MSD.add2sp_list(list_tr, list_v)
 case.MSD.do()
 
 # %%
