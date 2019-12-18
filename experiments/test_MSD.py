@@ -14,9 +14,9 @@ import time
 import pylab
 t = time.time()
 # %%
-pix = 256
+pix = 1024
 # Specific phantom
-phantom = 'Fourshape_test'
+phantom = 'Defrise'
 
 if phantom == 'Fourshape_test':
     PH = '4S'
@@ -29,7 +29,7 @@ elif phantom == 'Defrise':
 
 
 # Number of angles
-angles = 360
+angles = 2
 # Source radius
 det_rad = 0
 # Noise specifics

@@ -121,9 +121,13 @@ def number_of_datasets(path, data_type):
 def last_epoch(path):
     all_weights = []
     all_weights.extend(Path(path).glob('weights_epoch_*'))
-    all_weights = sorted(all_weights)
+    int_all_weights = []
+    for awi in all_weights:
+        
+        int_all_weights += [int(''.join(c for c in str(awi)[-20:] if c.isdigit()))]
+    all_weights = sorted(int_all_weights)
     string = str(all_weights[-1])
-    return int(''.join(c for c in string[-20:] if c.isdigit()))
+    return int(''.join(c for c in string[-20:] if c.isdigit())), all_weights
 
     
 # %%
