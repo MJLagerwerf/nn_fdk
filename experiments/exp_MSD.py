@@ -106,10 +106,10 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
     print('Initializing algorithms took', time.time() - t4, 'seconds')
     
     # %%
-    if not train:
-        case.FDK.do('Hann')
-        case.NNFDK.train(4)
-        case.NNFDK.do()
+#    if not train:
+#        case.FDK.do('Hann')
+#        case.NNFDK.train(4)
+#        case.NNFDK.do()
     # %%
     case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.MSD]
@@ -134,14 +134,14 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
         case.MSD.do()
         # %%
         print('MSD rec time:', case.MSD.results.rec_time[0])
-        print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-        print('FDK rec time:', case.FDK.results.rec_time[0])
+#        print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
+#        print('FDK rec time:', case.FDK.results.rec_time[0])
         # %%
         save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
         pylab.close('all')
         case.table()
         case.show_phantom()
         case.MSD.show(save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
-        case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-        case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
+#        case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
+#        case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
     return    
