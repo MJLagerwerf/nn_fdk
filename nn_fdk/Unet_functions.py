@@ -383,9 +383,9 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         recfolder.mkdir(exist_ok=True)        
         outfolder = Path(f'{save_path}Recon/out/')
         outfolder.mkdir(exist_ok=True)
-        HQfolder = Path(f'{self.data_path}tiffs/Dataset0/HQ/')
         if use_training_set:
             infolder = Path(f'{self.data_path}tiffs/Dataset0/FDK/')
+            HQfolder = Path(f'{self.data_path}tiffs/Dataset0/HQ/')
             rec = self.CT_obj.reco_space.zero()
             MSE = np.zeros(np.shape(rec)[0])
         else:
@@ -396,8 +396,8 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         
         input_dir = Path(infolder).expanduser().resolve()
         input_spec = input_dir
-        target_dir = Path(HQfolder).expanduser().resolve()
-        ds = mp.ImageDataset(input_spec, target_dir)
+
+        ds = load_concat_data(input_spec, input_spec)
         dl = DataLoader(ds, batch_size=1, shuffle=False)
         
         # Prepare output directory
