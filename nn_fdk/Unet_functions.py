@@ -223,6 +223,7 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
         # Create train (always) and validation (only if specified) datasets.
         val_input_glob = fls_v_path[0]
         val_target_glob = fls_v_path[1]
+        print(fls_v_path)
     else:
         print("Validation set from the same dataset")
         train_input_glob, train_target_glob, val_input_glob, val_target_glob = \
@@ -256,6 +257,16 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
     for epoch in range(epochs):
         start = timer()
         # Train
+#        for input, target in train_dl:
+#            import pyqtgraph as pq
+#            app = pq.mkQApp()
+#            pq.image(np.array(
+#                    [input.cpu().numpy().squeeze(), 
+#                     target.cpu().numpy().squeeze()
+#                     ]
+#                    ))   
+#            app.exec_()
+    
         model.train(train_dl, 1)
         # Compute training error
         train_error = model.validate(train_dl)
@@ -400,7 +411,8 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         # Prepare output directory
         output_dir = Path(outfolder).expanduser().resolve()
         output_dir.mkdir(exist_ok=True)
-
+        TSE = self.model.validate(dl)
+        print(TSE)
         rec = np.zeros(np.shape(rec))
         self.model.net.eval()
         with torch.no_grad():
