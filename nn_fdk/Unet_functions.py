@@ -395,8 +395,9 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
             sup.save_as_tiffs(rec, f'{infolder}/')
         
         input_dir = Path(infolder).expanduser().resolve()
+        target_dir = ''
         input_spec = input_dir
-        ds = mp.ImageDataset(input_spec, input_spec)
+        ds = mp.ImageDataset(input_spec, target_dir)
         dl = DataLoader(ds, batch_size=1, shuffle=False, num_workers=2)
         
         # Prepare output directory
@@ -418,7 +419,6 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
                     loss = self.model.criterion(out,
                                                 self.model.target)
                     MSE[i] = loss.item()
-                    
                 output_path = str(output_dir / f"unet_{i:05d}.tiff")
                 tifffile.imsave(output_path, output)
         
