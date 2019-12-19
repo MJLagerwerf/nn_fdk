@@ -395,10 +395,9 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
             sup.save_as_tiffs(rec, f'{infolder}/')
         
         input_dir = Path(infolder).expanduser().resolve()
-        target_dir = ''
         input_spec = input_dir
-        ds = mp.ImageDataset(input_spec, target_dir)
-        dl = DataLoader(ds, batch_size=1, shuffle=False, num_workers=2)
+        ds = mp.ImageDataset(input_spec, input_dir)
+        dl = DataLoader(ds, batch_size=1, shuffle=False)
         
         # Prepare output directory
         output_dir = Path(outfolder).expanduser().resolve()
