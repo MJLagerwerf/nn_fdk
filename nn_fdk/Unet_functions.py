@@ -377,7 +377,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         else:
             weights_file = Path(f'{save_path}weights_epoch_{epoch}.torch'
                                 ).expanduser().resolve()
-        print(weights_file)
+#        print(weights_file)
         self.model.load(weights_file)
         # Make folder for output
         recfolder = Path(f'{save_path}Recon/')
@@ -397,15 +397,15 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         
         input_dir = Path(infolder).expanduser().resolve()
         input_spec = input_dir
-        print(input_dir)
+#        print(input_dir)
         ds = load_concat_data([input_spec], [input_spec])
         dl = DataLoader(ds, batch_size=1, shuffle=False)
         
         # Prepare output directory
         output_dir = Path(outfolder).expanduser().resolve()
         output_dir.mkdir(exist_ok=True)
-        TSE = self.model.validate(dl)
-        print(TSE)
+#        TSE = self.model.validate(dl)
+#        print(TSE)
         rec = np.zeros(np.shape(rec))
 #        self.model.net.eval()
         with torch.no_grad():
@@ -434,7 +434,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
             worst = np.argmax(MSE)
             save_training_results(worst, infolder, HQfolder, outfolder,
                                   f'{save_path}worst{es}.png', 'Worst')
-            print(MSE)
+#            print(MSE)
         
             
 
