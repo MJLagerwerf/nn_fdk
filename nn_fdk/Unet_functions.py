@@ -407,7 +407,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         TSE = self.model.validate(dl)
         print(TSE)
         rec = np.zeros(np.shape(rec))
-        self.model.net.eval()
+#        self.model.net.eval()
         with torch.no_grad():
             for (i, (inp, tar)) in tqdm(enumerate(dl), mininterval=5.0):
                 self.model.set_input(inp)
