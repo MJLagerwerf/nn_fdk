@@ -411,14 +411,13 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
             for (i, (inp, tar)) in tqdm(enumerate(dl), mininterval=5.0):
                 self.model.set_input(inp)
                 output = self.model.net(self.model.input)
-                output = output.detach().cpu().squeeze().numpy()
-                rec[:, :, i] = output
                 if use_training_set:
                     self.model.set_target(tar)
-                    out = self.model.net(self.model.input)
-                    loss = self.model.criterion(out,
+                    loss = self.model.criterion(output,
                                                 self.model.target)
                     MSE[i] = loss.item()
+                output = output.detach().cpu().squeeze().numpy()
+                rec[:, :, i] = output
                 output_path = str(output_dir / f"unet_{i:05d}.tiff")
                 tifffile.imsave(output_path, output)
         

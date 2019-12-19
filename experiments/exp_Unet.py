@@ -13,7 +13,7 @@ import time
 import pylab
 t = time.time()
 
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
