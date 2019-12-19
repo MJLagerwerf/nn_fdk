@@ -257,15 +257,6 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
     for epoch in range(epochs):
         start = timer()
         # Train
-#        for input, target in train_dl:
-#            import pyqtgraph as pq
-#            app = pq.mkQApp()
-#            pq.image(np.array(
-#                    [input.cpu().numpy().squeeze(), 
-#                     target.cpu().numpy().squeeze()
-#                     ]
-#                    ))   
-#            app.exec_()
     
         model.train(train_dl, 1)
         # Compute training error
@@ -400,7 +391,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         else:
             infolder = Path(f'{save_path}Recon/in/')
             infolder.mkdir(exist_ok=True)
-            rec = self.CT_obj.FDK.do('Hann', compute_results=False) 
+            rec = self.CT_obj.FDK.do('Hann', compute_results=False)
             sup.save_as_tiffs(rec, f'{infolder}/')
         
         input_dir = Path(infolder).expanduser().resolve()
@@ -416,14 +407,18 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         rec = np.zeros(np.shape(rec))
         self.model.net.eval()
         with torch.no_grad():
-            for (i, (inp, _)) in tqdm(enumerate(dl), mininterval=5.0):
+            for (i, (inp, tar)) in tqdm(enumerate(dl), mininterval=5.0):
                 self.model.set_input(inp)
                 output = self.model.net(self.model.input)
                 output = output.detach().cpu().squeeze().numpy()
                 rec[:, :, i] = output
                 if use_training_set:
-                    HQ = tifffile.imread(f'{HQfolder}/stack_{i:05d}.tiff')
-                    MSE[i] = np.linalg.norm(HQ - output) ** 2
+                    self.model.set_target(tar)
+                    out = self.model.net(self.model.input)
+                    loss = self.model.criterion(out,
+                                                self.model.target)
+                    MSE[i] = loss.item()
+                    
                 output_path = str(output_dir / f"unet_{i:05d}.tiff")
                 tifffile.imsave(output_path, output)
         
@@ -439,7 +434,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
             worst = np.argmax(MSE)
             save_training_results(worst, infolder, HQfolder, outfolder,
                                   f'{save_path}worst{es}.png', 'Worst')
-            
+            print(MSE)
         
             
 
