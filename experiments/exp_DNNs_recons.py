@@ -40,7 +40,7 @@ def cfg():
     pix = 1024
     bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
-    
+
 @ex.automain
 def main(pix, phantom, nTD, nVD, bpath):
     # Specific phantom
