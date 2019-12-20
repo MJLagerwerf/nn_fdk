@@ -29,7 +29,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 @ex.config
 def cfg():
     phantom = 'Fourshape_test'
-    it_i
+    it_i = 0
     if it_i == 0:
         nTD = 1
         nVD = 0
