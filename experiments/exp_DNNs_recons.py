@@ -111,12 +111,12 @@ def main(pix, phantom, nTD, nVD, bpath):
     bin_param = 2
     
     # %%
-    t1 = time.time()
-    nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                     Exp_bin, bin_param, nTD + nVD,
-                                     base_path=bpath)
-    print('Creating training and validation datasets took', time.time() - t1,
-          'seconds')
+#    t1 = time.time()
+#    nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
+#                                     Exp_bin, bin_param, nTD + nVD,
+#                                     base_path=bpath)
+#    print('Creating training and validation datasets took', time.time() - t1,
+#          'seconds')
     
     # %% Create a test phantom
     voxels = [pix, pix, pix]
