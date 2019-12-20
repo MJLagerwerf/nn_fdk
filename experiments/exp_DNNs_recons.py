@@ -6,19 +6,13 @@ Created on Mon Dec  9 11:19:37 2019
 @author: lagerwer
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 11 13:53:20 2019
-
-@author: lagerwer
-"""
 
 import numpy as np
 import ddf_fdk as ddf
 import nn_fdk as nn
 import time
 import pylab
+import h5py
 t = time.time()
 
 ddf.import_astra_GPU()
@@ -35,12 +29,58 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 @ex.config
 def cfg():
     phantom = 'Fourshape_test'
-    nTD = 1
-    nVD = 0
+    it_i
+    if it_i == 0:
+        nTD = 1
+        nVD = 0
+    elif it_i == 1:
+        nTD = 1
+        nVD = 1
+    else:
+        nTD = 10
+        nVD = 10
     pix = 1024
     bpath = '/bigstore/lagerwer/data/NNFDK/'
-# %%
 
+# %%
+@ex.capture
+def make_map_path(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
+              Exp_bin, bin_param, bpath):
+    data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
+                                             noise, nTrain, nTD, nVal, nVD,
+                                             Exp_bin, bin_param,
+                                             base_path=bpath)
+    return data_path, full_path
+
+@ex.capture
+def save_and_add_artifact(path, arr):
+    np.save(path, arr)
+    ex.add_artifact(path)
+
+@ex.capture
+def save_network(case, full_path, NW_path):
+    NW_full = h5py.File(full_path + NW_path, 'r')
+    NW = h5py.File(case.WV_path + NW_path, 'w')
+
+    NW_full.copy(str(case.NNFDK.network[-1]['nNW']), NW, name='NW')
+    NW_full.close()
+    NW.close()
+    ex.add_artifact(case.WV_path + NW_path)
+
+@ex.capture
+def save_table(case, WV_path):
+    case.table()
+    latex_table = open(WV_path + '_latex_table.txt', 'w')
+    latex_table.write(case.table_latex)
+    latex_table.close()
+    ex.add_artifact(WV_path + '_latex_table.txt')
+
+@ex.capture
+def log_variables(results, Q, RT):
+    Q = np.append(Q, results.Q, axis=0)
+    RT = np.append(RT, results.rec_time)
+    return Q, RT
+# %%
 @ex.automain
 def main(pix, phantom, nTD, nVD, bpath):
     # Specific phantom
@@ -54,7 +94,7 @@ def main(pix, phantom, nTD, nVD, bpath):
         src_rad = 2
         noise = None
     
-    
+
     # Number of angles
     angles = 360
     # Source radius
@@ -69,7 +109,6 @@ def main(pix, phantom, nTD, nVD, bpath):
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    
     
     # %%
     t1 = time.time()
@@ -111,13 +150,33 @@ def main(pix, phantom, nTD, nVD, bpath):
     case.rec_methods += [case.NNFDK]
     print('Initializing algorithms took', time.time() - t4, 'seconds')
     
-    # %%
+    # %% set up paths
+    specifics = f'DNN_{PH}_NTD{nTD}NVD{nVD}'
+    Q = np.zeros((0, 3))
+    RT = np.zeros((0))
+    data_path, full_path = nn.make_map_path(pix, phantom, angles, src_rad,
+                                             noise, nTrain, nTD, nVal, nVD,
+                                             Exp_bin, bin_param,
+                                             base_path=bpath)
+    WV_path = case.WV_path + specifics 
+    save_and_add_artifact(WV_path + '_g.npy', case.g)
+    # %% Do FDK recons
     case.FDK.do('Hann')
     print('FDK rec time:', case.FDK.results.rec_time[0])
+    
+    Q, RT = log_variables(case.FDK.results, Q, RT)
+    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
+            case.FDK.results.rec_axis[-1])
+    # %% Do NN-FDK recons
     case.NNFDK.train(4)
     case.NNFDK.do()
     print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-    # %%
+        
+    save_and_add_artifact(WV_path + '_NNFDK4_rec.npy',
+                          case.NNFDK.results.rec_axis[-1])
+    Q, RT = log_variables(case.NNFDK.results, Q, RT)
+    
+    # %% Set up DNNs
     case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.MSD]
     case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
@@ -134,26 +193,32 @@ def main(pix, phantom, nTD, nVD, bpath):
         list_tr = [i for i in range(10)]
         list_v = [i + 10 for i in range(5)]
     
-    
+    # %% Do MSD
     case.MSD.add2sp_list(list_tr, list_v)
     print('added lists')
     case.MSD.do()
     print('MSD rec time:', case.MSD.results.rec_time[0])
-
     
+    save_and_add_artifact(WV_path + '_MSD_rec.npy',
+                          case.MSD.results.rec_axis[-1])
+    Q, RT = log_variables(case.MSD.results, Q, RT)
+    # %% Do Unet
     case.Unet.add2sp_list(list_tr, list_v)
     case.Unet.do()
     print('Unet rec time:', case.Unet.results.rec_time[0])
-
-
-
+    save_and_add_artifact(WV_path + '_MSD_rec.npy',
+                          case.Unet.results.rec_axis[-1])
+    Q, RT = log_variables(case.Unet.results, Q, RT)
+    
     # %%
-    save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
-    pylab.close('all')
-    case.table()
-    case.show_phantom()
-    case.MSD.show(save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
-    case.Unet.show(save_name=f'{save_path}Unet_{PH}_nTD{nTD}_nVD{nVD}')
-    case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-    case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
-    return    
+    save_and_add_artifact(WV_path + '_Q.npy', Q)
+    save_and_add_artifact(WV_path + '_RT.npy', RT)
+
+    print('Finished NNFDKs')
+    save_table(case, WV_path)
+
+    
+    case = None
+    gc.collect()
+    return Q
+
