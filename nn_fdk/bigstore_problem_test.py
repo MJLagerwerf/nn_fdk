@@ -23,8 +23,8 @@ for i in tqdm(range(5000)):
     if i % 3 == 2:
         n = msdnet.network.MSDNet.from_file(f'{save_path}nTD10nVD5/regr_params.h5',
                                             gpu=True)
-    n = None
-    gc.collect()
+#    n = None
+
     
     
 save_path = '/bigstore/lagerwer/data/NNFDK/4S_V1024_A360_SR10_I0256/L2/MSD/'
@@ -38,5 +38,4 @@ for i in tqdm(range(5000)):
     if i % 3 == 2:
         n = msdnet.network.MSDNet.from_file(f'{save_path}nTD10nVD5/regr_params.h5',
                                             gpu=True)
-    n = None
-    gc.collect()
+#    n = None
