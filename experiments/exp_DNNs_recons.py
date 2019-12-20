@@ -42,7 +42,7 @@ def cfg():
 # %%
     
 @ex.automain
-def main(pix, phantom, nTD, nVD, bpath, stop_crit):
+def main(pix, phantom, nTD, nVD, bpath):
     # Specific phantom
     
     if phantom == 'Fourshape_test':
