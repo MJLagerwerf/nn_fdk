@@ -168,7 +168,7 @@ def main(pix, phantom, nTD, nVD, bpath):
     save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
             case.FDK.results.rec_axis[-1])
     # %% Do NN-FDK recons
-    case.NNFDK.train(4)
+#    case.NNFDK.train(4)
     case.NNFDK.do()
     print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
         
