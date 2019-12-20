@@ -38,7 +38,6 @@ def cfg():
     nTD = 1
     nVD = 0
     pix = 1024
-    stop_crit = 50
     bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
@@ -128,9 +127,13 @@ def main(pix, phantom, nTD, nVD, bpath, stop_crit):
     if nVD == 0:
         list_tr = [0]
         list_v = None
+    elif nVD == 1:
+        list_tr = [0]
+        list_v = [1]
     else:
-        list_tr = list(l_tr)
-        list_v = list(l_v)
+        list_tr = [i for i in range(10)]
+        list_v = [i + 10 for i in range(5)]
+    
     
     case.MSD.add2sp_list(list_tr, list_v)
     print('added lists')
