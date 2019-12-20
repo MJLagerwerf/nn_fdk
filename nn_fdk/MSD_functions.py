@@ -14,7 +14,7 @@ import os
 import ddf_fdk as ddf
 import numpy as np
 import time
-
+import datetime
 from . import support_functions as sup
 
 # %%
@@ -184,7 +184,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         infolder.mkdir(exist_ok=True)
         outfolder = Path(f'{save_path}Recon/out/')
         outfolder.mkdir(exist_ok=True)
-        
+        print('Started loading network:', datetime.datetime.now().time())
         # Load network from file
         n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',
                                             gpu=True)
