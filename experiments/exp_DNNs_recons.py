@@ -15,7 +15,7 @@ import pylab
 import h5py
 t = time.time()
 
-#ddf.import_astra_GPU()
+ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
@@ -194,14 +194,14 @@ def main(pix, phantom, nTD, nVD, bpath):
         list_v = [i + 10 for i in range(5)]
     
     # %% Do MSD
-    case.MSD.add2sp_list(list_tr, list_v)
-    print('added lists')
-    case.MSD.do()
-    print('MSD rec time:', case.MSD.results.rec_time[0])
-    
-    save_and_add_artifact(WV_path + '_MSD_rec.npy',
-                          case.MSD.results.rec_axis[-1])
-    Q, RT = log_variables(case.MSD.results, Q, RT)
+#    case.MSD.add2sp_list(list_tr, list_v)
+#    print('added lists')
+#    case.MSD.do()
+#    print('MSD rec time:', case.MSD.results.rec_time[0])
+#    
+#    save_and_add_artifact(WV_path + '_MSD_rec.npy',
+#                          case.MSD.results.rec_axis[-1])
+#    Q, RT = log_variables(case.MSD.results, Q, RT)
     # %% Do Unet
     case.Unet.add2sp_list(list_tr, list_v)
     case.Unet.do()
