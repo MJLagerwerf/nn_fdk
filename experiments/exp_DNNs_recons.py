@@ -40,6 +40,7 @@ def cfg():
         nTD = 10
         nVD = 10
     pix = 1024
+#    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
     bpath = '/bigstore/lagerwer/data/NNFDK/'
 
 # %%
