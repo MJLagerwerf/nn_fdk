@@ -30,9 +30,10 @@ def cfg():
     nTD = 1
     nVD = 1
     train = False
-    pix = 1024
+    pix = 256
     stop_crit = 50
-    bpath = '/bigstore/lagerwer/data/NNFDK/'
+    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+#    bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
 @ex.automain

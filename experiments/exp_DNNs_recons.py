@@ -160,25 +160,25 @@ def main(pix, phantom, nTD, nVD, bpath):
                                              base_path=bpath)
     WV_path = case.WV_path + specifics 
     save_and_add_artifact(WV_path + '_g.npy', case.g)
-    # %% Do FDK recons
-    case.FDK.do('Hann')
-    print('FDK rec time:', case.FDK.results.rec_time[0])
-    
-    Q, RT = log_variables(case.FDK.results, Q, RT)
-    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
-            case.FDK.results.rec_axis[-1])
-    # %% Do NN-FDK recons
-    case.NNFDK.train(4)
-    case.NNFDK.do()
-    print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-        
-    save_and_add_artifact(WV_path + '_NNFDK4_rec.npy',
-                          case.NNFDK.results.rec_axis[-1])
-    Q, RT = log_variables(case.NNFDK.results, Q, RT)
-    
-    # %% Set up DNNs
-    case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
-    case.rec_methods += [case.MSD]
+#    # %% Do FDK recons
+#    case.FDK.do('Hann')
+#    print('FDK rec time:', case.FDK.results.rec_time[0])
+#    
+#    Q, RT = log_variables(case.FDK.results, Q, RT)
+#    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
+#            case.FDK.results.rec_axis[-1])
+#    # %% Do NN-FDK recons
+#    case.NNFDK.train(4)
+#    case.NNFDK.do()
+#    print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
+#        
+#    save_and_add_artifact(WV_path + '_NNFDK4_rec.npy',
+#                          case.NNFDK.results.rec_axis[-1])
+#    Q, RT = log_variables(case.NNFDK.results, Q, RT)
+#    
+#    # %% Set up DNNs
+#    case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
+#    case.rec_methods += [case.MSD]
     case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.Unet]
     
@@ -194,21 +194,21 @@ def main(pix, phantom, nTD, nVD, bpath):
         list_v = [i + 10 for i in range(5)]
     
     # %% Do MSD
-#    case.MSD.add2sp_list(list_tr, list_v)
-#    print('added lists')
-#    case.MSD.do()
-#    print('MSD rec time:', case.MSD.results.rec_time[0])
-#    
-#    save_and_add_artifact(WV_path + '_MSD_rec.npy',
-#                          case.MSD.results.rec_axis[-1])
-#    Q, RT = log_variables(case.MSD.results, Q, RT)
-    # %% Do Unet
-    case.Unet.add2sp_list(list_tr, list_v)
-    case.Unet.do()
-    print('Unet rec time:', case.Unet.results.rec_time[0])
+    case.MSD.add2sp_list(list_tr, list_v)
+    print('added lists')
+    case.MSD.do()
+    print('MSD rec time:', case.MSD.results.rec_time[0])
+    
     save_and_add_artifact(WV_path + '_MSD_rec.npy',
-                          case.Unet.results.rec_axis[-1])
-    Q, RT = log_variables(case.Unet.results, Q, RT)
+                          case.MSD.results.rec_axis[-1])
+    Q, RT = log_variables(case.MSD.results, Q, RT)
+    # %% Do Unet
+#    case.Unet.add2sp_list(list_tr, list_v)
+#    case.Unet.do()
+#    print('Unet rec time:', case.Unet.results.rec_time[0])
+#    save_and_add_artifact(WV_path + '_MSD_rec.npy',
+#                          case.Unet.results.rec_axis[-1])
+#    Q, RT = log_variables(case.Unet.results, Q, RT)
     
     # %%
     save_and_add_artifact(WV_path + '_Q.npy', Q)
@@ -219,6 +219,6 @@ def main(pix, phantom, nTD, nVD, bpath):
 
     
     case = None
-    gc.collect()
+#    gc.collect()
     return Q
 
