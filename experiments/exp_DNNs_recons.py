@@ -176,11 +176,11 @@ def main(pix, phantom, nTD, nVD, bpath):
 #                          case.NNFDK.results.rec_axis[-1])
 #    Q, RT = log_variables(case.NNFDK.results, Q, RT)
 #    
-#    # %% Set up DNNs
-#    case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
-#    case.rec_methods += [case.MSD]
-    case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
-    case.rec_methods += [case.Unet]
+    # %% Set up DNNs
+    case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
+    case.rec_methods += [case.MSD]
+#    case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
+#    case.rec_methods += [case.Unet]
     
     l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
     if nVD == 0:
