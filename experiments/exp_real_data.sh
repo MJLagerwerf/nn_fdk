@@ -7,6 +7,16 @@
 for i in {0..3}
 do
     python exp_real_data.py -p -F \
-    NNFDK_results/real_data with it_i=$i
+    NNFDK_results/real_data with it_i=$i nD=1
 done
+
+for i in {0..3}
+do
+    python exp_real_data.py -p -F \
+    NNFDK_results/real_data with it_i=$i nTD=1 nVD=0
+done
+
+python exp_real_data_CA.py -p -F NNFDK_results/real_data_CA with it_i=$i nTD=1 nVD=0
+
+python exp_real_data_CA.py -p -F NNFDK_results/real_data_CA with it_i=$i nD=1
 
