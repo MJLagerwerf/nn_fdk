@@ -27,7 +27,7 @@ ex = Experiment()
 # %%
 @ex.config
 def cfg():
-    it_i = 1
+    it_i = 0
     bp = '/export/scratch2/lagerwer/data/FleXray/' 
     path = f'{bp}Walnuts/Walnut{it_i}/Projections/'
     dset = f'tubeV{2}'
