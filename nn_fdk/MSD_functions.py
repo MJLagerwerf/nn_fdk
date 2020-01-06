@@ -158,7 +158,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         for i in list_tr:
             fls_tr_path[0] += [f'{lpath}{i}/FDK']
             fls_tr_path[1] += [f'{lpath}{i}/HQ']
-        self.nTD= len(fls_tr_path[0])
+        self.nTD = len(fls_tr_path[0])
         
         if list_v is None:
             self.nVD =  0

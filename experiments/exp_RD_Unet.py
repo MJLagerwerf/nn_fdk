@@ -162,10 +162,8 @@ def main(nTD, nVD, train, bpath, stop_crit, specifics, epoch, epochs):
         print(f'Use weights from epoch {epoch}')
         case.Unet.add2sp_list(list_tr, list_v)
     
-    case.Unet.do(epoch=epoch)
-    
-    
-    
+        case.Unet.do(epoch=epoch)
+
         # %%
         print('Unet rec time:', case.Unet.results.rec_time[0])
 #        print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
