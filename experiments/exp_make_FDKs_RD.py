@@ -36,7 +36,7 @@ def cfg():
     dset = dsets[it_j]
     pd = 'processed_data/'
 
-    ang_freqs = [1, 8, 16, 32]
+    ang_freqs = [1, 16]
     ang_freq = ang_freqs[it_j]
     sc = 1
     pix = 768 // sc

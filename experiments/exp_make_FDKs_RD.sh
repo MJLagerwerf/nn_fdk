@@ -6,7 +6,7 @@
 
 for i in {01..21}
 do
-    for j in {0..3}
+    for j in {0..1}
     do
         python exp_make_FDKs_RD.py -p -F  \
         /export/scratch2/lagerwer/NNFDK_results/FDK_RD/ with it_j=$j it_i=$i
