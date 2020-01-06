@@ -74,12 +74,16 @@ def cfg():
 @ex.capture
 def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
        nVD, bpath):
-    dataset = cap.load_and_preprocess_real_data(load_path, dset, sc)
-#    dataset = ddf.load_and_preprocess_real_data(load_path, dset, sc)
-    meta = ddf.load_meta(load_path + dset + '/', sc)
-    pix_size = meta['pix_size']
+    dataset, vecs = cap.load_and_preprocess(path, dset, ang_freq=ang_freq)
+    meta = ddf.load_meta(f'{path}{dset}/', 1)
+    pix_size = sc * meta['pix_size']
     src_rad = meta['s2o']
     det_rad = meta['o2d']
+#    dataset = ddf.load_and_preprocess_real_data(load_path, dset, sc)
+#    meta = ddf.load_meta(load_path + dset + '/', sc)
+#    pix_size = meta['pix_size']
+#    src_rad = meta['s2o']
+#    det_rad = meta['o2d']
     
     data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq,
                  zoom=False)
