@@ -53,6 +53,7 @@ def cfg():
     nVal = nVox
     nVD = 0
     
+    stop_crit = 100
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
@@ -105,16 +106,6 @@ def save_and_add_artifact(path, arr):
     np.save(path, arr)
     ex.add_artifact(path)
 
-@ex.capture
-def save_network(case, full_path, NW_path):
-    NW_full = h5py.File(full_path + NW_path, 'r')
-    NW = h5py.File(case.WV_path + NW_path, 'w')
-
-    NW_full.copy(str(case.NNFDK.network[-1]['nNW']), NW, name='NW')
-    NW_full.close()
-    NW.close()
-    ex.add_artifact(case.WV_path + NW_path)
-    
 @ex.capture
 def save_table(case, WV_path):
     case.table()
