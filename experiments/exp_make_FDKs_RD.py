@@ -30,7 +30,7 @@ ex = Experiment()
 def cfg():
     it_i = '01'
     it_j = 0
-    bpath = '/export/scratch2/lagerwer/data/FleXray/' 
+    bpath = '/bigstore/lagerwer/data/FleXray/' 
     load_path = f'{bpath}walnuts_10MAY/walnut_{it_i}/'
     dsets = ['noisy', 'good', 'good', 'good']
     dset = dsets[it_j]
