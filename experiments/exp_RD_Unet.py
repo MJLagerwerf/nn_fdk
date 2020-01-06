@@ -63,7 +63,8 @@ def cfg():
         specifics = 'good_ang_freq' + str(ang_freq)
     
     filts = ['Ram-Lak', 'Hann']
-
+    epochs = 1000
+    epoch = None
 
 # %%  
 @ex.capture
