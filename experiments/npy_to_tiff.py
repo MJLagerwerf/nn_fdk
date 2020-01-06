@@ -33,7 +33,7 @@ dfiles = [i + 1 for i in range(21)]
 #        io.imsave('{}stack_{:05d}.tiff'.format(sp, i), arr[:, :, i])
 
 for i in tqdm(range(21)):
-    lpath = f'{path1}{dfiles[i]}Projections/processed_data/'
+    lpath = f'{path1}{dfiles[i]}/Projections/processed_data'
     arr = np.load(f'{lpath}/ground_truth.npy')
     sp = f'{path1}{dfiles[i]}Projections/processed_data{path2}GS/'
 #    sp = f'{path1}{dfiles[i]}/{dset}{path2}GS/'
