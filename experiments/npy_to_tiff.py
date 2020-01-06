@@ -16,7 +16,7 @@ path1 = '/bigstore/lagerwer/data/FleXray/Walnuts/Walnut'
 path2 = '/tiffs/'
 
 
-AF = 1
+AF = 4
 dset = 'tubeV2'
 #rfiles = [2 * i + 1 for i in range(21)]
 rfiles = [i + 1 for i in range(21)]
