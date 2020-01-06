@@ -6,14 +6,6 @@ Created on Mon Jan  6 10:34:50 2020
 @author: lagerwer
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Mar 11 13:53:20 2019
-
-@author: lagerwer
-"""
-
 import numpy as np
 import ddf_fdk as ddf
 import nn_fdk as nn
@@ -21,58 +13,127 @@ import time
 import pylab
 t = time.time()
 
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'MSD'
+name_exp = 'RD_MSD'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
 ex.observers.append(FileStorageObserver.create(FSpath))
-
-# %%
+    
 @ex.config
 def cfg():
-    phantom = 'Fourshape_test'
-    nTD = 1
-    nVD = 1
-    train = False
-    pix = 256
-    stop_crit = 50
-    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
-#    bpath = '/bigstore/lagerwer/data/NNFDK/'
-# %%
+    it_i = 1
+    bpath = '/bigstore/lagerwer/data/FleXray/'
+    load_path = f'{bpath}walnuts_10MAY/walnut_21/'
     
-@ex.automain
-def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
-    # Specific phantom
+    dsets = ['noisy', 'good']
+    dset = dsets[it_i]
+    pd = 'processed_data/'
+    sc = 1
+    ang_freqs = [1, 16]
+    ang_freq = ang_freqs[it_i]
+    pix = 768 // sc
+
+    # Load data?
+    f_load_path = None
+    g_load_path = None
     
-    if phantom == 'Fourshape_test':
-        PH = '4S'
-        src_rad = 10
-        noise = ['Poisson', 2 ** 8]
-    elif phantom == 'Defrise':
-        PH = 'DF'
-        src_rad = 2
-        noise = None
-    
-    
-    # Number of angles
-    angles = 360
-    # Source radius
-    det_rad = 0
     # Noise specifics
-    
+    # Should we retrain the networks?
+    train = True
+    # Total number of voxels used for training
+    nVox = 1e6
     # Number of voxels used for training, number of datasets used for training
-    nTrain = 1e6
+    nTrain = nVox
+    nTD = 1
     # Number of voxels used for validation, number of datasets used for validation
-    nVal = 1e6
+    nVal = nVox
+    nVD = 0
     
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
+    if it_i == 0:
+        specifics = 'noisy'
+    elif it_i in [1, 2, 3]:
+        specifics = 'good_ang_freq' + str(ang_freq)
     
+    filts = ['Ram-Lak', 'Hann']
+
+
+# %%  
+@ex.capture
+def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
+       nVD, bpath):
+    dataset = ddf.load_and_preprocess_real_data(load_path, dset, sc)
+    meta = ddf.load_meta(load_path + dset + '/', sc)
+    pix_size = meta['pix_size']
+    src_rad = meta['s2o']
+    det_rad = meta['o2d']
+    
+    data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq,
+                 zoom=False)
+
+    CT_obj = ddf.CCB_CT(data_obj)
+    CT_obj.init_algo()
+    spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
+                                                         CT_obj.filter_space,
+                                                         interp=Exp_bin)
+    # Create the FDK binned operator
+#    CT_obj.FDK_bin_nn = CT_obj.FDK_op * Exp_op
+
+    # Create the NN-FDK object
+    CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
+                                   Exp_op, bin_param, dset=dset,
+                                   base_path=bpath)
+    CT_obj.rec_methods += [CT_obj.NNFDK]
+    return CT_obj
+
+# %%
+@ex.capture
+def make_map_path(dset, ang_freq, nTrain, nTD, nVal, nVD,
+              Exp_bin, bin_param, bpath):
+    data_path, full_path = nn.make_map_path_RD(dset, ang_freq, nTrain, nTD,
+                                               nVal, nVD, base_path=bpath)
+    return data_path, full_path
+
+@ex.capture
+def save_and_add_artifact(path, arr):
+    np.save(path, arr)
+    ex.add_artifact(path)
+
+@ex.capture
+def save_network(case, full_path, NW_path):
+    NW_full = h5py.File(full_path + NW_path, 'r')
+    NW = h5py.File(case.WV_path + NW_path, 'w')
+
+    NW_full.copy(str(case.NNFDK.network[-1]['nNW']), NW, name='NW')
+    NW_full.close()
+    NW.close()
+    ex.add_artifact(case.WV_path + NW_path)
+    
+@ex.capture
+def save_table(case, WV_path):
+    case.table()
+    latex_table = open(WV_path + '_latex_table.txt', 'w')
+    latex_table.write(case.table_latex)
+    latex_table.close()
+    ex.add_artifact(WV_path + '_latex_table.txt')
+
+@ex.capture
+def log_variables(results, Q, RT):
+    Q = np.append(Q, results.Q, axis=0)
+    RT = np.append(RT, results.rec_time)
+    return Q, RT
+
+#%%
+@ex.automain
+def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
+    # Specific phantom
+
     
     # %%
     t1 = time.time()
@@ -115,11 +176,6 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
     print('Initializing algorithms took', time.time() - t4, 'seconds')
     
     # %%
-#    if not train:
-#        case.FDK.do('Hann')
-#        case.NNFDK.train(4)
-#        case.NNFDK.do()
-    # %%
     case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.MSD]
     
@@ -151,6 +207,4 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
         case.table()
         case.show_phantom()
         case.MSD.show(save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
-#        case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-#        case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
     return    
