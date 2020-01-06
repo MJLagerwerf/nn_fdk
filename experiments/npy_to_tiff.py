@@ -11,7 +11,7 @@ import numpy as np
 import os
 from tqdm import tqdm
 # %%
-lpath = '/bigstore/lagerwer/NNFDK_results/FDK_RD/'
+lpath = '/bigstore/lagerwer/NNFDK_results/FDK_RD_CA/'
 path1 = '/bigstore/lagerwer/data/FleXray/Walnuts/Walnut'
 path2 = '/tiffs/'
 
