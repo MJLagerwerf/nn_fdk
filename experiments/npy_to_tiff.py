@@ -18,7 +18,8 @@ path2 = '/tiffs/'
 
 AF = 1
 dset = 'tubeV2'
-rfiles = [2 * i + 1 for i in range(21)]
+#rfiles = [2 * i + 1 for i in range(21)]
+rfiles = [i + 1 for i in range(21)]
 #dfiles = ['{:02d}'.format(1 + i) for i in range(21)]
 dfiles = [i + 1 for i in range(21)]
 for i in tqdm(range(21)):
