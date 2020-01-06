@@ -11,8 +11,8 @@ import numpy as np
 import os
 from tqdm import tqdm
 # %%
-lpath = '/export/scratch2/lagerwer/NNFDK_results/FDK_RD/'
-path1 = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_'
+lpath = '/bigstore/lagerwer/NNFDK_results/FDK_RD/'
+path1 = '/bigstore/lagerwer/data/FleXray/walnuts_10MAY/walnut_'
 path2 = '/tiffs/'
 
 dset = 'good'
@@ -21,7 +21,7 @@ rfiles = [4 * i + 3 for i in range(21)]
 dfiles = ['{:02d}'.format(1 + i) for i in range(21)]
 for i in tqdm(range(21)):
     arr = np.load(f'{lpath}{rfiles[i]}/RD_{dset}_AF{AF}_FDKHN_obj.npy')
-    sp = f'{path1}{dfiles[i]}/{dset}_AF{AF}{path2}/FDK/'
+    sp = f'{path1}{dfiles[i]}/processed_data{path2}{dset}_AF{AF}/FDK/'
 #    sp = f'{path1}{dfiles[i]}/{dset}{path2}FDK/'
 #    print(arr)
 #    print(sp)
@@ -32,7 +32,7 @@ for i in tqdm(range(21)):
 for i in tqdm(range(21)):
     lpath = f'{path1}{dfiles[i]}/processed_data/'
     arr = np.load(f'{lpath}ground_truth.npy')
-    sp = f'{path1}{dfiles[i]}/{dset}_AF{AF}{path2}GS/'
+    sp = f'{path1}{dfiles[i]}/processed_data{path2}GS/'
 #    sp = f'{path1}{dfiles[i]}/{dset}{path2}GS/'
 #    print(arr)
 #    print(sp)
