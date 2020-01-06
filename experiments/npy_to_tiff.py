@@ -17,7 +17,7 @@ path2 = '/tiffs/'
 
 dset = 'good'
 AF = 16
-rfiles = [2 * i + 1 for i in range(21)]
+rfiles = [2 * i + 2 for i in range(21)]
 dfiles = ['{:02d}'.format(1 + i) for i in range(21)]
 for i in tqdm(range(21)):
     arr = np.load(f'{lpath}{rfiles[i]}/RD_{dset}_AF{AF}_FDKHN_obj.npy')
