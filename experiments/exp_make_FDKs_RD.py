@@ -28,18 +28,21 @@ ex = Experiment()
 # %%
 @ex.config
 def cfg():
-    it_i = '01'
+    it_i = '1'
     it_j = 0
     bpath = '/bigstore/lagerwer/data/FleXray/' 
-    load_path = f'{bpath}walnuts_10MAY/walnut_{it_i}/'
-    dsets = ['noisy', 'good', 'good', 'good']
+    load_path = f'{bpath}Walnuts/walnut{it_i}/'
+    dsets = ['tubeV2']#['noisy', 'good', 'good', 'good']
     dset = dsets[it_j]
     pd = 'processed_data/'
 
-    ang_freqs = [1, 16]
+    ang_freqs = [4] #[1, 16]
     ang_freq = ang_freqs[it_j]
-    sc = 1
-    pix = 768 // sc
+    
+    # sc = 1
+    # vox = 768 // sc
+    sc = 2
+    vox = 1024 // sc
 
     # Load data?
     f_load_path = None
