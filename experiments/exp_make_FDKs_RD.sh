@@ -7,7 +7,7 @@
 for i in {1..21}
 do
     python exp_make_FDKs_RD.py -p -F  \
-    /bigstore/lagerwer/NNFDK_results/FDK_RD/ with it_i=$i
+    /bigstore/lagerwer/NNFDK_results/FDK_RD_CA/ with it_i=$i
 done
 
 #    for j in {0..1}

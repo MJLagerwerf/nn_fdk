@@ -31,7 +31,7 @@ def cfg():
     it_i = '1'
     it_j = 0
     bpath = '/bigstore/lagerwer/data/FleXray/' 
-    load_path = f'{bpath}Walnuts/walnut{it_i}/'
+    load_path = f'{bpath}Walnuts/Walnut{it_i}/'
     dsets = ['tubeV2']#['noisy', 'good', 'good', 'good']
     dset = dsets[it_j]
     pd = 'processed_data/'
