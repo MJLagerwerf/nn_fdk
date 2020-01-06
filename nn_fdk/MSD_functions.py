@@ -151,7 +151,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         print('Training took:', time.time()-t, 'seconds')
         self.t_train += [time.time() - t]
 
-    def add2sp_list(self, list_tr, list_v):
+    def add2sp_list(self, list_tr, list_v, RD=False, **kwargs):
         fls_tr_path = [[], []]
         fls_v_path = [[], []]
         lpath = f'{self.data_path}tiffs/Dataset'

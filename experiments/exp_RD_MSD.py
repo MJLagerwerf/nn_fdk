@@ -58,7 +58,7 @@ def cfg():
     bin_param = 2
     if it_i == 0:
         specifics = 'noisy'
-    elif it_i in [1, 2, 3]:
+    elif it_i in [1]:
         specifics = 'good_ang_freq' + str(ang_freq)
     
     filts = ['Ram-Lak', 'Hann']
