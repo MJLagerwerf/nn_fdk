@@ -74,7 +74,8 @@ def cfg():
 @ex.capture
 def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
        nVD, bpath):
-    dataset = ddf.load_and_preprocess_real_data(load_path, dset, sc)
+    dataset = cap.load_and_preprocess_real_data(load_path, dset, sc)
+#    dataset = ddf.load_and_preprocess_real_data(load_path, dset, sc)
     meta = ddf.load_meta(load_path + dset + '/', sc)
     pix_size = meta['pix_size']
     src_rad = meta['s2o']
