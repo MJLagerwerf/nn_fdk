@@ -165,13 +165,14 @@ def main(filts, specifics, nVD, nTD):
     print('added lists')
     case.MSD.do()
     print('MSD rec time:', case.MSD.results.rec_time[0])
-    
+    case.table()
     save_and_add_artifact(WV_path + '_MSD_rec.npy',
                           case.MSD.results.rec_axis[-1])
     Q, RT = log_variables(case.MSD.results, Q, RT)
     # %% Do Unet
     case.Unet.add2sp_list(list_tr, list_v)
     case.Unet.do()
+    case.table()
     print('Unet rec time:', case.Unet.results.rec_time[0])
     save_and_add_artifact(WV_path + '_MSD_rec.npy',
                           case.Unet.results.rec_axis[-1])
