@@ -8,7 +8,7 @@ Created on Thu Aug  8 16:16:56 2019
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 import nn_fdk as nn
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
@@ -25,7 +25,7 @@ ex = Experiment()
 # %%
 @ex.config
 def cfg():
-    it_i = 1
+    it_i = 0
     bpath = '/bigstore/lagerwer/data/FleXray/'
     load_path = f'{bpath}walnuts_10MAY/walnut_21/'
     
@@ -49,10 +49,10 @@ def cfg():
     nD = 10
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
-    nTD = nD
+    nTD = 1
     # Number of voxels used for validation, number of datasets used for validation
     nVal = nVox
-    nVD = nD
+    nVD = 0
     
     # Specifics for the expansion operator
     Exp_bin = 'linear'
