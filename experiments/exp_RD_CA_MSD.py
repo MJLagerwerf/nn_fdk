@@ -25,7 +25,7 @@ t = time.time()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'RD_MSD'
+name_exp = 'RD_CA_MSD'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
