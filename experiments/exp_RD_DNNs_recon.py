@@ -172,7 +172,6 @@ def main(filts, specifics, nVD, nTD):
     # %% Do Unet
     case.Unet.add2sp_list(list_tr, list_v)
     case.Unet.do()
-    case.table()
     print('Unet rec time:', case.Unet.results.rec_time[0])
     save_and_add_artifact(WV_path + '_MSD_rec.npy',
                           case.Unet.results.rec_axis[-1])
