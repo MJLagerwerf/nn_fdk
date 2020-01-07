@@ -25,6 +25,8 @@ t = time.time()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
+
+import load_and_preprocess_CA as cap
 name_exp = 'RD_CA_MSD'
 ex = Experiment(name_exp, ingredients=[])
 
@@ -35,15 +37,15 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 def cfg():
     it_i = 0
     bpath = '/bigstore/lagerwer/data/FleXray/'
-    load_path = f'{bpath}walnuts_10MAY/walnut_21/'
+    load_path = f'{bpath}Walnuts/Walnut21/'
     
-    dsets = ['noisy', 'good']
+    dsets = ['tubeV2']
     dset = dsets[it_i]
     pd = 'processed_data/'
-    sc = 1
-    ang_freqs = [1, 16]
+    sc = 2
+    ang_freqs = [4]
     ang_freq = ang_freqs[it_i]
-    pix = 768 // sc
+    pix = 1024 // sc
 
     # Load data?
     f_load_path = None
@@ -65,10 +67,7 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    if it_i == 0:
-        specifics = 'noisy'
-    elif it_i in [1]:
-        specifics = 'good_ang_freq' + str(ang_freq)
+    specifics = 'RD_CA'
     
     filts = ['Ram-Lak', 'Hann']
 
@@ -78,16 +77,17 @@ def cfg():
 # %%  
 @ex.capture
 def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
-       nVD, bpath):
-    dataset = ddf.load_and_preprocess_real_data(load_path, dset, sc)
-    meta = ddf.load_meta(load_path + dset + '/', sc)
-    pix_size = meta['pix_size']
+       nVD, vox, bpath):
+    dataset, vecs = cap.load_and_preprocess(load_path, dset, ang_freq=ang_freq)
+    meta = ddf.load_meta(f'{load_path}{dset}/', 1)
+    pix_size = sc * meta['pix_size']
     src_rad = meta['s2o']
     det_rad = meta['o2d']
     
+    
     data_obj = ddf.real_data(dataset, pix_size, src_rad, det_rad, ang_freq,
-                 zoom=False)
-
+                             vox=vox, vecs=vecs)
+    
     CT_obj = ddf.CCB_CT(data_obj)
     CT_obj.init_algo()
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
