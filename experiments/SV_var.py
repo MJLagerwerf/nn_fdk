@@ -154,40 +154,40 @@ def main(retrain, filts, specifics):
     # Create the paths where the objects are saved
     data_path, full_path = make_map_path()
     WV_path = case.WV_path + specifics 
-    save_and_add_artifact(WV_path + '_g.npy', case.g)
+#    save_and_add_artifact(WV_path + '_g.npy', case.g)
+#
+#    for i in range(len(filts)):
+#        case.FDK.do(filts[i])
+#    Q, RT = log_variables(case.FDK.results, Q, RT)
+#
+#    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
+#            case.FDK.results.rec_axis[-1])
+#    
+#    print('Finished FDKs')
+#    TT = np.zeros(5)
+#    for i in range(5):
+    i = 2
+    case.NNFDK.train(2 ** i, retrain=retrain)
 
-    for i in range(len(filts)):
-        case.FDK.do(filts[i])
-    Q, RT = log_variables(case.FDK.results, Q, RT)
 
-    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
-            case.FDK.results.rec_axis[-1])
+    TT = case.NNFDK.train_time
+    save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')
     
-    print('Finished FDKs')
-    TT = np.zeros(5)
-    for i in range(5):
-
-        case.NNFDK.train(2 ** i, retrain=retrain)
-
-    
-        TT[i] = case.NNFDK.train_time
-        save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')
-        
-        case.NNFDK.do()
-        save_and_add_artifact(WV_path + '_NNFDK'+  str(2 ** i) + 
-                               '_rec.npy', case.NNFDK.results.rec_axis[-1])
+    case.NNFDK.do()
+    save_and_add_artifact(WV_path + '_NNFDK'+  str(2 ** i) + 
+                           '_rec.npy', case.NNFDK.results.rec_axis[-1])
 
     save_and_add_artifact(WV_path + '_TT.npy', TT)
         
-    Q, RT = log_variables(case.NNFDK.results, Q, RT)
-    
-    niter = [50, 100, 200]
-    case.SIRT_NN.do(niter)
-    for ni in range(len(niter)):
-        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
-                              case.SIRT_NN.results.rec_axis[ni])
-
-    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
+#    Q, RT = log_variables(case.NNFDK.results, Q, RT)
+#    
+#    niter = [50, 100, 200]
+#    case.SIRT_NN.do(niter)
+#    for ni in range(len(niter)):
+#        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
+#                              case.SIRT_NN.results.rec_axis[ni])
+#
+#    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
 
