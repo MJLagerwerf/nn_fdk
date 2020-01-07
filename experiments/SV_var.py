@@ -26,7 +26,7 @@ ex = Experiment()
 @ex.config
 def cfg():
     it_i = 0
-    pix = 1024
+    pix = 256
     # Specific phantom
     phantom = 'Fourshape_test'
     # Number of angles
@@ -46,7 +46,7 @@ def cfg():
     retrain = True
     # Total number of voxels used for training
     nVox = 1e6
-    nD = 10
+    nD = 1
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
     nTD = nD
@@ -60,6 +60,7 @@ def cfg():
     specifics = 'ang' + str(ang[it_i])
     filts = ['Ram-Lak', 'Hann']
     bpath = '/bigstore/lagerwer/data/NNFDK/'
+#    bpath = '/export/scratch2/lagerwer/NNFDK/'
 
 # %%
 # %%

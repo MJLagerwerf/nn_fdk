@@ -64,8 +64,8 @@ def cfg():
     bin_param = 2
     specifics = 'I0' + str(I0[it_i])
     filts = ['Ram-Lak', 'Hann']
-#    bpath = '/bigstore/lagerwer/data/NNFDK/'
-    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    bpath = '/bigstore/lagerwer/data/NNFDK/'
+#    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
 
 # %%
 @ex.capture

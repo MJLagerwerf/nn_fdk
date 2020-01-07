@@ -48,7 +48,7 @@ def cfg():
     retrain = True
     # Total number of voxels used for training
     nVox = 1e6
-    nD = 10
+    nD = 1
     # Number of voxels used for training, number of datasets used for training
     nTrain = nVox
     nTD = nD
@@ -63,7 +63,7 @@ def cfg():
     specifics = 'SR' + str(src_rad)
     filts = ['Ram-Lak', 'Hann']
     bpath = '/bigstore/lagerwer/data/NNFDK/'
-
+#    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
 # %%
 @ex.capture
 def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
