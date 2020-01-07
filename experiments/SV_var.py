@@ -154,7 +154,8 @@ def main(retrain, filts, specifics):
     case = CT()
     # Create the paths where the objects are saved
     data_path, full_path = make_map_path()
-    WV_path = case.WV_path + specifics 
+    WV_path = case.WV_path + specifics
+    print('Finished making data objects')
 #    save_and_add_artifact(WV_path + '_g.npy', case.g)
 #
 #    for i in range(len(filts)):
