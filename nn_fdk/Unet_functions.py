@@ -16,19 +16,19 @@ import os
 import ddf_fdk as ddf
 import numpy as np
 import time
-import torch
+#import torch
 import pylab
 
 
 from nn_fdk import support_functions as sup
 from timeit import default_timer as timer
 import logging
-import torch
-import torch.nn as tnn
-import torch.nn.functional as F
-import msd_pytorch as mp
-from msd_pytorch.msd_model import MSDModel
-from torch.utils.data import DataLoader
+#import torch
+#import torch.nn as tnn
+#import torch.nn.functional as F
+#import msd_pytorch as mp
+#from msd_pytorch.msd_model import MSDModel
+#from torch.utils.data import DataLoader
 
 # This code is copied and adapted from:
 # %% https://github.com/milesial/Pytorch-UNet
