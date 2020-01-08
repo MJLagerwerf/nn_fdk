@@ -191,6 +191,8 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',
                                             gpu=True)
         print('Loaded network', time.time() - t, 'seconds')
+        import sys
+        sys.exit()
         rec = self.CT_obj.FDK.do('Hann', compute_results=False)
         print('Done FDK reconstruciton')#/ 2 / self.CT_obj.w_detu
         sup.save_as_tiffs(rec, f'{infolder}/')
