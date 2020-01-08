@@ -145,8 +145,8 @@ def main(nTD, nVD, train, bpath, stop_crit, specifics):
     data_path, full_path = make_map_path()
     WV_path = case.WV_path + specifics 
     
-    print('Creating training and validation datasets took and')
-    print('Making phantom and mask took', time.time() - t1, 'seconds')
+    print('Creating training and validation datasets took')
+    print(time.time() - t1, 'seconds')
     # The amount of projection angles in the measurements
     # Source to center of rotation radius
     
