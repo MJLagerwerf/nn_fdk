@@ -14,6 +14,7 @@ import ddf_fdk as ddf
 import nn_fdk as nn
 import time
 import pylab
+import torch
 t = time.time()
 
 ddf.import_astra_GPU()
