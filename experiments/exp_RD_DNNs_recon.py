@@ -63,7 +63,8 @@ def cfg():
         specifics = 'good_ang_freq' + str(ang_freq)
     
     filts = ['Hann']
-
+    MSD = True
+    Unet = True
 
 # %%  
 @ex.capture
@@ -131,7 +132,7 @@ def log_variables(results, Q, RT):
     return Q, RT
 # %%
 @ex.automain
-def main(filts, specifics, nVD, nTD):
+def main(filts, specifics, nVD, nTD, MSD, Unet):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
@@ -160,22 +161,23 @@ def main(filts, specifics, nVD, nTD):
         list_v = [i + 10 for i in range(5)]
     
     # %% Do MSD
-    
-    case.MSD.add2sp_list(list_tr, list_v)
-    print('added lists')
-    case.MSD.do()
-    print('MSD rec time:', case.MSD.results.rec_time[0])
-    case.table()
-    save_and_add_artifact(WV_path + '_MSD_rec.npy',
-                          case.MSD.results.rec_axis[-1])
-    Q, RT = log_variables(case.MSD.results, Q, RT)
+    if MSD:
+        case.MSD.add2sp_list(list_tr, list_v)
+        print('added lists')
+        case.MSD.do()
+        print('MSD rec time:', case.MSD.results.rec_time[0])
+        case.table()
+        save_and_add_artifact(WV_path + '_MSD_rec.npy',
+                              case.MSD.results.rec_axis[-1])
+        Q, RT = log_variables(case.MSD.results, Q, RT)
     # %% Do Unet
-    case.Unet.add2sp_list(list_tr, list_v)
-    case.Unet.do()
-    print('Unet rec time:', case.Unet.results.rec_time[0])
-    save_and_add_artifact(WV_path + '_Unet_rec.npy',
-                          case.Unet.results.rec_axis[-1])
-    Q, RT = log_variables(case.Unet.results, Q, RT)
+    if Unet:
+        case.Unet.add2sp_list(list_tr, list_v)
+        case.Unet.do()
+        print('Unet rec time:', case.Unet.results.rec_time[0])
+        save_and_add_artifact(WV_path + '_Unet_rec.npy',
+                              case.Unet.results.rec_axis[-1])
+        Q, RT = log_variables(case.Unet.results, Q, RT)
     
     # %%
     save_and_add_artifact(WV_path + '_Q.npy', Q)
