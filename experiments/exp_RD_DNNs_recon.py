@@ -146,8 +146,6 @@ def main(filts, specifics, nVD, nTD, MSD, Unet):
     print('Finished setting up')
     case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.MSD]
-    case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
-    case.rec_methods += [case.Unet]
     
     l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
     if nVD == 0:
@@ -172,6 +170,9 @@ def main(filts, specifics, nVD, nTD, MSD, Unet):
         Q, RT = log_variables(case.MSD.results, Q, RT)
     # %% Do Unet
     if Unet:
+        case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
+        case.rec_methods += [case.Unet]
+
         case.Unet.add2sp_list(list_tr, list_v)
         case.Unet.do()
         print('Unet rec time:', case.Unet.results.rec_time[0])
