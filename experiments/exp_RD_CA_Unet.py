@@ -132,7 +132,7 @@ def log_variables(results, Q, RT):
 
 #%%
 @ex.automain
-def main(nTD, nVD, train, bpath, stop_crit, specifics):
+def main(nTD, nVD, train, bpath, stop_crit, specifics, epochs, epoch):
     # Specific phantom
     # %%
     t1 = time.time()
@@ -166,9 +166,9 @@ def main(nTD, nVD, train, bpath, stop_crit, specifics):
         list_v = [i + 10 for i in range(5)]
         
     if train:
-        print('Started training function')
-        case.Unet.train(list_tr, list_v, stop_crit=stop_crit, ratio=3)
-    
+        print('training')
+        case.Unet.train(list_tr, list_v, epochs=epochs, stop_crit=stop_crit, 
+                        ratio=3)
     else:
         case.Unet.add2sp_list(list_tr, list_v)
         case.Unet.do()
