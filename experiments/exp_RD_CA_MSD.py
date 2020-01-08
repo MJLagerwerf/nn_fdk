@@ -45,7 +45,7 @@ def cfg():
     sc = 2
     ang_freqs = [4]
     ang_freq = ang_freqs[it_i]
-    pix = 1024 // sc
+    vox = 1024 // sc
 
     # Load data?
     f_load_path = None
