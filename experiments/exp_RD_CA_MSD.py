@@ -37,7 +37,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 def cfg():
     it_i = 0
     bpath = '/bigstore/lagerwer/data/FleXray/'
-    load_path = f'{bpath}Walnuts/Walnut21/'
+    load_path = f'{bpath}Walnuts/Walnut21/Projections/'
     
     dsets = ['tubeV2']
     dset = dsets[it_i]
