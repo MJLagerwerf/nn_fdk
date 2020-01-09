@@ -181,7 +181,7 @@ def main(retrain, filts, specifics):
 
     save_and_add_artifact(WV_path + '_TT.npy', TT)
         
-#    Q, RT = log_variables(case.NNFDK.results, Q, RT)
+    Q, RT = log_variables(case.NNFDK.results, Q, RT)
 #    
 #    niter = [50, 100, 200]
 #    case.SIRT_NN.do(niter)
