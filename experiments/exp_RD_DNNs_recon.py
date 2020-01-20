@@ -65,6 +65,7 @@ def cfg():
     filts = ['Hann']
     MSD = True
     Unet = True
+    epoch = None
 
 # %%  
 @ex.capture
@@ -132,7 +133,7 @@ def log_variables(results, Q, RT):
     return Q, RT
 # %%
 @ex.automain
-def main(filts, specifics, nVD, nTD, MSD, Unet):
+def main(filts, specifics, nVD, nTD, MSD, Unet, epoch):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
@@ -175,7 +176,7 @@ def main(filts, specifics, nVD, nTD, MSD, Unet):
         case.rec_methods += [case.Unet]
 
         case.Unet.add2sp_list(list_tr, list_v)
-        case.Unet.do()
+        case.Unet.do(epoch)
         print('Unet rec time:', case.Unet.results.rec_time[0])
         save_and_add_artifact(WV_path + '_Unet_rec.npy',
                               case.Unet.results.rec_axis[-1])
