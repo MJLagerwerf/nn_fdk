@@ -40,27 +40,27 @@ def load_and_preprocess(path, dset, sc, redo, ang_freq):
     dataset, vecs = cap.load_and_preprocess(path, dset, ang_freq=ang_freq)
     meta = ddf.load_meta(f'{path}{dset}/', 1)
 
-    return dataset, meta
+    return dataset, meta, vecs
 
 @ex.capture
-def Create_dataset(dataset, meta, ang_freq, Exp_bin, bin_param):
-    pix_size = meta['pix_size']
+def Create_dataset(dataset, meta, vox, vecs, ang_freq, Exp_bin, bin_param, sc):
+    pix_size = sc * meta['pix_size']
     src_rad = meta['s2o']
     det_rad = meta['o2d']   
     return nn.Create_dataset_ASTRA_real(dataset, pix_size, src_rad, det_rad, 
-                              ang_freq, Exp_bin, bin_param)
+                              ang_freq, Exp_bin, bin_param, vox, vecs)
     
 # %%
 @ex.automain
 def main(it_i, path, dset, sc):
     t = time.time()
-    load_and_preprocess()
+    dataset, meta, vecs = load_and_preprocess()
     save_path = path + 'NNFDK/' + dset
-    B = Create_dataset()
+    B = Create_dataset(dataset, meta, vecs)
     np.save(save_path + '/Dataset' + str(it_i - 1), B)
     print('Finished creating Dataset' + str(it_i - 1) + '_' + dset,
           time.time() - t)
-
+    
     return ''
 
 
