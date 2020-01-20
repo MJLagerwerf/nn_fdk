@@ -372,7 +372,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         if epoch is None:
             epoch = sup.last_epoch(f'{save_path}')
         elif epoch is False:
-            weights_file = Path(f'{save_path}weights').expanduser().resolve()
+            weights_file = Path(f'{save_path}weights.torch').expanduser().resolve()
         else:
             weights_file = Path(f'{save_path}weights_epoch_{epoch}.torch'
                                 ).expanduser().resolve()
