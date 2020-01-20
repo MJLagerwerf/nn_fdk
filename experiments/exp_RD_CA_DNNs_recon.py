@@ -162,6 +162,7 @@ def main(filts, specifics, nVD, nTD, MSD, Unet):
         save_and_add_artifact(WV_path + '_MSD_rec.npy',
                               case.MSD.results.rec_axis[-1])
         Q, RT = log_variables(case.MSD.results, Q, RT)
+        save_table(case, WV_path)
     # %% Do Unet
     if Unet:
         case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
