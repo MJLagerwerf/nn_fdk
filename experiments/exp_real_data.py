@@ -8,7 +8,7 @@ Created on Thu Aug  8 16:16:56 2019
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
+#ddf.import_astra_GPU()
 import nn_fdk as nn
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
