@@ -56,7 +56,7 @@ def main(it_i, path, dset, sc):
     t = time.time()
     dataset, meta, vecs = load_and_preprocess()
     save_path = path + 'NNFDK/' + dset
-    B = Create_dataset(dataset, meta, vecs)
+    B = Create_dataset(dataset=dataset, meta=meta, vecs=vecs)
     np.save(save_path + '/Dataset' + str(it_i - 1), B)
     print('Finished creating Dataset' + str(it_i - 1) + '_' + dset,
           time.time() - t)
