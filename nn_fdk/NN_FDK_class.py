@@ -48,7 +48,7 @@ def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
         VD_fls = [full_path + VD_dn + str(i) for i in kwargs['d_fls'][1]]
     else:
         TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
-        VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
+        VD_fls = [full_path + VD_dn + str(i) for i in range(nVD)]
     
 #    print(TD_fls)
     # Open hdf5 file for your network
