@@ -57,7 +57,7 @@ def main(it_i, path, dset, sc, sp):
     t = time.time()
     dataset, meta, vecs = load_and_preprocess()
     B = Create_dataset(dataset=dataset, meta=meta, vecs=vecs)
-    np.save(save_path + '/Dataset' + str(it_i - 1), B)
+    np.save(sp + '/Dataset' + str(it_i - 1), B)
     print('Finished creating Dataset' + str(it_i - 1) + '_' + dset,
           time.time() - t)
     
