@@ -23,6 +23,7 @@ def cfg():
     bp = '/bigstore/lagerwer/data/FleXray/'
     dset = 'tubeV2'
     path = f'{bp}Walnuts/Walnut{it_i}/Projections/'
+    sp = f'{bp}Walnuts/NNFDK/' + dset + '/'
     
     ang_freq = 4
     sc = 2
@@ -52,10 +53,9 @@ def Create_dataset(dataset, meta, vox, vecs, ang_freq, Exp_bin, bin_param, sc):
     
 # %%
 @ex.automain
-def main(it_i, path, dset, sc):
+def main(it_i, path, dset, sc, sp):
     t = time.time()
     dataset, meta, vecs = load_and_preprocess()
-    save_path = path + 'NNFDK/' + dset
     B = Create_dataset(dataset=dataset, meta=meta, vecs=vecs)
     np.save(save_path + '/Dataset' + str(it_i - 1), B)
     print('Finished creating Dataset' + str(it_i - 1) + '_' + dset,
