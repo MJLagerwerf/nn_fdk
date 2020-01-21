@@ -27,7 +27,6 @@ ex = Experiment()
 # %%
 @ex.config
 def cfg():
-    it_i = 1
     bp = '/bigstore/lagerwer/data/FleXray/' 
     path = f'{bp}Walnuts/Walnut21/Projections/'
     dset = f'tubeV{2}'
@@ -128,7 +127,7 @@ def log_variables(results, Q, RT):
     return Q, RT
 # %%
 @ex.automain
-def main(it_i, retrain, filts, specifics):
+def main(retrain, filts, specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
