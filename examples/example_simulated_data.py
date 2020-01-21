@@ -33,9 +33,9 @@ det_rad = 0
 # Noise specifics
 noise = ['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
-nTrain, nTD = 1e6, 10
+nTrain, nTD = 1e5, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 5
+nVal, nVD = 1e5, 0
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -89,7 +89,7 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 
 case.FDK.do('Hann')
 # %%
-case.NNFDK.train(4)
+case.NNFDK.train(4, retrain=True)
 case.NNFDK.do()
 # %%
 #pylab.close('all')

@@ -49,11 +49,10 @@ def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
     else:
         TD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
         if nVD == 0:
-            VD_fls = [full_path + TD_dn + str(i) for i in range(nTD)]
+            VD_fls = [full_path + VD_dn + str(i) for i in range(nTD)]
         else:
             VD_fls = [full_path + VD_dn + str(i) for i in range(nVD)]
     
-#    print(TD_fls)
     # Open hdf5 file for your network
     # Check if we already have a network trained for this number of nodes
     if os.path.exists(fnNetwork + '.hdf5'):
