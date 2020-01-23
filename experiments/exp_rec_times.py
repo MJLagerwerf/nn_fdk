@@ -250,7 +250,7 @@ def main(nTests, retrain, filts, specifics, save_path, pix):
     save_and_add_artifact(f'{WV_path}_RT_SIRT', RT_SIRT)
     
     print('Finished NNFDKs')
-    save_table(case, WV_path)
+    # save_table(case, WV_path)
 
     
     case = None
