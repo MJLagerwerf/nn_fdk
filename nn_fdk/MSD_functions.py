@@ -178,6 +178,10 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
     def do(self, nr=-1, compute_results=True, measures=['MSE', 'MAE', 'SSIM']):
         t = time.time()
         save_path = self.sp_list[nr]
+        print('Started loading network:', datetime.datetime.now().time())
+        # Load network from file
+        n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',
+                                            gpu=True)
         # Make folder for output
         recfolder = Path(f'{save_path}Recon/')
         recfolder.mkdir(exist_ok=True)        
@@ -185,11 +189,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         infolder.mkdir(exist_ok=True)
         outfolder = Path(f'{save_path}Recon/out/')
         outfolder.mkdir(exist_ok=True)
-        gc.collect()
-        print('Started loading network:', datetime.datetime.now().time())
-        # Load network from file
-        n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',
-                                            gpu=True)
+
         print('Loaded network', time.time() - t, 'seconds')
 #        import sys
 #        sys.exit()

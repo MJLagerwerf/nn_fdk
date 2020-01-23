@@ -9,7 +9,7 @@ Created on Wed Jan 22 11:59:43 2020
 import numpy as np
 from pathlib import Path
 import ddf_fdk as ddf
-#ddf.import_astra_GPU()
+ddf.import_astra_GPU()
 import nn_fdk as nn
 from sacred import Experiment
 from sacred.observers import FileStorageObserver
@@ -186,56 +186,58 @@ def main(nTests, retrain, filts, specifics, save_path, pix):
         t = time.time()
         dilations = msdnet.dilations.IncrementDilations(10)
         print('hoi')
-        # n = msdnet.network.MSDNet.from_file(
-        #     f'{save_path}MSD/nTD1nVD1/regr_params.h5',gpu=True)
+        n = msdnet.network.MSDNet.from_file(
+            f'{save_path}MSD/nTD1nVD1/regr_params.h5',gpu=True)
         
-        # recfolder, infolder, outfolder = make_rec_tiffs(case, save_path)
-        # flsin = sorted(Path(infolder).glob('*.tiff'))
-        # d = msdnet.data.ImageFileDataPoint(flsin)
-        # rec = np.zeros((pix, pix, pix))
-        # for i in tqdm(range(len(flsin))):
-        #     # Create datapoint with only input image
-        #     d = msdnet.data.ImageFileDataPoint(str(flsin[i]))
-        #     # Compute network output
-        #     output = n.forward(d.input)
-        #     rec[:, :, i] = output[0]
-        #     # Save network output to file
-        #     tifffile.imsave(outfolder / 'msd_{:05d}.tiff'.format(i), output[0])
-        # RT_MSD[nt] = time.time() - t
-        # # %% Unet
-        # t = time.time()
-        # model = nn.Unet_functions.UNetRegressionModel(1, 1, parallel=False)
-        # weights_file = Path(
-        #     f'{save_path}/Unet/nTD1nVD1/weights.torch').expanduser().resolve()
-        # input_dir = Path(infolder).expanduser().resolve()
-        # input_spec = input_dir
-        # #        print(input_dir)
-        # ds = nn.Unet_functions.load_concat_data([input_spec], [input_spec])
-        # dl = DataLoader(ds, batch_size=1, shuffle=False)
-        # # Prepare output directory
-        # output_dir = Path(outfolder).expanduser().resolve()
-        # rec = np.zeros((pix, pix, pix))
-        # with torch.no_grad():
-        #     for (i, (inp, tar)) in tqdm(enumerate(dl), mininterval=5.0):
-        #         model.set_input(inp)
-        #         output = model.net(model.input)
-        #         output = output.detach().cpu().squeeze().numpy()
-        #         rec[:, :, i] = output
-        #         output_path = str(output_dir / f"unet_{i:05d}.tiff")
-        #         tifffile.imsave(output_path, output)
+        recfolder, infolder, outfolder = make_rec_tiffs(case, save_path)
+        flsin = sorted(Path(infolder).glob('*.tiff'))
+        d = msdnet.data.ImageFileDataPoint(flsin)
+        rec = np.zeros((pix, pix, pix))
+        for i in tqdm(range(len(flsin))):
+            # Create datapoint with only input image
+            d = msdnet.data.ImageFileDataPoint(str(flsin[i]))
+            # Compute network output
+            output = n.forward(d.input)
+            rec[:, :, i] = output[0]
+            # Save network output to file
+            tifffile.imsave(outfolder / 'msd_{:05d}.tiff'.format(i), output[0])
+        RT_MSD[nt] = time.time() - t
+        # %% Unet
+        t = time.time()
+        model = nn.Unet_functions.UNetRegressionModel(1, 1, parallel=False)
+        weights_file = Path(
+            f'{save_path}/Unet/nTD1nVD1/weights.torch').expanduser().resolve()
+        input_dir = Path(infolder).expanduser().resolve()
+        input_spec = input_dir
+        #        print(input_dir)
+        ds = nn.Unet_functions.load_concat_data([input_spec], [input_spec])
+        dl = DataLoader(ds, batch_size=1, shuffle=False)
+        # Prepare output directory
+        output_dir = Path(outfolder).expanduser().resolve()
+        rec = np.zeros((pix, pix, pix))
+        with torch.no_grad():
+            for (i, (inp, tar)) in tqdm(enumerate(dl), mininterval=5.0):
+                model.set_input(inp)
+                output = model.net(model.input)
+                output = output.detach().cpu().squeeze().numpy()
+                rec[:, :, i] = output
+                output_path = str(output_dir / f"unet_{i:05d}.tiff")
+                tifffile.imsave(output_path, output)
         RT_Unet[nt] = time.time() - t
     # %% Rest
         case.FDK.do(filts)
         case.NNFDK.do()
         niter = [50, 100, 200]
         case.SIRT_NN.do(niter)
-        print(case.SIRT_NN.results.rec_time)
-        print(case.SIRT_NN.results.rec_time[-3:])
         RT_SIRT[nt, :] = case.SIRT_NN.results.rec_time[-3:]
 
     RT_FDK = case.FDK.results.rec_time
     RT_NNFDK = case.NNFDK.results.rec_time
-
+    save_and_add_artifact(f'{WV_path}_RT_MSD', RT_MSD)
+    save_and_add_artifact(f'{WV_path}_RT_Unet', RT_Unet)
+    save_and_add_artifact(f'{WV_path}_RT_FDK', RT_FDK)
+    save_and_add_artifact(f'{WV_path}_RT_NNFDK', RT_NNFDK)
+    save_and_add_artifact(f'{WV_path}_RT_SIRT', RT_SIRT)
     
     print('Finished NNFDKs')
     save_table(case, WV_path)

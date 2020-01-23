@@ -30,7 +30,8 @@ def load_dataset_adapt_voxels(data_path, idData, nVox, one_dset=False):
         Ds = Ds[idVox[:int(nVox)], :]
         return Ds
     else:
-        
+        if nVox[0] == np.shape(Ds)[0]:
+            raise ValueError('Dataset not large enough')
         # Take the desired number of voxels for the dataset
         Ds1 = Ds[idVox[:int(nVox[0])], :]
         Ds2 = Ds[idVox[int(nVox[0]):int(nVox[1] + nVox[0])], :]
