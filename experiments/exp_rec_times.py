@@ -243,11 +243,11 @@ def main(nTests, retrain, filts, specifics, save_path, pix):
 
     RT_FDK = case.FDK.results.rec_time
     RT_NNFDK = case.NNFDK.results.rec_time
-    save_and_add_artifact(f'{WV_path}_RT_MSD', RT_MSD)
-    save_and_add_artifact(f'{WV_path}_RT_Unet', RT_Unet)
-    save_and_add_artifact(f'{WV_path}_RT_FDK', RT_FDK)
-    save_and_add_artifact(f'{WV_path}_RT_NNFDK', RT_NNFDK)
-    save_and_add_artifact(f'{WV_path}_RT_SIRT', RT_SIRT)
+    save_and_add_artifact(f'{WV_path}_RT_MSD.npy', RT_MSD)
+    save_and_add_artifact(f'{WV_path}_RT_Unet.npy', RT_Unet)
+    save_and_add_artifact(f'{WV_path}_RT_FDK.npy', RT_FDK)
+    save_and_add_artifact(f'{WV_path}_RT_NNFDK.npy', RT_NNFDK)
+    save_and_add_artifact(f'{WV_path}_RT_SIRT.npy', RT_SIRT)
     
     print('Finished NNFDKs')
     # save_table(case, WV_path)
