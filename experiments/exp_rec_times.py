@@ -191,13 +191,13 @@ def main(nTests, retrain, filts, specifics, save_path, pix):
     WV_path = case.WV_path + specifics
     print('Finished making data objects')
     case.NNFDK.train(4, retrain=False)
+    dilations = msdnet.dilations.IncrementDilations(10)
+    print('hoi')
+    n = msdnet.network.MSDNet.from_file(
+        f'{save_path}MSD/nTD1nVD1/regr_params.h5',gpu=True)
     for nt in range(nTests):
         # %% MSD
         t = time.time()
-        dilations = msdnet.dilations.IncrementDilations(10)
-        print('hoi')
-        n = msdnet.network.MSDNet.from_file(
-            f'{save_path}MSD/nTD1nVD1/regr_params.h5',gpu=True)
         
         recfolder, infolder, outfolder = make_rec_tiffs(case, save_path)
         flsin = sorted(Path(infolder).glob('*.tiff'))
