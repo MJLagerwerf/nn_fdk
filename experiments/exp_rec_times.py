@@ -157,13 +157,18 @@ def log_variables(results, Q, RT):
 def make_rec_tiffs(case, save_path):
     # Make folder for output
     recfolder = Path(f'{save_path}Recon/')
-    shutil.rmtree(recfolder)
-    recfolder.mkdir(exist_ok=True)        
+    if os.path.exists(recfolder):
+        shutil.rmtree(recfolder)
+    recfolder.mkdir(exist_ok=True)
+    
     infolder = Path(f'{save_path}Recon/in/')
-    shutil.rmtree(infolder)
+    if os.path.exists(infolder):
+        shutil.rmtree(infolder)
     infolder.mkdir(exist_ok=True)
+    
     outfolder = Path(f'{save_path}Recon/out/')
-    shutil.rmtree(outfolder)
+    if os.path.exists(outfolder):
+        shutil.rmtree(outfolder)
     outfolder.mkdir(exist_ok=True)
     rec = case.FDK.do('Hann', compute_results=False)
     print('Done FDK reconstruciton')
