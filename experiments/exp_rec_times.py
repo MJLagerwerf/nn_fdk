@@ -23,6 +23,7 @@ from tqdm import tqdm
 import tifffile
 from torch.utils.data import DataLoader
 import torch
+import shutil
 # %%
 path = 'python_data/results/'
 ex = Experiment()
@@ -44,7 +45,7 @@ def cfg():
     # Source radius
     src_rad = 10
     # Noise specifics
-    noise = ['Poisson', 2 ** 8]
+    noise = None#['Poisson', 2 ** 8]
 
     # Should we retrain the networks?
     retrain = False
@@ -156,10 +157,13 @@ def log_variables(results, Q, RT):
 def make_rec_tiffs(case, save_path):
     # Make folder for output
     recfolder = Path(f'{save_path}Recon/')
+    shutil.rmtree(recfolder)
     recfolder.mkdir(exist_ok=True)        
     infolder = Path(f'{save_path}Recon/in/')
+    shutil.rmtree(infolder)
     infolder.mkdir(exist_ok=True)
     outfolder = Path(f'{save_path}Recon/out/')
+    shutil.rmtree(outfolder)
     outfolder.mkdir(exist_ok=True)
     rec = case.FDK.do('Hann', compute_results=False)
     print('Done FDK reconstruciton')
