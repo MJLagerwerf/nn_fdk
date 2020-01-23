@@ -66,7 +66,8 @@ def cfg():
     # bpath = '/bigstore/lagerwer/data/NNFDK/'
     bpath = '/export/scratch2/lagerwer/NNFDK/'
     nTests = 5
-    loc = '/ufs/lagerwer/mount/scan7'
+    # loc = '/ufs/lagerwer/mount/scan7'
+    loc = ''
     save_path = f'{loc}/bigstore/lagerwer/data/NNFDK/4S_V1024_A360_SR10_I0256/L2/'
 
 
