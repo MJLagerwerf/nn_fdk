@@ -139,6 +139,7 @@ def main(pix, phantom, PH,  bpath):
     RT = np.zeros((0))
     data_path = [[], [], []]
     case = CT()
+    print('CT object is set up')
     save_and_add_artifact(case.WV_path + 'DNN_{PH}_g.npy', case.g)
     # Do FDK recons
     case.FDK.do('Hann')
