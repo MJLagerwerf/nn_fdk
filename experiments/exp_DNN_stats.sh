@@ -7,12 +7,12 @@
 for i in {0..20}
 do
     python exp_DNNs_recons.py -p -F \
-    NNFDK_results/DNN_stats_4S with phantom='Fourshape'
+    NNFDK_results/DNN_stats_4S with phantom='Fourshape' --log=WARNING
 done
 
 for i in {0..20}
 do
     python exp_DNNs_recons.py -p -F \
-    NNFDK_results/DNN_stats_DF with phantom='Defrise random'
+    NNFDK_results/DNN_stats_DF with phantom='Defrise random' --log=WARNING
 done
 
