@@ -24,18 +24,19 @@ sys.path.append('../nn_fdk/')
 import msdnet
 from tqdm import tqdm
 
-name_exp = 'DNN_recons'
-ex = Experiment(name_exp, ingredients=[])
+# name_exp = 'DNN_recons'
+# ex = Experiment(name_exp, ingredients=[])
 
-FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
-ex.observers.append(FileStorageObserver.create(FSpath))
-
+# FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
+# ex.observers.append(FileStorageObserver.create(FSpath))
+ex = Experiment()
 # %%
 @ex.config
 def cfg():
-    phantom = 'Fourshape_test'
+    phantom = 'Fourshape'
     pix = 1024
-    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    # bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    bpath = '/bigstore/lagerwer/data/NNFDK/'
     if phantom == 'Fourshape_test' or phantom == 'Fourshape':
         PH = '4S'
         src_rad = 10
@@ -52,9 +53,9 @@ def cfg():
     # Noise specifics
     
     # Number of voxels used for training, number of datasets used for training
-    nTrain = 1e5
+    nTrain = 1e6
     # Number of voxels used for validation, number of datasets used for validation
-    nVal = 1e5
+    nVal = 1e6
     
     # Specifics for the expansion operator
     Exp_bin = 'linear'
@@ -133,7 +134,7 @@ def NNFDK_obj(CT_obj, phantom, pix, angles, src_rad, noise, nTrain, nTD, nVal,
 @ex.automain
 def main(pix, phantom, PH,  bpath):
     # %%
-    scens = [0, 1]
+    scens = [0, 1, 2]
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     data_path = [[], [], []]
@@ -163,7 +164,7 @@ def main(pix, phantom, PH,  bpath):
                           case.NNFDK.results.rec_axis[-1])
         Q, RT = log_variables(case.NNFDK.results, Q, RT)
         case.table()
-        print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
+        print('NNFDK rec time:', case.NNFDK.results.rec_time[-1])
     
     data_path = case.NNFDK.data_path
     # %% Set up DNNs
@@ -176,7 +177,7 @@ def main(pix, phantom, PH,  bpath):
 
     for S in scens:
         if S == 0:
-            nTD, nVD = 1, None
+            nTD, nVD = 1, 0
         if S == 1:
             nTD, nVD = 1, 1
         if S == 2: 
@@ -187,7 +188,7 @@ def main(pix, phantom, PH,  bpath):
         case.MSD.add2sp_list(list_tr[S], list_v[S])
         print('added lists')
         case.MSD.do()
-        print('MSD rec time:', case.MSD.results.rec_time[0])
+        print('MSD rec time:', case.MSD.results.rec_time[-1])
         
         save_and_add_artifact(WV_path + '_MSD_rec.npy',
                               case.MSD.results.rec_axis[-1])
@@ -208,7 +209,7 @@ def main(pix, phantom, PH,  bpath):
         case.rec_methods += [case.Unet]
         case.Unet.add2sp_list(list_tr[S], list_v[S])
         case.Unet.do()
-        print('Unet rec time:', case.Unet.results.rec_time[0])
+        print('Unet rec time:', case.Unet.results.rec_time[-1])
         save_and_add_artifact(WV_path + '_MSD_rec.npy',
                               case.Unet.results.rec_axis[-1])
     
