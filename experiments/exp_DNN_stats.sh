@@ -2,7 +2,7 @@
 # limit numper of OpenMP threads
 #export OMP_NUM_THREADS=16
 # set astra gpu index: 0-3
-#export CUDA_VISIBLE_DEVICES=0,1,2,3
+export CUDA_VISIBLE_DEVICES=0,1,2,3
 
 for i in {0..20}
 do
