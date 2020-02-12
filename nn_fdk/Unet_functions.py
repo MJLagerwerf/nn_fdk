@@ -439,7 +439,7 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         
             
 
-        param = f'nTD={self.nTD}, epoch = {epoch}'
+        param = f'nTD={self.nTD}, nVD={self.nVD}, epoch = {epoch}'
         t_rec = time.time() - t
         if compute_results:
             self.comp_results(rec, measures, '', param, t_rec)
