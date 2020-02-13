@@ -152,9 +152,9 @@ def main(pix, phantom, PH,  bpath):
     for S in scens:
         if S == 0:
             nTD, nVD = 1, 0
-        if S == 1:
+        elif S == 1:
             nTD, nVD = 1, 1
-        if S == 2: 
+        elif S == 2: 
             nTD, nVD = 10, 5
             
         specifics = f'DNN_{PH}_NTD{nTD}NVD{nVD}'
@@ -180,9 +180,9 @@ def main(pix, phantom, PH,  bpath):
     for S in scens:
         if S == 0:
             nTD, nVD = 1, 0
-        if S == 1:
+        elif S == 1:
             nTD, nVD = 1, 1
-        if S == 2: 
+        elif S == 2: 
             nTD, nVD = 10, 5
         case.MSD = msd.MSD_class(case, data_path)
         case.rec_methods += [case.MSD]
@@ -203,9 +203,9 @@ def main(pix, phantom, PH,  bpath):
     for S in scens:
         if S == 0:
             nTD, nVD = 1, 0
-        if S == 1:
+        elif S == 1:
             nTD, nVD = 1, 1
-        if S == 2: 
+        elif S == 2: 
             nTD, nVD = 10, 5
         case.Unet = unet.Unet_class(case, data_path)
         case.rec_methods += [case.Unet]
@@ -216,11 +216,22 @@ def main(pix, phantom, PH,  bpath):
                               case.Unet.results.rec_axis[-1])
     
         Q, RT = log_variables(case.Unet.results, Q, RT)
+    case.table()
     # %%
+    if PH == '4S':
+        niter = [20, 50, 100]        
+    elif PH == 'DF':
+        niter = [50, 100, 200]
+
+    case.SIRT_NN.do(niter)
+    for ni in range(len(niter)):
+        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
+                              case.SIRT_NN.results.rec_axis[ni])
+
+    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
 
-    print('Finished NNFDKs')
     save_table(case, WV_path)
 
     case = None
