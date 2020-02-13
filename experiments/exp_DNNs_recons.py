@@ -13,9 +13,10 @@ import nn_fdk as nn
 import time
 import pylab
 import h5py
+import astra
 t = time.time()
 
-ddf.import_astra_GPU()
+# ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
@@ -23,7 +24,7 @@ import sys
 sys.path.append('../nn_fdk/')
 import msdnet
 from tqdm import tqdm
-
+astra.set_gpu_index([0, 1, 2, 3])
 # name_exp = 'DNN_recons'
 # ex = Experiment(name_exp, ingredients=[])
 
@@ -159,7 +160,7 @@ def main(pix, phantom, PH,  bpath):
         specifics = f'DNN_{PH}_NTD{nTD}NVD{nVD}'
         WV_path = case.WV_path + specifics 
         case = NNFDK_obj(CT_obj=case, nTD=nTD, nVD=nVD)
-        case.NNFDK.train(4, retrain=True)
+        case.NNFDK.train(4, retrain=False)
         case.NNFDK.do()
         save_and_add_artifact(WV_path + '_NNFDK4_rec.npy',
                           case.NNFDK.results.rec_axis[-1])
