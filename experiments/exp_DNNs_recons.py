@@ -140,7 +140,7 @@ def main(pix, phantom, PH,  bpath):
     data_path = [[], [], []]
     case = CT()
     print('CT object is set up')
-    save_and_add_artifact(case.WV_path + 'DNN_{PH}_g.npy', case.g)
+    save_and_add_artifact(case.WV_path + r'DNN_{PH}_g.npy', case.g)
     # Do FDK recons
     case.FDK.do('Hann')
     save_and_add_artifact(case.WV_path + 'DNN_{PH}_FDKHN_rec.npy', 
