@@ -29,7 +29,7 @@ def cfg():
     it_j = 0
     pix = 256
     # Specific phantom
-    phantom = 'Fourshape_test'
+    phantom = 'Fourshape'
     # Number of angles
     angles = 360
     # Source radius
@@ -38,10 +38,7 @@ def cfg():
     I0 = [2 ** 8, 2 ** 9, 2 ** 10, 2 ** 11, 2 ** 12, 2 ** 13, 2 ** 14, 2 ** 16,
           2 ** 18, 2 ** 20]
     noise = ['Poisson', I0[it_i]]
-    
-    # Load data?
-    f_load_path = None
-    g_load_path = None
+
     
     # Source radius
     src_rad = 10
@@ -77,26 +74,21 @@ def create_datasets(pix, phantom, angles, src_rad, noise, nTD, nVD, Exp_bin,
 
         
 @ex.capture
-def CT(pix, phantom, angles, src_rad, noise, nTrain, nTD, nVal, nVD,
-              Exp_bin, bin_param, f_load_path, g_load_path, bpath):
-    
+def CT(pix, phantom, angles, src_rad, noise):
     voxels = [pix, pix, pix]
     det_rad = 0
-    if g_load_path is not None:
-        if f_load_path is not None:
-            data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad,
-                                   det_rad, load_data_g=g_load_path,
-                                   load_data_f=f_load_path)
-        else:
-            data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad,
-                               det_rad, load_data_g=g_load_path)
-            
-    else:
-        data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad,
-                                   det_rad)
+    data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)
 
     CT_obj = ddf.CCB_CT(data_obj)
     CT_obj.init_algo()
+    return CT_obj
+
+@ex.capture
+def NNFDK_obj(CT_obj, phantom, pix, angles, src_rad, noise, nTrain, nTD, nVal,
+              nVD, Exp_bin, bin_param, bpath):
+    nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
+                                    Exp_bin, bin_param, nTD + nVD,
+                                    base_path=bpath)
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
                                                          CT_obj.filter_space,
                                                          interp=Exp_bin)
@@ -150,52 +142,47 @@ def log_variables(results, Q, RT):
 # %%
 @ex.automain
 def main(retrain, filts, specifics):
+   # %%
+    scens = [0, 1]
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
-    
-    create_datasets()
-    # Create a test dataset
+    data_path = [[], [], []]
     case = CT()
-    # Create the paths where the objects are saved
-    data_path, full_path = make_map_path()
-    WV_path = case.WV_path + specifics 
-    print('Finished making data objects')
-#    save_and_add_artifact(WV_path + '_g.npy', case.g)
-#
-
-#    for i in range(len(filts)):
-#        case.FDK.do(filts[i])
-#    Q, RT = log_variables(case.FDK.results, Q, RT)
-#
-#    save_and_add_artifact(WV_path + '_FDKHN_rec.npy',
-#            case.FDK.results.rec_axis[-1])
-#    
-#    print('Finished FDKs')
-#    TT = np.zeros(5)
-#    for i in range(5):
-    i = 2
-    case.NNFDK.train(2 ** i, retrain=retrain)
-
-        
-    TT = case.NNFDK.train_time
-    save_network(case, full_path, 'network_' + str(2 ** i) + '.hdf5')
-        
-    case.NNFDK.do()
-    save_and_add_artifact(WV_path + '_NNFDK'+  str(2 ** i) + 
-                               '_rec.npy', case.NNFDK.results.rec_axis[-1])
-
-    save_and_add_artifact(WV_path + '_TT.npy', TT)
-        
-    Q, RT = log_variables(case.NNFDK.results, Q, RT)
+    print('CT object is set up')
+    save_and_add_artifact(case.WV_path + f'{specifics}_g.npy', case.g)
+    # Do FDK recons
+    case.FDK.do('Hann')
+    save_and_add_artifact(case.WV_path + specifics + 'FDKHN_rec.npy', 
+                          case.FDK.results.rec_axis[-1])
     
-#    niter = [20, 50, 100]
-#    case.SIRT_NN.do(niter)
-#    for ni in range(len(niter)):
-#        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
-#                              case.SIRT_NN.results.rec_axis[ni])
-#
-#
-#    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
+    print('FDK rec time:', case.FDK.results.rec_time[0])
+    Q, RT = log_variables(case.FDK.results, Q, RT)
+    for S in scens:
+        if S == 0:
+            nTD, nVD = 1, 0
+        elif S == 1:
+            nTD, nVD = 1, 1
+        elif S == 2: 
+            nTD, nVD = 10, 5
+            
+
+        WV_path = case.WV_path + specifics 
+        case = NNFDK_obj(CT_obj=case, nTD=nTD, nVD=nVD)
+        case.NNFDK.train(4, retrain=False)
+        case.NNFDK.do()
+        save_and_add_artifact(WV_path + f'S{S}_NNFDK4_rec.npy',
+                          case.NNFDK.results.rec_axis[-1])
+        Q, RT = log_variables(case.NNFDK.results, Q, RT)
+        case.table()
+        print('NNFDK rec time:', case.NNFDK.results.rec_time[-1])
+    
+    niter = [20, 50, 100]
+    case.SIRT_NN.do(niter)
+    for ni in range(len(niter)):
+        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
+                              case.SIRT_NN.results.rec_axis[ni])
+
+    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
 
