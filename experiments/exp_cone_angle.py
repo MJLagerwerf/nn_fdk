@@ -15,7 +15,7 @@ import time
 import pylab
 import os
 import gc
-
+astra.set_gpu_index([0, 1, 2, 3])
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
