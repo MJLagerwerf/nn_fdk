@@ -137,7 +137,7 @@ def log_variables(results, Q, RT):
 @ex.automain
 def main(retrain, filts, specifics):
    # %%
-    scens = [0, 1]
+    scens = [0, 1, 2]
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     data_path = [[], [], []]
