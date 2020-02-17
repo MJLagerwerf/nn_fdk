@@ -17,6 +17,7 @@ import pylab
 import os
 import time
 import h5py
+import astra
 astra.set_gpu_index([0, 1, 2, 3])
 # %%
 path = 'python_data/results/'
