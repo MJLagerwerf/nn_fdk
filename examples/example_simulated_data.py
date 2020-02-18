@@ -24,7 +24,7 @@ def make_hann_filt(voxels, w_detu):
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Fourshape_test'
+phantom = 'Fourshape'
 # Number of angles
 angles = 360
 # Source radius

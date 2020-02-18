@@ -26,8 +26,9 @@ ex = Experiment()
 @ex.config
 def cfg():
     it_i = 0
+    it_j = 21
     bpath = '/bigstore/lagerwer/data/FleXray/'
-    load_path = f'{bpath}walnuts_10MAY/walnut_21/'
+    load_path = f'{bpath}walnuts_10MAY/walnut_{it_j}/'
     
     dsets = ['noisy', 'good']
     dset = dsets[it_i]
@@ -69,8 +70,7 @@ def cfg():
 
 # %%  
 @ex.capture
-def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
-       nVD, bpath):
+def CT(load_path, dset, sc, ang_freq):
     dataset = ddf.load_and_preprocess_real_data(load_path, dset, sc)
     meta = ddf.load_meta(load_path + dset + '/', sc)
     pix_size = meta['pix_size']
@@ -82,11 +82,13 @@ def CT(load_path, dset, sc, ang_freq, Exp_bin, bin_param, nTrain, nTD, nVal,
 
     CT_obj = ddf.CCB_CT(data_obj)
     CT_obj.init_algo()
+    return CT_obj
+
+@ex.capture
+def NNFDK_obj(CT_obj, dset, Exp_bin, bin_param, nTrain, nTD, nVal, nVD, bpath):
     spf_space, Exp_op = ddf.support_functions.ExpOp_builder(bin_param,
                                                          CT_obj.filter_space,
                                                          interp=Exp_bin)
-    # Create the FDK binned operator
-#    CT_obj.FDK_bin_nn = CT_obj.FDK_op * Exp_op
 
     # Create the NN-FDK object
     CT_obj.NNFDK = nn.NNFDK_class(CT_obj, nTrain, nTD, nVal, nVD, Exp_bin,
@@ -133,7 +135,8 @@ def log_variables(results, Q, RT):
     return Q, RT
 # %%
 @ex.automain
-def main(filts, specifics, nVD, nTD, MSD, Unet, epoch):
+def main(filts, dset, specifics, nVD, nTD, MSD, Unet, epoch):
+    scens = [0, 1, 2]
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
@@ -143,52 +146,97 @@ def main(filts, specifics, nVD, nTD, MSD, Unet, epoch):
     data_path, full_path = make_map_path()
     WV_path = case.WV_path + specifics 
     # %%
-
-    print('Finished setting up')
-    case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
-    case.rec_methods += [case.MSD]
+    # Do FDK recons
+    case.FDK.do('Hann')
+    save_and_add_artifact(case.WV_path + 'DNN__FDKHN_rec.npy', 
+                          case.FDK.results.rec_axis[-1])
     
-    l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
-    if nVD == 0:
-        list_tr = [0]
-        list_v = None
-    elif nVD == 1:
-        list_tr = [0]
-        list_v = [1]
-    else:
-        list_tr = [i for i in range(10)]
-        list_v = [i + 10 for i in range(5)]
+    print('FDK rec time:', case.FDK.results.rec_time[0])
+    Q, RT = log_variables(case.FDK.results, Q, RT)
+    for S in scens:
+        if S == 0:
+            nTD, nVD = 1, 0
+        elif S == 1:
+            nTD, nVD = 1, 1
+        elif S == 2: 
+            nTD, nVD = 10, 5
+            
+        specifics = f'DNN_'
+        WV_path = case.WV_path + specifics 
+        case = NNFDK_obj(CT_obj=case, nTD=nTD, nVD=nVD)
+        case.NNFDK.train(4, retrain=False)
+        case.NNFDK.do()
+        save_and_add_artifact(WV_path + '_NNFDK4_rec.npy',
+                          case.NNFDK.results.rec_axis[-1])
+        Q, RT = log_variables(case.NNFDK.results, Q, RT)
+        case.table()
+        print('NNFDK rec time:', case.NNFDK.results.rec_time[-1])
+    
+    # %% Set up DNNs
+    list_tr = [[0], [0], [i for i in range(10)]]
+    list_v = [None, [1], [i + 10 for i in range(5)]]
+
     
     # %% Do MSD
-    if MSD:
-        case.MSD.add2sp_list(list_tr, list_v)
+    import MSD_functions as msd
+
+    for S in scens:
+        if S == 0:
+            nTD, nVD = 1, 0
+        elif S == 1:
+            nTD, nVD = 1, 1
+        elif S == 2: 
+            nTD, nVD = 10, 5
+        case.MSD = msd.MSD_class(case, data_path)
+        case.rec_methods += [case.MSD]
+        
+        case.MSD.add2sp_list(list_tr[S], list_v[S])
         print('added lists')
         case.MSD.do()
-        print('MSD rec time:', case.MSD.results.rec_time[0])
-        save_table(case, WV_path)
+        print('MSD rec time:', case.MSD.results.rec_time[-1])
+        
         save_and_add_artifact(WV_path + '_MSD_rec.npy',
                               case.MSD.results.rec_axis[-1])
         Q, RT = log_variables(case.MSD.results, Q, RT)
-        
-    # %% Do Unet
-    if Unet:
-        case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
-        case.rec_methods += [case.Unet]
 
-        case.Unet.add2sp_list(list_tr, list_v)
-        case.Unet.do(epoch)
-        print('Unet rec time:', case.Unet.results.rec_time[0])
-        save_and_add_artifact(WV_path + '_Unet_rec.npy',
-                              case.Unet.results.rec_axis[-1])
-        Q, RT = log_variables(case.Unet.results, Q, RT)
+    case.table()
+    # %% Do Unet
+    import Unet_functions as unet
     
+    for S in scens:
+        if S == 0:
+            nTD, nVD = 1, 0
+        elif S == 1:
+            nTD, nVD = 1, 1
+        elif S == 2: 
+            nTD, nVD = 10, 5
+        case.Unet = unet.Unet_class(case, data_path)
+        case.rec_methods += [case.Unet]
+        case.Unet.add2sp_list(list_tr[S], list_v[S])
+        case.Unet.do()
+        print('Unet rec time:', case.Unet.results.rec_time[-1])
+        save_and_add_artifact(WV_path + '_MSD_rec.npy',
+                              case.Unet.results.rec_axis[-1])
+    
+        Q, RT = log_variables(case.Unet.results, Q, RT)
+    case.table()
     # %%
+    if dset == 'noisy':
+        niter = [20, 50, 100]        
+    elif dset == 'good':
+        niter = [50, 100, 200]
+
+    case.SIRT_NN.do(niter)
+    for ni in range(len(niter)):
+        save_and_add_artifact(WV_path + '_SIRT' + str(niter[ni]) + '_rec.npy',
+                              case.SIRT_NN.results.rec_axis[ni])
+
+    Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
     save_and_add_artifact(WV_path + '_Q.npy', Q)
     save_and_add_artifact(WV_path + '_RT.npy', RT)
 
-    print('Finished NNFDKs')
     save_table(case, WV_path)
 
-    
     case = None
+
     return Q
