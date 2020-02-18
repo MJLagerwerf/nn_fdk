@@ -184,6 +184,8 @@ def main(pix, phantom, PH,  bpath):
             nTD, nVD = 1, 1
         elif S == 2: 
             nTD, nVD = 10, 5
+        specifics = f'DNN_{PH}_NTD{nTD}NVD{nVD}'
+        WV_path = case.WV_path + specifics 
         case.MSD = msd.MSD_class(case, data_path)
         case.rec_methods += [case.MSD]
         
@@ -207,12 +209,14 @@ def main(pix, phantom, PH,  bpath):
             nTD, nVD = 1, 1
         elif S == 2: 
             nTD, nVD = 10, 5
+        specifics = f'DNN_{PH}_NTD{nTD}NVD{nVD}'
+        WV_path = case.WV_path + specifics 
         case.Unet = unet.Unet_class(case, data_path)
         case.rec_methods += [case.Unet]
         case.Unet.add2sp_list(list_tr[S], list_v[S])
         case.Unet.do()
         print('Unet rec time:', case.Unet.results.rec_time[-1])
-        save_and_add_artifact(WV_path + '_MSD_rec.npy',
+        save_and_add_artifact(WV_path + '_Unet_rec.npy',
                               case.Unet.results.rec_axis[-1])
     
         Q, RT = log_variables(case.Unet.results, Q, RT)

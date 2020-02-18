@@ -18,6 +18,8 @@ import os
 import time
 import h5py
 import astra
+import sys
+sys.path.append('../nn_fdk/')
 astra.set_gpu_index([0, 1, 2, 3])
 # %%
 path = 'python_data/results/'
@@ -220,7 +222,7 @@ def main(filts, dset, specifics, nVD, nTD, MSD, Unet, epoch):
         case.Unet.add2sp_list(list_tr[S], list_v[S])
         case.Unet.do()
         print('Unet rec time:', case.Unet.results.rec_time[-1])
-        save_and_add_artifact(WV_path + '_MSD_rec.npy',
+        save_and_add_artifact(WV_path + '_Unet_rec.npy',
                               case.Unet.results.rec_axis[-1])
     
         Q, RT = log_variables(case.Unet.results, Q, RT)

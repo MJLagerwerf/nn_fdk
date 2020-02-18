@@ -16,3 +16,8 @@ do
     NNFDK_results/DNN_stats_good with  it_i=1 it_j=$i --log=WARNING
 done
 
+for i in {16..20}
+do
+    python exp_RD_CA_DNNs_recon.py -p -F \
+    NNFDK_results/DNN_stats_CA with  it_i=1 it_j=$i --log=WARNING
+done

@@ -16,6 +16,10 @@ import pylab
 import os
 import time
 import h5py
+import sys
+sys.path.append('../nn_fdk/')
+import astra
+astra.set_gpu_index([0, 1, 2, 3])
 import load_and_preprocess_CA as cap
 # %%
 path = 'python_data/results/'
@@ -58,8 +62,7 @@ def cfg():
     specifics = 'CA_RD'
     
     filts = ['Hann']
-    MSD = True
-    Unet = True
+
 
 # %%  
 @ex.capture
