@@ -162,7 +162,7 @@ def main(filts, dset, specifics, nVD, nTD, MSD, Unet, epoch):
         elif S == 2: 
             nTD, nVD = 10, 5
             
-        specifics = f'DNN_'
+        specifics = f'DNN_{dset}_{S}'
         WV_path = case.WV_path + specifics 
         case = NNFDK_obj(CT_obj=case, nTD=nTD, nVD=nVD)
         case.NNFDK.train(4, retrain=False)
@@ -188,6 +188,8 @@ def main(filts, dset, specifics, nVD, nTD, MSD, Unet, epoch):
             nTD, nVD = 1, 1
         elif S == 2: 
             nTD, nVD = 10, 5
+        specifics = f'DNN_{dset}_{S}'
+        WV_path = case.WV_path + specifics 
         case.MSD = msd.MSD_class(case, data_path)
         case.rec_methods += [case.MSD]
         
@@ -211,6 +213,8 @@ def main(filts, dset, specifics, nVD, nTD, MSD, Unet, epoch):
             nTD, nVD = 1, 1
         elif S == 2: 
             nTD, nVD = 10, 5
+        specifics = f'DNN_{dset}_{S}'
+        WV_path = case.WV_path + specifics 
         case.Unet = unet.Unet_class(case, data_path)
         case.rec_methods += [case.Unet]
         case.Unet.add2sp_list(list_tr[S], list_v[S])
