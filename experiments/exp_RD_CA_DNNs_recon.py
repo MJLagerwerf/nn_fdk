@@ -132,7 +132,7 @@ def log_variables(results, Q, RT):
     return Q, RT
 # %%
 @ex.automain
-def main(filts, dset, specifics, nVD, nTD, MSD, Unet, epoch):
+def main(filts, dset, specifics, nVD, nTD):
     scens = [0, 1, 2]
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
