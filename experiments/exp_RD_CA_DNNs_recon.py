@@ -218,10 +218,8 @@ def main(filts, dset, specifics, nVD, nTD):
         Q, RT = log_variables(case.Unet.results, Q, RT)
     case.table()
     # %%
-    if dset == 'noisy':
-        niter = [20, 50, 100]        
-    elif dset == 'good':
-        niter = [50, 100, 200]
+
+    niter = [50, 100, 200]
 
     case.SIRT_NN.do(niter)
     for ni in range(len(niter)):
