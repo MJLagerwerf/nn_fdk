@@ -24,7 +24,7 @@ def make_hann_filt(voxels, w_detu):
 # %%
 pix = 256
 # Specific phantom
-phantom = 'Fourshape'
+phantom = 'Fourshape_test'
 # Number of angles
 angles = 360
 # Source radius
@@ -35,7 +35,7 @@ noise = ['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
 nTrain, nTD = 1e6, 1
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 0
+nVal, nVD = 1e6, 1
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -59,10 +59,10 @@ data_obj = ddf.phantom(voxels, phantom, angles, noise, src_rad, det_rad)#,
 print('Making phantom and mask took', time.time() -t2, 'seconds')
 # The amount of projection angles in the measurements
 # Source to center of rotation radius
-filt = make_hann_filt(data_obj.voxels, data_obj.w_detu)
-xFDK = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, filt,
-                                           data_obj.geometry, 
-                                           data_obj.reco_space, None)
+# filt = make_hann_filt(data_obj.voxels, data_obj.w_detu)
+# xFDK = ddf.FDK_ODL_astra_backend.FDK_astra(data_obj.g, filt,
+#                                            data_obj.geometry, 
+#                                            data_obj.reco_space, None)
 t3 = time.time()
 # %% Create the circular cone beam CT class
 case = ddf.CCB_CT(data_obj)#, angles, src_rad, det_rad, noise)
@@ -87,17 +87,17 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
 
 
-case.FDK.do('Hann')
+# case.FDK.do('Hann')
 # %%
 case.NNFDK.train(4, retrain=True)
-case.NNFDK.do()
-# %%
-#pylab.close('all')
-case.table()
-case.show_phantom()
-#case.MSD.show(clim=False)
-#case.show_xHQ()
-case.NNFDK.show()
+# case.NNFDK.do()
+# # %%
+# #pylab.close('all')
+# case.table()
+# case.show_phantom()
+# #case.MSD.show(clim=False)
+# #case.show_xHQ()
+# case.NNFDK.show()
 #case.NNFDK.show_filters()
 #case.NNFDK.show_node_output(3)
 

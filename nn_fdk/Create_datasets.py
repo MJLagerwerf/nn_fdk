@@ -91,10 +91,12 @@ def Create_dataset_ASTRA_sim(pix, phantom, angles, src_rad, noise, Exp_bin,
     # %% Create data
     proj_data = np.transpose(np.asarray(data_obj.g), (2, 0, 1)).copy()
 #    W.FP(np.transpose(np.asarray(data_obj.f), (2, 1, 0)))
-    if noise is not None:
-        g = add_poisson_noise(proj_data, noise[1])
-    else:
-        g = proj_data
+    
+    # ! ! ! wat is deze? ! ! !
+    # if noise is not None:
+    #     g = add_poisson_noise(proj_data, noise[1])
+    # else:
+    g = proj_data
 
     proj_id = astra.data3d.link('-sino', proj_geom, g)
 
@@ -220,7 +222,7 @@ def add_poisson_noise(g, I_0, seed=None):
 
 
 # %%
-def Make_Smat(voxels, MaxVoxDataset, WV_path, **kwargs):
+def Make_Smat(voxels, MaxVoxDataset, WV_path, shape='mat', **kwargs):
     if 'seed' in kwargs:
         seed_old = np.random.get_state()
         np.random.seed(seed=kwargs['seed'])
@@ -235,7 +237,10 @@ def Make_Smat(voxels, MaxVoxDataset, WV_path, **kwargs):
                                   replace=False))
     Smat = np.zeros(size_reco, dtype=bool)
     Smat[picks] = True
-    Smat = Smat.reshape(shape_reco)
+    if shape == 'mat': 
+        Smat = Smat.reshape(shape_reco)
+    elif shape == 'vec':
+        pass
     if 'seed' in kwargs:
         np.random.set_state(seed_old)
     return Smat

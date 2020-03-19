@@ -79,6 +79,8 @@ class Network(object):
         self.l1 *= beta / l1norm
         self.l2 = 2 * np.random.rand(self.nHid + 1) - 1
         self.l2 /= np.linalg.norm(self.l2)
+
+        
         self.minl1 = self.l1.copy()
         self.minl2 = self.l2.copy()
         self.minmax = self.tTD.getMinMax()
@@ -169,6 +171,7 @@ class Network(object):
     def train(self):
         '''Train the network using the Levenberg-Marquardt method.'''
         self.__inittrain()
+        num_chol = 0
         mu = 100000.
         muUpdate = 10
         self.lst_valError = []
@@ -179,11 +182,15 @@ class Network(object):
         self.lst_traError += [tse]
         curTime = time.time()
         self.allls = []
-        for i in range(1000000):
+        self.__setJac2()
+        for i in range(100000):
             self.__setJac2()
+            print('curr_loss:', tse)
             try:
+                
                 dw = -la.cho_solve(la.cho_factor(self.jac2 + mu * self.ident),
-                                   self.jacDiff)
+                                    self.jacDiff)
+                num_chol += 1
             except la.LinAlgError:
                 break
             done = -1
@@ -201,13 +208,16 @@ class Network(object):
                         self.l1[:, k] += dw[start:start + self.nIn + 1]
                 newtse = self.__getTSE(self.tTD)
 
+                print('test loss:', newtse)
                 if newtse < tse:
+                    print('accepted update, lambda = ', mu)
                     if done == -1:
                         mu /= muUpdate
                     if mu <= 1e-100:
                         mu = 1e-99
                     done = 1
                 else:
+                    print('did not accept')
                     done = 0
                     mu *= muUpdate
                     if mu >= 1e20:
@@ -226,17 +236,20 @@ class Network(object):
                             self.l1[:, k] -= dw[start:start + self.nIn+1]
                     try:
                         dw = -la.cho_solve(la.cho_factor(self.jac2 + mu *
-                                                         self.ident),
-                                                            self.jacDiff)
+                                                          self.ident),
+                                                          self.jacDiff)
+                        num_chol += 1
                     except la.LinAlgError:
                         done = 2
             gradSize = np.linalg.norm(self.jacDiff)
             if done == 2:
                 break
+            
             curValErr = self.__getTSE(self.vTD)
             if curValErr > prevValError:
                 bestCounter += 1
             else:
+                # print('Validation set error: {}'.format(prevValError))
                 prevValError = curValErr
                 self.lst_valError += [prevValError]
                 self.minl1 = self.l1.copy()
@@ -253,9 +266,8 @@ class Network(object):
                 break
             tse = newtse
             self.lst_traError += [tse]
-            if i % 10 == 0:
-                print('Validation set error: {}'.format(prevValError))
             self.allls.append([self.minl1, self.minl2])
+        print('number of computed updates:', num_chol)
         self.l1 = self.minl1
         self.l2 = self.minl2
         self.lst_valError = np.array(self.lst_valError)

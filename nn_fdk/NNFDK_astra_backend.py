@@ -90,7 +90,7 @@ def NNFDK_astra(g, NW, geom, reco_space, w_du, Exp_op, node_output,
     if node_output:
         mid = v // 2
         node_output_axis = []
-        
+    
     for i in range(NW['nNodes']):
         h = NW['l1'][:-1, i] * 2 * NW['sc1'][0, :]
         h_e += [h]

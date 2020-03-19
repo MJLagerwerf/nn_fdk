@@ -185,7 +185,7 @@ class TrainingData(object):
         return (minL, maxL, minIn, maxIn)
 
     def normalizeData(self, minL, maxL, minIn, maxIn):
-        '''Normalize the set such that every column is in range (0,1), except for the last column,
+        '''Normalize the set such that every column is in range (-1,1), except for the last column,
         which will be normalized to (0.25,0.75). Parameters are like ``getMinMax()``.
         '''
         raise NotImplementedError("TrainingData: Subclass should implement this method.")
