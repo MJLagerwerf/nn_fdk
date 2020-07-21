@@ -69,8 +69,8 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
-    # bpath = '/bigstore/lagerwer/data/NNFDK/'
+    # bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
 @ex.automain
@@ -141,11 +141,10 @@ def main(pix, phantom, nTD, nTrain, nVD, nVal, train, bpath, stop_crit, epochs,
         print(f'Reconstructing...')
         case.Unet.add2sp_list(list_tr, list_v)
     
-        case.Unet.do()
     
     # %%
-    case.table()
-    # save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
-    # case.Unet.show(clim=False, save_name=f'{save_path}Unet_{PH}_nTD{nTD}_nVD{nVD}')
+        case.table()
+        save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
+        case.Unet.show(clim=False, save_name=f'{save_path}Unet_{PH}_nTD{nTD}_nVD{nVD}')
 
     return    

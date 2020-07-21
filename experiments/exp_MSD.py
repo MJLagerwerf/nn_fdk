@@ -70,8 +70,8 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
-    # bpath = '/bigstore/lagerwer/data/NNFDK/'
+    # bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
 @ex.automain
