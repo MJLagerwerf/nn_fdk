@@ -30,7 +30,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 @ex.config
 def cfg():
     it_i = 0
-    pix = 256
+    pix = 1024
     det_rad = 0
     nTD, nTrain = 1, int(1e6)
     nVD, nVal = 1, int(1e6)
@@ -64,7 +64,7 @@ def cfg():
         # var
         rads = [2, 3, 5, 7.5, 10]
         src_rad = rads[it_i]
-    train = False
+    train = True
     stop_crit = 50
 
     # Specifics for the expansion operator
