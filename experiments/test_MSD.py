@@ -8,15 +8,18 @@ Created on Mon Mar 11 13:53:20 2019
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
 import nn_fdk as nn
 import time
 import pylab
+import sys
+import torch
+sys.path.append('../nn_fdk/')
+import MSD_functions as msd
 t = time.time()
 # %%
-pix = 1024
+pix = 256
 # Specific phantom
-phantom = 'Defrise'
+phantom = 'Fourshape_test'
 
 if phantom == 'Fourshape_test':
     PH = '4S'
@@ -29,7 +32,7 @@ elif phantom == 'Defrise':
 
 
 # Number of angles
-angles = 2
+angles = 360
 # Source radius
 det_rad = 0
 # Noise specifics
@@ -43,7 +46,7 @@ nVal, nVD = 1e6, 1
 Exp_bin = 'linear'
 bin_param = 2
 #bpath = '/bigstore/lagerwer/data/NNFDK/'
-bpath = '/export/scratch2/lagerwer/data/NNFDK'
+bpath = '/export/scratch2/lagerwer/data/NNFDK/'
 
 # %%
 t1 = time.time()
@@ -90,28 +93,28 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 #case.NNFDK.train(4)
 #case.NNFDK.do()
 # %%
-case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
+case.MSD = msd.MSD_class(case, case.NNFDK.data_path)
 case.rec_methods += [case.MSD]
 if nVD == 0:
     list_tr, list_v = [0], None
 else:
     list_tr, list_v = [0], [1]
-case.MSD.train(list_tr, list_v, stop_crit=50_000, ratio=3)
-#case.MSD.add2sp_list(list_tr, list_v)
+# case.MSD.train(list_tr, list_v, stop_crit=100, ratio=3)
+case.MSD.add2sp_list(list_tr, list_v)
 case.MSD.do()
 
 # %%
 
 
-print('MSD rec time:', case.MSD.results.rec_time[0])
-print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-print('FDK rec time:', case.FDK.results.rec_time[0])
-# %%
-save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
+# print('MSD rec time:', case.MSD.results.rec_time[0])
+# print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
+# print('FDK rec time:', case.FDK.results.rec_time[0])
+# # %%
+# save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
 pylab.close('all')
 case.table()
 case.show_phantom()
-case.MSD.show(clim=False, save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
-case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
+case.MSD.show(clim=False)#, save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
+# case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
+# case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
 

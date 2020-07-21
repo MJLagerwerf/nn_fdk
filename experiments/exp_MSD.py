@@ -11,9 +11,12 @@ import ddf_fdk as ddf
 import nn_fdk as nn
 import time
 import pylab
+import sys
+
+sys.path.append('../nn_fdk/')
+import MSD_functions as msd
 t = time.time()
 
-ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
@@ -26,44 +29,55 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 # %%
 @ex.config
 def cfg():
-    phantom = 'Fourshape_test'
-    nTD = 1
-    nVD = 1
-    train = False
+    it_i = 0
     pix = 256
-    stop_crit = 50
-    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
-#    bpath = '/bigstore/lagerwer/data/NNFDK/'
-# %%
+    det_rad = 0
+    nTD, nTrain = 1, int(1e6)
+    nVD, nVal = 1, int(1e6)
+    exp_type = 'noise'
     
-@ex.automain
-def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
-    # Specific phantom
-    
-    if phantom == 'Fourshape_test':
+    if exp_type == 'noise':
+        phantom = 'Fourshape_test'
         PH = '4S'
         src_rad = 10
-        noise = ['Poisson', 2 ** 8]
-    elif phantom == 'Defrise':
-        PH = 'DF'
-        src_rad = 2
+        angles = 360
+        
+        # var
+        I0s = [2 ** 8, 2 ** 9, 2 ** 10, 2 ** 11, 2 ** 12, 2 ** 13]
+        noise = ['Poisson', I0s[it_i]]
+
+    elif exp_type == 'angles':
+        phantom = 'Fourshape_test'
+        PH = '4S'
+        src_rad = 10
         noise = None
-    
-    
-    # Number of angles
-    angles = 360
-    # Source radius
-    det_rad = 0
-    # Noise specifics
-    
-    # Number of voxels used for training, number of datasets used for training
-    nTrain = 1e6
-    # Number of voxels used for validation, number of datasets used for validation
-    nVal = 1e6
-    
+
+        # var
+        angs = [8, 16, 32, 64, 128]
+        angles = angs[it_i]
+    elif exp_type == 'cone angle':
+        phantom = 'Defrise'
+        PH = 'DF'
+        angles = 360
+        noise = None
+        
+        # var
+        rads = [2, 3, 5, 7.5, 10]
+        src_rad = rads[it_i]
+    train = False
+    stop_crit = 50
+
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
+    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    # bpath = '/bigstore/lagerwer/data/NNFDK/'
+# %%
+    
+@ex.automain
+def main(pix, phantom, nTD, nTrain, nVD, nVal, train, bpath, stop_crit,
+         PH, angles, src_rad, det_rad, noise, Exp_bin, bin_param):
+    # Specific phantom
     
     
     # %%
@@ -83,7 +97,7 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
     print('Making phantom and mask took', time.time() -t2, 'seconds')
     # The amount of projection angles in the measurements
     # Source to center of rotation radius
-    
+     
     t3 = time.time()
     # %% Create the circular cone beam CT class
     case = ddf.CCB_CT(data_obj)#, angles, src_rad, det_rad, noise)
@@ -107,12 +121,7 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
     print('Initializing algorithms took', time.time() - t4, 'seconds')
     
     # %%
-#    if not train:
-#        case.FDK.do('Hann')
-#        case.NNFDK.train(4)
-#        case.NNFDK.do()
-    # %%
-    case.MSD = nn.MSD_class(case, case.NNFDK.data_path)
+    case.MSD = msd.MSD_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.MSD]
     
     l_tr, l_v = nn.Preprocess_datasets.random_lists(nTD, nVD)
@@ -143,6 +152,5 @@ def main(pix, phantom, nTD, nVD, train, bpath, stop_crit):
         case.table()
         case.show_phantom()
         case.MSD.show(save_name=f'{save_path}MSD_{PH}_nTD{nTD}_nVD{nVD}')
-#        case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-#        case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
-    return    
+
+    return

@@ -11,9 +11,11 @@ import ddf_fdk as ddf
 import nn_fdk as nn
 import time
 import pylab
+import sys
+sys.path.append('../nn_fdk/')
+import Unet_functions as unet
 t = time.time()
 
-#ddf.import_astra_GPU()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
@@ -26,51 +28,57 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 # %%
 @ex.config
 def cfg():
-
-    phantom = 'Fourshape_test'
-    nTD = 1
-    nVD = 1
-    epochs = 1000
-    epoch = None
-    train = False
-    use_training_set = False
-    recon_other = True
+    it_i = 0
     pix = 1024
-    stop_crit = 50
-    bpath = '/bigstore/lagerwer/data/NNFDK/'
-# %%
+    det_rad = 0
+    nTD, nTrain = 1, int(1e6)
+    nVD, nVal = 1, int(1e6)
+    exp_type = 'noise'
     
-@ex.automain
-def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
-         epoch, bpath, stop_crit):
-
-    # Specific phantom
-    
-    if phantom == 'Fourshape_test':
+    if exp_type == 'noise':
+        phantom = 'Fourshape_test'
         PH = '4S'
         src_rad = 10
-        noise = ['Poisson', 2 ** 8]
-    elif phantom == 'Defrise':
-        PH = 'DF'
-        src_rad = 2
+        angles = 360
+        
+        # var
+        I0s = [2 ** 8, 2 ** 9, 2 ** 10, 2 ** 11, 2 ** 12, 2 ** 13]
+        noise = ['Poisson', I0s[it_i]]
+
+    elif exp_type == 'angles':
+        phantom = 'Fourshape_test'
+        PH = '4S'
+        src_rad = 10
         noise = None
-    
-    # Number of angles
-    angles = 360
-    # Source radius
-    det_rad = 0
-    # Noise specifics
-    
-    # Number of voxels used for training, number of datasets used for training
-    nTrain = 1e6
-    # Number of voxels used for validation, number of datasets used for validation
-    nVal = 1e6
-    
+
+        # var
+        angs = [8, 16, 32, 64, 128]
+        angles = angs[it_i]
+    elif exp_type == 'cone angle':
+        phantom = 'Defrise'
+        PH = 'DF'
+        angles = 360
+        noise = None
+        
+        # var
+        rads = [2, 3, 5, 7.5, 10]
+        src_rad = rads[it_i]
+    train = True
+    stop_crit = 50
+    epochs = 10_000
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
+    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    # bpath = '/bigstore/lagerwer/data/NNFDK/'
+# %%
     
-
+@ex.automain
+def main(pix, phantom, nTD, nTrain, nVD, nVal, train, bpath, stop_crit, epochs,
+         PH, angles, src_rad, det_rad, noise, Exp_bin, bin_param):
+    # Specific phantom
+    
+    
     # %%
     t1 = time.time()
     nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
@@ -88,7 +96,7 @@ def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
     print('Making phantom and mask took', time.time() -t2, 'seconds')
     # The amount of projection angles in the measurements
     # Source to center of rotation radius
-    
+     
     t3 = time.time()
     # %% Create the circular cone beam CT class
     case = ddf.CCB_CT(data_obj)#, angles, src_rad, det_rad, noise)
@@ -112,13 +120,7 @@ def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
     print('Initializing algorithms took', time.time() - t4, 'seconds')
     
     # %%
-    if recon_other:
-        case.FDK.do('Hann')
-        case.NNFDK.train(4)
-        case.NNFDK.do()
-
-    # %%
-    case.Unet = nn.Unet_class(case, case.NNFDK.data_path)
+    case.Unet = unet.Unet_class(case, case.NNFDK.data_path)
     case.rec_methods += [case.Unet]
     
     if nVD == 0:
@@ -136,23 +138,14 @@ def main(phantom, pix, nTD, nVD, train, use_training_set, recon_other, epochs,
         case.Unet.train(list_tr, list_v, epochs=epochs, stop_crit=stop_crit, 
                         ratio=3)
     else:
-        print(f'Use weights from epoch {epoch}')
+        print(f'Reconstructing...')
         case.Unet.add2sp_list(list_tr, list_v)
     
-    case.Unet.do(epoch=epoch, use_training_set=use_training_set)
+        case.Unet.do()
     
     # %%
     case.table()
-    save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
-    case.Unet.show(clim=False, save_name=f'{save_path}Unet_{PH}_nTD{nTD}_nVD{nVD}')
-    if recon_other:
-        print('Unet rec time:', case.Unet.results.rec_time[0])
-        print('NNFDK rec time:', case.NNFDK.results.rec_time[0])
-        print('FDK rec time:', case.FDK.results.rec_time[0])
-        # %%
-        pylab.close('all')
-        case.show_phantom()
+    # save_path = '/bigstore/lagerwer/NNFDK_results/figures/'
+    # case.Unet.show(clim=False, save_name=f'{save_path}Unet_{PH}_nTD{nTD}_nVD{nVD}')
 
-        case.NNFDK.show(save_name=f'{save_path}NNFDK_{PH}_nTD{nTD}_nVD{nVD}')
-        case.FDK.show(save_name=f'{save_path}FDK_{PH}_nTD{nTD}_nVD{nVD}')
     return    

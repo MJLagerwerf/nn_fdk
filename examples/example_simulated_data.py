@@ -90,7 +90,8 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 # case.FDK.do('Hann')
 # %%
 case.NNFDK.train(4, retrain=True)
-# case.NNFDK.do()
+case.NNFDK.do()
+case.NNFDK.show()
 # # %%
 # #pylab.close('all')
 # case.table()
