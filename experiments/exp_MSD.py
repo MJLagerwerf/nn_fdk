@@ -124,11 +124,12 @@ def main(pix, phantom, nTD, nTrain, nVD, nVal, train, bpath, stop_crit,
         case.rec_methods += [case.NNFDK]
         case.MSD = msd.MSD_class(case, case.NNFDK.data_path)
         case.rec_methods += [case.MSD]
+        print('Initializing algorithms took', time.time() - t4, 'seconds')
     else:
         data_path = nn.make_data_path(pix, phantom, angles, src_rad, noise,
                                       Exp_bin, bin_param, base_path=bpath)
         MSD = msd.MSD_class(None, data_path)
-    print('Initializing algorithms took', time.time() - t4, 'seconds')
+
     
     # %%
 
