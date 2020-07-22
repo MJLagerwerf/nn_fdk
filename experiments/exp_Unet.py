@@ -64,8 +64,8 @@ def cfg():
         rads = [2, 3, 5, 7.5, 10]
         src_rad = rads[it_i]
     train = True
-    stop_crit = 200
-    epochs = 1
+    stop_crit = np.inf
+    epochs = 100_000
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
