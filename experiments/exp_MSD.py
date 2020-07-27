@@ -32,8 +32,8 @@ def cfg():
     it_i = 0
     pix = 1024
     det_rad = 0
-    nTD, nTrain = 1, int(1e6)
-    nVD, nVal = 1, int(1e6)
+    nTD, nTrain = 10, int(1e6)
+    nVD, nVal = 5, int(1e6)
     exp_type = 'noise'
     
     if exp_type == 'noise':
