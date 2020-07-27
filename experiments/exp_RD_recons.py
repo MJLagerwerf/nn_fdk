@@ -143,7 +143,7 @@ def main(filts, dset, specifics, nVD, nTD, save_full_recons, MSD, Unet):
     # Do FDK recons
     if save_full_recons:
         rec = case.FDK.do('Hann', compute_results=False)
-        save_and_add_artifact(WV_path + '_FDKHN_rec.npy', rec)
+        save_and_add_artifact(WV_path + '_FDKHN_full_rec.npy', rec)
     else:
         case.FDK.do('Hann')
         save_and_add_artifact(WV_path + '_FDKHN_rec.npy', 
