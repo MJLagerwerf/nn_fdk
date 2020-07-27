@@ -20,7 +20,7 @@ import h5py
 import astra
 import sys
 sys.path.append('../nn_fdk/')
-astra.set_gpu_index([0, 1, 2, 3])
+# astra.set_gpu_index([0, 1, 2, 3])
 # %%
 path = 'python_data/results/'
 ex = Experiment()
