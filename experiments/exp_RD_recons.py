@@ -222,7 +222,7 @@ def main(filts, dset, specifics, nVD, nTD, save_full_recons, MSD, Unet):
         niter = [50, 100, 200]
 
     if save_full_recons:
-        recs = case.SIRT_NN.do(niter)
+        recs = case.SIRT_NN.do(niter, compute_results=False)
         for ni in range(len(niter)):
             save_and_add_artifact(f'{WV_path}_SIRT{niter[ni]}_full_rec.npy',
                                   recs[ni])
