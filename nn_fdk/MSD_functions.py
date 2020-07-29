@@ -158,12 +158,7 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio,
     
     # %%
     # Log error metrics to console
-    consolelog = msdnet.loggers.ConsoleLogger()
-    # Log error metrics to file
-    filelog = msdnet.loggers.FileLogger(f'{save_path}log_regr.txt')
-    # Log typical, worst, and best images to image files
-    imagelog = msdnet.loggers.ImageLogger(f'{save_path}log_regr',
-                                          onlyifbetter=True)
+
     
     # %%
     # Train network until program is stopped manually
@@ -172,10 +167,22 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio,
     # training steps.
     print('Started training')
     if save_model_pb:
-        train(n, t, val, bprov, f'{save_path}regr_params.h5', f'{save_path}net',
+        consolelog = msdnet.loggers.ConsoleLogger()
+        # Log error metrics to file
+        filelog = msdnet.loggers.FileLogger(f'{save_path}log_regr_pb.txt')
+        # Log typical, worst, and best images to image files
+        imagelog = msdnet.loggers.ImageLogger(f'{save_path}log_regr_pb',
+                                              onlyifbetter=True)
+        train(n, t, val, bprov, f'{save_path}regr_params_pb.h5', f'{save_path}net',
                            loggers=[consolelog,filelog,imagelog],
                            val_every=len(datsv), stopcrit=stop_crit)
     else:
+        consolelog = msdnet.loggers.ConsoleLogger()
+        # Log error metrics to file
+        filelog = msdnet.loggers.FileLogger(f'{save_path}log_regr.txt')
+        # Log typical, worst, and best images to image files
+        imagelog = msdnet.loggers.ImageLogger(f'{save_path}log_regr',
+                                              onlyifbetter=True)
         msdnet.train.train(n, t, val, bprov, f'{save_path}regr_params.h5',
                            loggers=[consolelog,filelog,imagelog],
                            val_every=len(datsv), stopcrit=stop_crit)

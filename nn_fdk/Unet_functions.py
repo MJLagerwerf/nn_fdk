@@ -211,7 +211,6 @@ def load_concat_data(inp, tar):
 
     return train_ds
         
-# %%
 
 
 
@@ -285,7 +284,10 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
         # Save network if worthwile
         if validation_error < best_validation_error or val_dl is None:
             best_validation_error = validation_error
-            model.save(f"{weights_path}_epoch_{epoch}.torch", epoch)
+            if save_model_pb:
+                model.save(f"{weights_path}_epoch_{epoch}_pb.torch", epoch)
+            else:
+                model.save(f"{weights_path}_epoch_{epoch}.torch", epoch)
             print(f'It took {stop_iter} epochs to improve upon the validation error')
             stop_iter = 0
         else:
@@ -301,8 +303,12 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
         print(f"{epoch:05} Iteration time: {end-start: 0.6f}")
 
     # Always save final network parameters
-    model.save(f"{weights_path}.torch", epoch)
-    np.save(f'{weights_path}_training_error', training_errors)
+    if save_model_pb:
+        model.save(f"{weights_path}_pb.torch", epoch)
+        np.save(f'{weights_path}_training_error_pb', training_errors)
+    else:
+        model.save(f"{weights_path}.torch", epoch)
+        np.save(f'{weights_path}_training_error', training_errors)
 #    ex.add_artifact(f"{weights_path}.torch")
 
 
