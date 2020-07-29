@@ -43,9 +43,53 @@ def sort_files(fls_path, dset_one=False, ratio=None):
                 flstg_tr += [flstg[i]]
         return flsin_tr, flstg_tr, flsin_v, flstg_v
     
+# %%
+def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
+          val_every=None, loggers=None, stopcrit=np.Inf):
+    if not val_every:
+        val_every = len(validation.d)
+    
+    parts = outputfile.split('.')
+    if len(parts)>1:
+        checkpointfile = '.'.join(parts[:-1]) + '.checkpoint'
+    else:
+        checkpointfile = outputfile + '.checkpoint'
+    
+    nworse = 0
+    nstep = 0
+    it = 1
+    while True:
+        trainalg.step(network, dataprov.getbatch())
+        if (np.log2(it)).is_integer():
+            network.to_file(f'{netfilepath}_slices_seen{it}.h5')
+        it += 1
+        nstep += 1
+        if nstep >= val_every:
+            nstep = 0
+            network.to_file(checkpointfile, groupname='checkpoint')
+            trainalg.to_file(checkpointfile)
+            validation.to_file(checkpointfile)    
+            network.to_file(f'{netfilepath}_slices_seen{it}.h5')
+            if validation.validate(network):
+                network.to_file(outputfile)
+                nworse = 0
+            else:
+                nworse += 1
+                if nworse>=stopcrit:
+                    return
+            if loggers:
+                try:
+                    for log in loggers:
+                        log.log(validation)
+                except TypeError:
+                    loggers.log(validation)
+
+
+
 
 # %%
-def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
+def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio,
+              save_model_pb):
     t = time.time()
     # Define dilations in [1,10] as in paper.
     dilations = msdnet.dilations.IncrementDilations(10)
@@ -127,10 +171,14 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio):
     # Validation is run after every len(datsv) (=25)
     # training steps.
     print('Started training')
-    msdnet.train.train(n, t, val, bprov, f'{save_path}regr_params.h5',
-                       loggers=[consolelog,filelog,imagelog],
-                       val_every=len(datsv), stopcrit=stop_crit)
-
+    if save_model_pb:
+        train(n, t, val, bprov, f'{save_path}regr_params.h5', f'{save_path}net',
+                           loggers=[consolelog,filelog,imagelog],
+                           val_every=len(datsv), stopcrit=stop_crit)
+    else:
+        msdnet.train.train(n, t, val, bprov, f'{save_path}regr_params.h5',
+                           loggers=[consolelog,filelog,imagelog],
+                           val_every=len(datsv), stopcrit=stop_crit)
 
 
 # %%
@@ -142,12 +190,14 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         self.sp_list = []
         self.t_train = []
     
-    def train(self, list_tr, list_v, stop_crit=50, ratio=None):
+    def train(self, list_tr, list_v, stop_crit=50, ratio=None,
+              save_model_pb=False):
         t = time.time()
         fls_tr_path, fls_v_path = self.add2sp_list(list_tr, list_v)
         if (list_v is None) and (ratio is None):
             raise ValueError('Pass a ratio if you want to train on one dset')
-        train_msd(fls_tr_path, fls_v_path, self.sp_list[-1], stop_crit, ratio)
+        train_msd(fls_tr_path, fls_v_path, self.sp_list[-1], stop_crit, ratio,
+                  save_model_pb)
         print('Training took:', time.time()-t, 'seconds')
         self.t_train += [time.time() - t]
 

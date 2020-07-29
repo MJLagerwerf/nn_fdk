@@ -212,8 +212,12 @@ def load_concat_data(inp, tar):
     return train_ds
         
 # %%
+
+
+
+# %%
 def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
-               stop_crit, ratio):
+               stop_crit, ratio, save_model_pb):
     batch_size = 1
     weights_path = f'{save_path}weights'
     if fls_v_path is not None:
@@ -253,11 +257,21 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
     validation_error = 0.0
     training_errors = np.zeros(epochs)
     stop_iter = 0
+    it = 1
     for epoch in range(epochs):
         start = timer()
         # Train
-    
-        model.train(train_dl, 1)
+        if save_model_pb:
+            for (input, target) in train_dl:
+                loss = model.forward(input, target)
+                model.optimizer.zero_grad()
+                model.loss.backward()
+                model.optimizer.step()
+                if (np.log2(it)).is_integer():
+                    model.save(f"{weights_path}_slices_seen{it}.torch", epoch)
+                it += 1
+        else:
+            model.train(train_dl, 1)
         # Compute training error
         train_error = model.validate(train_dl)
 #        ex.log_scalar("Training error", train_error)
@@ -331,13 +345,15 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         self.model = UNetRegressionModel(1, 1, parallel=False)
 
     
-    def train(self, list_tr, list_v, epochs=1, stop_crit=None, ratio=None):
+    def train(self, list_tr, list_v, epochs=1, stop_crit=None, ratio=None,
+              save_model_pb=False):
         t = time.time()
         fls_tr_path, fls_v_path = self.add2sp_list(list_tr, list_v)
         if (list_v is None) and (ratio is None):
             raise ValueError('Pass a ratio if you want to train on one dset')
         train_unet(self.model, self.slab_size, fls_tr_path, fls_v_path,
-                   self.sp_list[-1], epochs, stop_crit, ratio)
+                   self.sp_list[-1], epochs, stop_crit, ratio,
+                   save_model_pb=save_model_pb)
         print('Training took:', time.time()-t, 'seconds')
         self.t_train += [time.time() - t]
 
