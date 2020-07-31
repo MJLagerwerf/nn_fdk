@@ -283,7 +283,7 @@ class Network(object):
                 break
             tse = newtse
             if save_model_pb:
-                save_network(f'/export/scratch2/lagerwer/NNFDK_results/network_epoch{epoch}',
+                save_network(f'/export/scratch2/lagerwer/NNFDK_results/nnfdk_p_epoch/network_epoch{epoch}',
                              self.l1, self.l2, self.minmax)
             epoch += 1
             self.lst_traError += [tse]

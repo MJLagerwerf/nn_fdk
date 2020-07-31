@@ -42,6 +42,7 @@ Exp_bin = 'linear'
 bin_param = 2
 
 bpath = '/bigstore/lagerwer/data/NNFDK/'
+# bpath = '/export/scratch2/lagerwer/data/NNFDK/'
 #'/export/scratch1/home/voxels-gpu0/data/NNFDK/'
 # %%
 t1 = time.time()
@@ -81,7 +82,7 @@ case.FDK_bin_nn = case.FDK_op * Exp_op
 
 # Create the NN-FDK object
 case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
-                             bin_param, bpath=bpath)
+                             bin_param, base_path=bpath)
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
