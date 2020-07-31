@@ -41,12 +41,12 @@ nVal, nVD = 1e6, 5
 Exp_bin = 'linear'
 bin_param = 2
 
-
+bpath = '/bigstore/lagerwer/data/NNFDK/'
 #'/export/scratch1/home/voxels-gpu0/data/NNFDK/'
 # %%
 t1 = time.time()
 nn.Create_TrainingValidationData(pix, phantom, angles, src_rad, noise,
-                                 Exp_bin, bin_param, nTD + nVD)
+                                 Exp_bin, bin_param, nTD + nVD, base_path=bpath)
 print('Creating training and validation datasets took', time.time() - t1,
       'seconds')
 
@@ -81,7 +81,7 @@ case.FDK_bin_nn = case.FDK_op * Exp_op
 
 # Create the NN-FDK object
 case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
-                             bin_param, bpath='/bigstore/lagerwer/data/NNFDK/')
+                             bin_param, bpath=bpath)
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
