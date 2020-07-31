@@ -109,5 +109,5 @@ def main(pix, phantom, nTD, nTrain, nVD, nVal, train, bpath, stop_crit, MSD,
         import Unet_functions as unet
         Unet = unet.Unet_class(None, data_path)
         Unet.train(list_tr, list_v, epochs=epochs, stop_crit=stop_crit, 
-                        ratio=3)
+                        ratio=3, save_model_pb=save_model_pb)
     return
