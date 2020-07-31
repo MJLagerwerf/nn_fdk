@@ -37,6 +37,7 @@ def outer_layer(x, b, sc2_1, sc2_2):
 
 # %%
 def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
+                  save_model_pb=False,
                   **kwargs):
     # Set a path to save the network
     fnNetwork = full_path + 'network_' + str(nHiddenNodes) + name
@@ -99,7 +100,7 @@ def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
     # Train a network
     print('Training new network, network has', str(nHiddenNodes),
       'hidden nodes')
-    NW_obj.train()
+    NW_obj.train(save_model_pb)
 
     # Save the number of datasets used for training/validation
     f[nNetworks].attrs['nTD'] = nTD
@@ -169,7 +170,7 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
 
 
     def train(self, nHiddenNodes, name='', retrain=False, DS_list=False, 
-              preprocess=True, **kwargs):
+              preprocess=True, save_model_pb=False, **kwargs):
         tt = time.time()
         if preprocess:
             PD.Preprocess_Data(self.CT_obj.pix, self.data_path, self.nTrain,
@@ -181,10 +182,12 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         if hasattr(self, 'network'):
             self.network += [train_network(nHiddenNodes, self.nTD, self.nVD,
                                            self.full_path, name, retrain,
+                                           save_model_pb,
                                            **kwargs)]
         else:
             self.network = [train_network(nHiddenNodes, self.nTD, self.nVD,
                                           self.full_path, name, retrain,
+                                          save_model_pb,
                                           **kwargs)]
         self.train_time = time.time() - t
 

@@ -22,7 +22,7 @@ def make_hann_filt(voxels, w_detu):
 #    filt = filt / 2 / w_detu
     return filt
 # %%
-pix = 256
+pix = 1024
 # Specific phantom
 phantom = 'Fourshape_test'
 # Number of angles
@@ -33,9 +33,9 @@ det_rad = 0
 # Noise specifics
 noise = ['Poisson', 2 ** 8]
 # Number of voxels used for training, number of datasets used for training
-nTrain, nTD = 1e6, 1
+nTrain, nTD = 1e6, 10
 # Number of voxels used for validation, number of datasets used for validation
-nVal, nVD = 1e6, 1
+nVal, nVD = 1e6, 5
 
 # Specifics for the expansion operator
 Exp_bin = 'linear'
@@ -81,7 +81,7 @@ case.FDK_bin_nn = case.FDK_op * Exp_op
 
 # Create the NN-FDK object
 case.NNFDK = nn.NNFDK_class(case, nTrain, nTD, nVal, nVD, Exp_bin, Exp_op,
-                             bin_param)
+                             bin_param, bpath='/bigstore/lagerwer/data/NNFDK/')
 case.rec_methods += [case.NNFDK]
 print('Initializing algorithms took', time.time() - t4, 'seconds')
 # %%
@@ -89,7 +89,7 @@ print('Initializing algorithms took', time.time() - t4, 'seconds')
 
 # case.FDK.do('Hann')
 # %%
-case.NNFDK.train(4, retrain=True)
+case.NNFDK.train(4, retrain=True, save_model_pb=True)
 case.NNFDK.do()
 case.NNFDK.show()
 # # %%

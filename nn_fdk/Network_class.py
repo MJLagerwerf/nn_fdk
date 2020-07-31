@@ -13,6 +13,7 @@ from scipy.signal import fftconvolve
 import scipy.ndimage.filters as snf
 import numpy.linalg as na
 import scipy.io as sio
+import h5py
 
 
 import numexpr
@@ -25,7 +26,22 @@ try:
 except:
     hasfblas=False
 
-
+def save_network(path, l1, l2, minmax):
+    # Create a hdf5 file for networks with this number of nodes
+    f = h5py.File(path + '.hdf5', 'w')
+    # Save the training MSE and validation MSE
+    # Save the network parameters
+    f.create_dataset('l1', data=l1)
+    f.create_dataset('l2', data=l2)
+    # Fix the scaling operators
+    sc1 = 1 / (minmax[1] - minmax[0])
+    sc1 = np.concatenate(([sc1,], [minmax[0] * sc1,]), 0)
+    sc2 = np.array([minmax[3] - minmax[2], minmax[2]])
+    # Save the scaling operators
+    f.create_dataset('sc1', data=sc1)
+    f.create_dataset('sc2', data=sc2)
+    f.close()
+    
 
 def sigmoid(x):
     '''Sigmoid function'''
@@ -168,9 +184,10 @@ class Network(object):
 
 
 
-    def train(self):
+    def train(self, save_model_pb=False):
         '''Train the network using the Levenberg-Marquardt method.'''
         self.__inittrain()
+        epoch = 0
         num_chol = 0
         mu = 100000.
         muUpdate = 10
@@ -265,6 +282,10 @@ class Network(object):
                 print('Gradsize was too small')
                 break
             tse = newtse
+            if save_model_pb:
+                save_network(f'/export/scratch2/lagerwer/NNFDK_results/network_epoch{epoch}',
+                             self.l1, self.l2, self.minmax)
+            epoch += 1
             self.lst_traError += [tse]
             self.allls.append([self.minl1, self.minl2])
         print('number of computed updates:', num_chol)
