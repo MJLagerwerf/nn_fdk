@@ -167,6 +167,7 @@ def main(filts, specifics):
     print('FDK rec time:', case.FDK.results.rec_time[0])
     Q, RT = log_variables(case.FDK.results, Q, RT)
     # %% do NN-FDK recons
+    NNFDK_obj(case)
     case.NNFDK.train(4, retrain=False)
 
     case.NNFDK.do()

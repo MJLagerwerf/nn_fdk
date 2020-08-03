@@ -140,7 +140,8 @@ def main(specifics, bpath):
     WV_path = case.WV_path + specifics 
     
     # %% do NN-FDK recons
-    case.NNFDK.train(4, retrain=False)
+    NNFDK_obj(case)
+    # case.NNFDK.train(4, retrain=False)
     path = '/export/scratch2/lagerwer/NNFDK_results/nnfdk_p_epoch/network_epoch'
     epochs = [2 ** i for i in range(7)]
     epochs += [116]
