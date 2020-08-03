@@ -34,6 +34,17 @@ def outer_layer(x, b, sc2_1, sc2_2):
     return numexpr.evaluate('2 * (1 / (1 + exp(-(x - b))) - .25) * sc2_1' \
                             '+ sc2_2')
     
+# %%
+def load_network(path):
+    f = h5py.File(path + '.hdf5', 'r')
+    l1 = np.asarray(f['l1'])
+    l2 = np.asarray(f['l2'])
+    sc1 = np.asarray(f['sc1'])
+    sc2 = np.asarray(f['sc2'])
+    
+    f.close()
+    return {'l1' : l1, 'l2' : l2, 'sc1' : sc1, 'sc2' : sc2, 'nNodes': 4}
+    
 
 # %%
 def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
@@ -192,9 +203,12 @@ class NNFDK_class(ddf.algorithm_class.algorithm_class):
         self.train_time = time.time() - t
 
     def do(self, node_output=False, nwNumber=-1, compute_results=True,
-           measures=['MSE', 'MAE', 'SSIM'], astra=True):
+           measures=['MSE', 'MAE', 'SSIM'], astra=True, NW_path=None):
         t = time.time()
-        NW = self.network[nwNumber] # To improve readability
+        if NW_path is None:
+            NW = self.network[nwNumber] # To improve readability
+        else:
+            NW = load_network(NW_path)
         if astra:
             if node_output:
                 rec, h_e, self.node_out_axis = NNFDK_astra.NNFDK_astra(

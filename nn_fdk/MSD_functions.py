@@ -232,13 +232,17 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         self.sp_list += [save_path]
         return fls_tr_path, fls_v_path
 
-    def do(self, nr=-1, compute_results=True, measures=['MSE', 'MAE', 'SSIM']):
+    def do(self, nr=-1, compute_results=True, measures=['MSE', 'MAE', 'SSIM'],
+           NW_path=None):
         t = time.time()
         save_path = self.sp_list[nr]
         print('Started loading network:', datetime.datetime.now().time())
         # Load network from file
-        n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',
-                                            gpu=True)
+        if NW_path is None:
+            n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',
+                                                gpu=True)
+        else:
+            n = msdnet.network.MSDNet.from_file(f'{NW_path}', gpu=True)
         # Make folder for output
         recfolder = Path(f'{save_path}Recon/')
         recfolder.mkdir(exist_ok=True)        
@@ -248,8 +252,6 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         outfolder.mkdir(exist_ok=True)
 
         print('Loaded network', time.time() - t, 'seconds')
-#        import sys
-#        sys.exit()
         rec = self.CT_obj.FDK.do('Hann', compute_results=False)
         print('Done FDK reconstruciton')#/ 2 / self.CT_obj.w_detu
         sup.save_as_tiffs(rec, f'{infolder}/')

@@ -388,18 +388,22 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         return fls_tr_path, fls_v_path
 
     def do(self, epoch=None, nr=-1, compute_results=True,
-           measures=['MSE', 'MAE', 'SSIM'], use_training_set=False):
+           measures=['MSE', 'MAE', 'SSIM'], use_training_set=False,
+           NW_path=None):
         t = time.time()
         save_path = self.sp_list[nr]
-        if epoch is None:
-            epoch = sup.last_epoch(f'{save_path}')
-            weights_file = Path(f'{save_path}weights_epoch_{epoch}.torch'
-                                ).expanduser().resolve()
-        elif epoch is False:
-            weights_file = Path(f'{save_path}weights.torch').expanduser().resolve()
+        if NW_path is None:
+            if epoch is None:
+                epoch = sup.last_epoch(f'{save_path}')
+                weights_file = Path(f'{save_path}weights_epoch_{epoch}.torch'
+                                    ).expanduser().resolve()
+            elif epoch is False:
+                weights_file = Path(f'{save_path}weights.torch').expanduser().resolve()
+            else:
+                weights_file = Path(f'{save_path}weights_epoch_{epoch}.torch'
+                                    ).expanduser().resolve()
         else:
-            weights_file = Path(f'{save_path}weights_epoch_{epoch}.torch'
-                                ).expanduser().resolve()
+            weights_file = Path(f'{NW_path}').expanduser().resolve()
 #        print(weights_file)
         self.model.load(weights_file)
         # Make folder for output
