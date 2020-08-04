@@ -178,7 +178,7 @@ def main(specifics, bpath):
     
 
     Q, RT = log_variables(case.MSD.results, Q, RT)
-
+    case.table()
     # %% Do Unet
     
     import Unet_functions as unet
@@ -192,7 +192,7 @@ def main(specifics, bpath):
     path = f'{bpath}4S_V1024_A360_SR10_I0256/L2/Unet/nTD10nVD5/weights_slices_seen'
     epochs = [2 ** i for i in range(17)]
     for e in epochs:
-        case.Unet.do(NW_path=f'{bpath}{e}.torch')
+        case.Unet.do(NW_path=f'{path}{e}.torch')
         save_and_add_artifact(f'{WV_path}_Unet_rec_e{e}.npy',
                               case.Unet.results.rec_axis[-1])
     Q, RT = log_variables(case.Unet.results, Q, RT)
