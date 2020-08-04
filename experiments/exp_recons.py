@@ -149,6 +149,7 @@ def log_variables(results, Q, RT):
 # %%
 @ex.automain
 def main(specifics):
+    print(specifics)
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
