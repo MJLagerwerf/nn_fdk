@@ -159,7 +159,7 @@ def train_msd(fls_tr_path, fls_v_path, save_path, stop_crit, ratio,
     # %%
     # Log error metrics to console
 
-    
+    print(len(datsv))
     # %%
     # Train network until program is stopped manually
     # Network parameters are saved in regr_params.h5
