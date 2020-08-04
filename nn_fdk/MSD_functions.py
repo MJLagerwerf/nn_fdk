@@ -58,16 +58,24 @@ def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
     nworse = 0
     nstep = 0
     it = 1
-    
+    vit = 1
     tot_time = 0
+    tot_vt = 0
     while True:
         t = time.time()
         trainalg.step(network, dataprov.getbatch())
         if (np.log2(it)).is_integer():
             network.to_file(f'{netfilepath}_slices_seen{it}.h5')
         nstep += 1
+        it_time = time.time() - t
+
+        tot_time += it_time
+        
         if nstep >= val_every:
+            print('it time', it_time)
+            print('av it time', tot_time / it)
             nstep = 0
+            vt = time.time()
             network.to_file(checkpointfile, groupname='checkpoint')
             trainalg.to_file(checkpointfile)
             validation.to_file(checkpointfile)    
@@ -85,10 +93,10 @@ def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
                         log.log(validation)
                 except TypeError:
                     loggers.log(validation)
-        it_time = time.time() - t
-        print(it_time)
-        tot_time += it_time
-        print(tot_time / it)
+            valt = time.time() - vt
+            print('valiation time', vt)
+            print('av validation time', tot_vt / vit)
+            vit += 1
         it += 1
 
 
