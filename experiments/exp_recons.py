@@ -148,7 +148,7 @@ def log_variables(results, Q, RT):
     return Q, RT
 # %%
 @ex.automain
-def main(filts, specifics):
+def main(specifics):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
