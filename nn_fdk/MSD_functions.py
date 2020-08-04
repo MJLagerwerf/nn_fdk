@@ -58,11 +58,13 @@ def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
     nworse = 0
     nstep = 0
     it = 1
+    
+    tot_time = 0
     while True:
+        t = time.time()
         trainalg.step(network, dataprov.getbatch())
         if (np.log2(it)).is_integer():
             network.to_file(f'{netfilepath}_slices_seen{it}.h5')
-        it += 1
         nstep += 1
         if nstep >= val_every:
             nstep = 0
@@ -83,8 +85,11 @@ def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
                         log.log(validation)
                 except TypeError:
                     loggers.log(validation)
-
-
+        it_time = time.time() - t
+        print(it_time)
+        tot_time += it_time
+        print(tot_time / it)
+        it += 1
 
 
 # %%
