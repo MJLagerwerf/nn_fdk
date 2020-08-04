@@ -54,7 +54,7 @@ def cfg():
         # var
         angs = [8, 16, 32, 64, 128]
         angles = angs[it_i]
-        specfics = f'4S_ang{angles}'
+        specifics = f'4S_ang{angles}'
     elif exp_type == 'cone angle':
         phantom = 'Defrise random'
         PH = 'DF'
