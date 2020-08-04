@@ -94,7 +94,8 @@ def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
                 except TypeError:
                     loggers.log(validation)
             valt = time.time() - vt
-            print('valiation time', vt)
+            tot_vt += valt
+            print('valiation time', valt)
             print('av validation time', tot_vt / vit)
             vit += 1
         it += 1
