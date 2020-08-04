@@ -44,7 +44,7 @@ def cfg():
         # var
         I0s = [2 ** 8, 2 ** 9, 2 ** 10, 2 ** 11, 2 ** 12, 2 ** 13]
         noise = ['Poisson', I0s[it_i]]
-        specifics = '4S_I0{noise[1]}'
+        specifics = f'4S_I0{noise[1]}'
     elif exp_type == 'angles':
         phantom = 'Fourshape'
         PH = '4S'
@@ -149,7 +149,6 @@ def log_variables(results, Q, RT):
 # %%
 @ex.automain
 def main(specifics):
-    print(specifics)
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
