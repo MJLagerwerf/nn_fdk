@@ -36,7 +36,7 @@ def cfg():
     exp_type = 'noise'
     
     if exp_type == 'noise':
-        phantom = 'Fourshape_test'
+        phantom = 'Fourshape'
         PH = '4S'
         src_rad = 10
         angles = 360
@@ -46,7 +46,7 @@ def cfg():
         noise = ['Poisson', I0s[it_i]]
         specifics = '4S_I0{noise[1]}'
     elif exp_type == 'angles':
-        phantom = 'Fourshape_test'
+        phantom = 'Fourshape'
         PH = '4S'
         src_rad = 10
         noise = None
@@ -56,7 +56,7 @@ def cfg():
         angles = angs[it_i]
         specfics = f'4S_ang{angles}'
     elif exp_type == 'cone angle':
-        phantom = 'Defrise'
+        phantom = 'Defrise random'
         PH = 'DF'
         angles = 360
         noise = None
