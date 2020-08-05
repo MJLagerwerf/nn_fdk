@@ -154,13 +154,13 @@ def main(specifics, bpath):
     # # print('NNFDK rec time:', case.NNFDK.results.rec_time[-1])
     
     # # %% Set up DNNs
-    # list_tr = [i for i in range(10)]
-    # list_v = [i + 10 for i in range(5)]
+    list_tr = [i for i in range(10)]
+    list_v = [i + 10 for i in range(5)]
 
     
     # # %% Do MSD
     # import MSD_functions as msd
-    # nTD, nVD = 10, 5
+    nTD, nVD = 10, 5
     # WV_path = case.WV_path + specifics 
     # case.MSD = msd.MSD_class(case, data_path)
     # case.rec_methods += [case.MSD]
