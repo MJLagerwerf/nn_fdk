@@ -142,43 +142,43 @@ def main(specifics, bpath):
     # %% do NN-FDK recons
     NNFDK_obj(case)
     # case.NNFDK.train(4, retrain=False)
-    path = '/export/scratch2/lagerwer/NNFDK_results/nnfdk_p_epoch/network_epoch'
-    epochs = [2 ** i for i in range(7)]
-    epochs += [116]
-    for e in epochs:
-        case.NNFDK.do(NW_path=f'{path}{e}')
-        save_and_add_artifact(f'{WV_path}_NNFDK4_rec_e{e}.npy', 
-                      case.NNFDK.results.rec_axis[-1])
-    Q, RT = log_variables(case.NNFDK.results, Q, RT)
-    case.table()
-    # print('NNFDK rec time:', case.NNFDK.results.rec_time[-1])
+    # path = '/export/scratch2/lagerwer/NNFDK_results/nnfdk_p_epoch/network_epoch'
+    # epochs = [2 ** i for i in range(7)]
+    # epochs += [116]
+    # for e in epochs:
+    #     case.NNFDK.do(NW_path=f'{path}{e}')
+    #     save_and_add_artifact(f'{WV_path}_NNFDK4_rec_e{e}.npy', 
+    #                   case.NNFDK.results.rec_axis[-1])
+    # Q, RT = log_variables(case.NNFDK.results, Q, RT)
+    # case.table()
+    # # print('NNFDK rec time:', case.NNFDK.results.rec_time[-1])
     
-    # %% Set up DNNs
-    list_tr = [i for i in range(10)]
-    list_v = [i + 10 for i in range(5)]
+    # # %% Set up DNNs
+    # list_tr = [i for i in range(10)]
+    # list_v = [i + 10 for i in range(5)]
 
     
-    # %% Do MSD
-    import MSD_functions as msd
-    nTD, nVD = 10, 5
-    WV_path = case.WV_path + specifics 
-    case.MSD = msd.MSD_class(case, data_path)
-    case.rec_methods += [case.MSD]
+    # # %% Do MSD
+    # import MSD_functions as msd
+    # nTD, nVD = 10, 5
+    # WV_path = case.WV_path + specifics 
+    # case.MSD = msd.MSD_class(case, data_path)
+    # case.rec_methods += [case.MSD]
     
-    case.MSD.add2sp_list(list_tr, list_v)
-    print('added lists')
-    path = f'{bpath}4S_V1024_A360_SR10_I0256/L2/MSD/nTD10nVD5/net_slices_seen'
-    epochs = [2 ** i for i in range(16)]
-    epochs += [65281]
-    for e in epochs:
-        case.MSD.do(NW_path=f'{path}{e}.h5')
-        save_and_add_artifact(f'{WV_path}_MSD_rec_e{e}.npy',
-                          case.MSD.results.rec_axis[-1])
-    # print('MSD rec time:', case.MSD.results.rec_time[-1])
+    # case.MSD.add2sp_list(list_tr, list_v)
+    # print('added lists')
+    # path = f'{bpath}4S_V1024_A360_SR10_I0256/L2/MSD/nTD10nVD5/net_slices_seen'
+    # epochs = [2 ** i for i in range(16)]
+    # epochs += [65281]
+    # for e in epochs:
+    #     case.MSD.do(NW_path=f'{path}{e}.h5')
+    #     save_and_add_artifact(f'{WV_path}_MSD_rec_e{e}.npy',
+    #                       case.MSD.results.rec_axis[-1])
+    # # print('MSD rec time:', case.MSD.results.rec_time[-1])
     
 
-    Q, RT = log_variables(case.MSD.results, Q, RT)
-    case.table()
+    # Q, RT = log_variables(case.MSD.results, Q, RT)
+    # case.table()
     # %% Do Unet
     
     import Unet_functions as unet
