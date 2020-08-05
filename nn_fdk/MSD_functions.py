@@ -247,7 +247,7 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
         return fls_tr_path, fls_v_path
 
     def do(self, nr=-1, compute_results=True, measures=['MSE', 'MAE', 'SSIM'],
-           NW_path=None):
+           NW_path=None, timing=False):
         t = time.time()
         save_path = self.sp_list[nr]
         print('Started loading network:', datetime.datetime.now().time())
