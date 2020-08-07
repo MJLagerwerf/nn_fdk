@@ -21,7 +21,7 @@ t = time.time()
 from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
-name_exp = 'MSD'
+name_exp = 'training_pb'
 ex = Experiment(name_exp, ingredients=[])
 
 FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
@@ -30,12 +30,12 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 # %%
 @ex.config
 def cfg():
-    it_i = 0
+    it_i = 2
     pix = 1024
     det_rad = 0
     nTD, nTrain = 10, int(1e6)
     nVD, nVal = 5, int(1e6)
-    exp_type = 'noise'
+    exp_type = 'angles'
     
     if exp_type == 'noise':
         phantom = 'Fourshape_test'
