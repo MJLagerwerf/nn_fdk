@@ -268,6 +268,8 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
                 model.optimizer.step()
                 if (np.log2(it)).is_integer():
                     model.save(f"{weights_path}_slices_seen{it}.torch", epoch)
+                elif (it % 10) == 0 and it <= 200:
+                    model.save(f"{weights_path}_slices_seen{it}.torch", epoch)
                 it += 1
         else:
             model.train(train_dl, 1)
@@ -301,7 +303,8 @@ def train_unet(model, slab_size, fls_tr_path, fls_v_path, save_path, epochs,
         end = timer()
 #        ex.log_scalar("Iteration time", end - start)
         print(f"{epoch:05} Iteration time: {end-start: 0.6f}")
-
+        model.save(f"{weights_path}_slices_seen_last.torch", epoch)
+        print('iter:', it)
     # Always save final network parameters
     if save_model_pb:
         model.save(f"{weights_path}_pb.torch", epoch)

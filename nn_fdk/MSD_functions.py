@@ -57,7 +57,7 @@ def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
     
     nworse = 0
     nstep = 0
-    it = 1
+    it = 0
     vit = 1
     tot_time = 0
     tot_vt = 0
@@ -65,6 +65,8 @@ def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
         t = time.time()
         trainalg.step(network, dataprov.getbatch())
         if (np.log2(it)).is_integer():
+            network.to_file(f'{netfilepath}_slices_seen{it}.h5')
+        elif (it % 10) == 0 and it <= 200:
             network.to_file(f'{netfilepath}_slices_seen{it}.h5')
         nstep += 1
         it_time = time.time() - t
@@ -98,6 +100,8 @@ def train(network, trainalg, validation, dataprov, outputfile, netfilepath,
             print('valiation time', valt)
             print('av validation time', tot_vt / vit)
             vit += 1
+        network.to_file(f'{netfilepath}_slices_seen_last.h5')
+        print('iter', it)
         it += 1
 
 
