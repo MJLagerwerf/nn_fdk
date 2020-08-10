@@ -30,6 +30,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 @ex.config
 def cfg():
     it_i = 0
+    it_j = 0
     pix = 256
     det_rad = 0
     nTD, nTrain = 10, int(1e6)
@@ -69,8 +70,8 @@ def cfg():
     # Specifics for the expansion operator
     Exp_bin = 'linear'
     bin_param = 2
-    bpath = '/export/scratch2/lagerwer/data/NNFDK/'
-    # bpath = '/bigstore/lagerwer/data/NNFDK/'
+    # bpath = '/export/scratch2/lagerwer/data/NNFDK/'
+    bpath = '/bigstore/lagerwer/data/NNFDK/'
 # %%
     
 @ex.capture
@@ -150,7 +151,7 @@ def log_variables(results, Q, RT):
     return Q, RT
 # %%
 @ex.automain
-def main(specifics, it_i):
+def main(specifics, it_j):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
@@ -161,11 +162,12 @@ def main(specifics, it_i):
     WV_path = case.WV_path + specifics 
     # %%
     # Do FDK recons
-
+    print(f'{data_path}/tiffs/Dataset{it_j}')
+    print('')
     rec = case.FDK.do('Hann', compute_results=False)
     # Save input
-    nn.save_as_tiffs(rec, f'{data_path}/tiffs/Dataset{it_i}/FDK/')
+    nn.save_as_tiffs(rec, f'{data_path}/tiffs/Dataset{it_j}/FDK/')
     # Save target
-    nn.save_as_tiffs(data_obj.xHQ, f'{data_path}/tiffs/Dataset{it_i}/HQ/')
+    nn.save_as_tiffs(data_obj.xHQ, f'{data_path}/tiffs/Dataset{it_j}/HQ/')
     
     return Q
