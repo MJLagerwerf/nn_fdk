@@ -20,11 +20,11 @@ from sacred.observers import FileStorageObserver
 from sacred import Experiment
 from os import environ
 import h5py
-name_exp = 'noisy_FDKs'
+name_exp = 'compute_training_data'
 ex = Experiment(name_exp, ingredients=[])
 
-FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
-ex.observers.append(FileStorageObserver.create(FSpath))
+# FSpath = '/export/scratch2/lagerwer/NNFDK_results/' + name_exp
+# ex.observers.append(FileStorageObserver.create(FSpath))
 
 # %%
 @ex.config
