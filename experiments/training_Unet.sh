@@ -11,11 +11,11 @@ read -a ExpT
 echo "Experiment iteration"
 read ExpI
 
-for i in ${ind[@]}; 
+for i in 0 1 2; 
 do
 	if [ $timer_bool == 'y' ]; then 
 		# Experiment that I want to run
-		CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i} it_i=${ExpI} &
+		CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i]} it_i=${ExpI} &
 		# Sleeps how much time you need:
 		sleep 2d
 
@@ -25,7 +25,7 @@ do
 		echo "Stopped training of exp type: ${ExpT[$i]}, with it_i: ${ExpI}, Unet"
 	else
 		# Experiment that I want to run
-		CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i} it_i=${ExpI} 
+		CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i]} it_i=${ExpI} 
 
 		echo "Stopped training of exp type: ${ExpT[$i]}, with it_i: ${ExpI[$i]}, Unet"
 	fi
