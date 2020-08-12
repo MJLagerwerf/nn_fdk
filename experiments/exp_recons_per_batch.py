@@ -29,12 +29,12 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 # %%
 @ex.config
 def cfg():
-    it_i = 0
+    it_i = 2
     pix = 1024
     det_rad = 0
     nTD, nTrain = 10, int(1e6)
     nVD, nVal = 5, int(1e6)
-    exp_type = 'noise'
+    exp_type = 'angles'
     
     phantom = 'Fourshape_test'
     PH = '4S'
