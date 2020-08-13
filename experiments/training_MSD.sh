@@ -5,13 +5,15 @@ read timer_bool
 echo "Give GPU index"
 read GPU_i
 
-echo "Give experiment types in array form with ' and spaces in between"
-read -a ExpT
+echo "Specify which exp types you want, 0 - angles, 1 - cone angle, 2 - noise"
+read -a inds
 
 echo "Experiment iteration"
 read ExpI
 
-for i in 0 1 2; 
+ExpT=("'angles'" "'cone angle'" "'noise'")
+
+for i in ${inds{@}; 
 do
 	if [ $timer_bool == 'y' ]; then 
 		# Experiment that I want to run
