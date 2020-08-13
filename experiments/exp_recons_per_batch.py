@@ -131,7 +131,7 @@ def log_variables(results, Q, RT):
     return Q, RT
 # %%
 @ex.automain
-def main(specifics, bpath):
+def main(specifics, bpath, rec_meth):
     Q = np.zeros((0, 3))
     RT = np.zeros((0))
     
@@ -143,6 +143,9 @@ def main(specifics, bpath):
     
     # %% do NN-FDK recons
     NNFDK_obj(case)
+    # # %% Set up DNNs
+    list_tr = [i for i in range(10)]
+    list_v = [i + 10 for i in range(5)]
     if rec_meth == 'NNFDK':
         case.NNFDK.train(4, retrain=False)
         path = '/export/scratch2/lagerwer/NNFDK_results/nnfdk_p_epoch/network_epoch'
@@ -158,12 +161,10 @@ def main(specifics, bpath):
         case.table()
         # # print('NNFDK rec time:', case.NNFDK.results.rec_time[-1])
         gc.collect()
-    # # %% Set up DNNs
-    list_tr = [i for i in range(10)]
-    list_v = [i + 10 for i in range(5)]
+
 
     elif rec_meth == 'MSD':
-        # # %% Do MSD
+    # %% Do MSD
         import MSD_functions as msd
         nTD, nVD = 10, 5
         WV_path = case.WV_path + specifics 
