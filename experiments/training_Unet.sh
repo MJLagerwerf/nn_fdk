@@ -5,15 +5,15 @@ read timer_bool
 echo "Give GPU index"
 read GPU_i
 
-echo "Specify which exp types you want, 0 - angles, 1 - cone angle, 2 - noise"
-read -a inds
+#echo "Specify which exp types you want, 0 - angles, 1 - cone angle, 2 - noise"
+#read -a inds
 
 echo "Experiment iteration"
 read ExpI
 
-ExpT=("'angles'" "'cone angle'" "'noise'")
+ExpT=("'cone angle'" "'noise'")
 
-for i in ${inds[@]}
+for i in 0 1 #${inds[@]}
 do
 	if [ $timer_bool == 'y' ]; then 
 		# Experiment that I want to run
@@ -26,9 +26,7 @@ do
 
 		echo "Stopped training of exp type: ${ExpT[$i]}, with it_i: ${ExpI}, Unet"
 	else
-		# Experiment that I want to run
-		echo "CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i]} it_i=${ExpI}"
-		CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i]} it_i=${ExpI} 
+		CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i]} it_i=${ExpI}
 
 		echo "Stopped training of exp type: ${ExpT[$i]}, with it_i: ${ExpI}, Unet"
 	fi
