@@ -27,9 +27,10 @@ do
 		echo "Stopped training of exp type: ${ExpT[$i]}, with it_i: ${ExpI}, Unet"
 	else
 		# Experiment that I want to run
+		echo "CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i]} it_i=${ExpI}"
 		CUDA_VISIBLE_DEVICES=${GPU_i} python exp_Unet.py -p with exp_type=${ExpT[$i]} it_i=${ExpI} 
 
-		echo "Stopped training of exp type: ${ExpT[$i]}, with it_i: ${ExpI[$i]}, Unet"
+		echo "Stopped training of exp type: ${ExpT[$i]}, with it_i: ${ExpI}, Unet"
 	fi
 done
 
