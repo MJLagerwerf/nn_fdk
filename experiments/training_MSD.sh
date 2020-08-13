@@ -13,7 +13,7 @@ read ExpI
 
 ExpT=("'angles'" "'cone angle'" "'noise'")
 
-for i in ${inds{@}; 
+for i in ${inds[@]}
 do
 	if [ $timer_bool == 'y' ]; then 
 		# Experiment that I want to run
