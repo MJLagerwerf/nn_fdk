@@ -254,7 +254,8 @@ class MSD_class(ddf.algorithm_class.algorithm_class):
            NW_path=None, timing=False):
         t = time.time()
         save_path = self.sp_list[nr]
-        print('Started loading network:', datetime.datetime.now().time())
+        print('This network was last modified on:', 
+              time.ctime(os.path.getmtime(f'{save_path}regr_params.h5')))
         # Load network from file
         if NW_path is None:
             n = msdnet.network.MSDNet.from_file(f'{save_path}regr_params.h5',

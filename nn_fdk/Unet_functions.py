@@ -408,6 +408,8 @@ class Unet_class(ddf.algorithm_class.algorithm_class):
         else:
             weights_file = Path(f'{NW_path}').expanduser().resolve()
 #        print(weights_file)
+        print('This network was last modified on:', 
+              time.ctime(os.path.getmtime(weights_file)))
         self.model.load(weights_file)
         # Make folder for output
         recfolder = Path(f'{save_path}Recon/')
