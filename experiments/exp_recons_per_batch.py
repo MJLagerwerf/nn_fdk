@@ -196,7 +196,7 @@ def main(specifics, bpath, rec_meth):
         case.Unet.add2sp_list(list_tr, list_v)
         
         print('added lists')
-        epochs = [10 * i for i in range(20)]
+        epochs = [10 * (i +1) for i in range(19)]
         path = f'{bpath}4S_V1024_A32_SR10/L2/Unet/nTD10nVD5/weights_slices_seen'
         epochs += [2 ** i for i in range(17)]
         epochs = np.sort(epochs)
