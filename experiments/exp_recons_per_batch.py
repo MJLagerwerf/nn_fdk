@@ -30,7 +30,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 # %%
 @ex.config
 def cfg():
-    it_i = 2
+    it_i = 0
     pix = 1024
     det_rad = 0
     nTD, nTrain = 10, int(1e6)
@@ -40,11 +40,11 @@ def cfg():
     phantom = 'Fourshape_test'
     PH = '4S'
     src_rad = 10
-    angles = 360
+    angles = 32
     
     # var
     I0 = 2 ** 8
-    noise = ['Poisson', I0]
+    noise = None# ['Poisson', I0]
     specifics = 'results_per_batch'
 
     # Specifics for the expansion operator
@@ -52,7 +52,9 @@ def cfg():
     bin_param = 2
     # bpath = '/export/scratch2/lagerwer/data/NNFDK/'
     bpath = '/bigstore/lagerwer/data/NNFDK/'
-    rec_meth = 'MSD'
+    rms = ['NNFDK', 'MSD', 'Unet']
+    rec_meth = rms[it_i]
+    
 # %%
     
 @ex.capture
