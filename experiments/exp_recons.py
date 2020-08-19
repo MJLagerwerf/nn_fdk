@@ -36,7 +36,7 @@ def cfg():
     exp_type = 'noise'
     
     if exp_type == 'noise':
-        phantom = 'Fourshape'
+        phantom = 'Fourshape_test'
         PH = '4S'
         src_rad = 10
         angles = 360
@@ -46,7 +46,7 @@ def cfg():
         noise = ['Poisson', I0s[it_i]]
         specifics = f'4S_I0{noise[1]}'
     elif exp_type == 'angles':
-        phantom = 'Fourshape'
+        phantom = 'Fourshape_test'
         PH = '4S'
         src_rad = 10
         noise = None
@@ -56,7 +56,7 @@ def cfg():
         angles = angs[it_i]
         specifics = f'4S_ang{angles}'
     elif exp_type == 'cone angle':
-        phantom = 'Defrise random'
+        phantom = 'Defrise'
         PH = 'DF'
         angles = 360
         noise = None
@@ -218,7 +218,7 @@ def main(specifics):
     Q, RT = log_variables(case.Unet.results, Q, RT)
 
     # %% Do SIRT recons
-    niter = [100, 200]        
+    niter = [200]      
 
     case.SIRT_NN.do(niter)
     for ni in range(len(niter)):
