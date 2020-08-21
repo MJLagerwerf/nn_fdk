@@ -218,7 +218,7 @@ def main(specifics):
     Q, RT = log_variables(case.Unet.results, Q, RT)
 
     # %% Do SIRT recons
-    niter = [200]      
+    niter = 200
 
     case.SIRT_NN.do(niter)
     for ni in range(len(niter)):
