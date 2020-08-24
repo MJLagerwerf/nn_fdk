@@ -29,7 +29,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 @ex.config
 def cfg():
     it_i = 0
-    pix = 1024
+    pix = 256
     det_rad = 0
     nTD, nTrain = 10, int(1e6)
     nVD, nVal = 5, int(1e6)
@@ -221,9 +221,9 @@ def main(specifics):
     niter = 200
 
     case.SIRT_NN.do(niter)
-    for ni in range(len(niter)):
-        save_and_add_artifact(f'{WV_path}_SIRT{niter[ni]}_rec.npy',
-                              case.SIRT_NN.results.rec_axis[ni])
+    # for ni in range(len(niter)):
+    save_and_add_artifact(f'{WV_path}_SIRT{niter}_rec.npy',
+                              case.SIRT_NN.results.rec_axis[-1])
 
     Q, RT = log_variables(case.SIRT_NN.results, Q, RT)
     
