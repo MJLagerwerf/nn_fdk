@@ -29,7 +29,7 @@ ex.observers.append(FileStorageObserver.create(FSpath))
 @ex.config
 def cfg():
     it_i = 0
-    pix = 256
+    pix = 1024
     det_rad = 0
     nTD, nTrain = 10, int(1e6)
     nVD, nVal = 5, int(1e6)
