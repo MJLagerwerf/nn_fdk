@@ -23,9 +23,10 @@ Python 3.
 To install Neural Network FDK algorithm, simply clone this GitHub
 project. Go to the cloned directory and run PIP installer:
 ```
-git clone https://github.com/mjlagerwerf/nn_fdk.git
-cd nn_fdk
+git clone https://github.com/mjlagerwerf/ddf_fdk.git
+cd ddf_fdk
 make install
+cd ..
 
 git clone https://github.com/mjlagerwerf/nn_fdk.git
 cd nn_fdk
@@ -33,9 +34,11 @@ make install
 ```
 Instal it as editable 
 ```
-git clone https://github.com/mjlagerwerf/nn_fdk.git
-cd nn_fdk
+git clone https://github.com/mjlagerwerf/ddf_fdk.git
+cd ddf_fdk
 make install_dev
+
+cd ..
 
 git clone https://github.com/mjlagerwerf/nn_fdk.git
 cd nn_fdk
@@ -54,15 +57,15 @@ Activate the new environment and install the ddf_fdk and nn_fdk packages
 ```
 conda activate nnfdk
 
-git clone https://github.com/mjlagerwerf/nn_fdk.git
-cd nn_fdk
+git clone https://github.com/mjlagerwerf/ddf_fdk.git
+cd ddf_fdk
 make install
+cd ..
 
 git clone https://github.com/mjlagerwerf/nn_fdk.git
 cd nn_fdk
 make install
 ```
-
 ### Running the examples
 
 To learn more about the functionality of the package check out our
