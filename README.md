@@ -10,62 +10,6 @@ brief overview of its features and limitations.
 * Documentation: [https://mjlagerwerf.github.io/nn_fdk]
 
 
-## Readiness
-
-The author of this package is in the process of setting up this
-package for optimal usability. The following has already been completed:
-
-- [ ] Documentation
-    - A package description has been written in the README
-    - Documentation has been generated using `make docs`, committed,
-        and pushed to GitHub.
-	- GitHub pages have been setup in the project settings
-	  with the "source" set to "master branch /docs folder".
-- [ ] An initial release
-	- In `CHANGELOG.md`, a release date has been added to v0.1.0 (change the YYYY-MM-DD).
-	- The release has been marked a release on GitHub.
-	- For more info, see the [Software Release Guide](https://cicwi.github.io/software-guides/software-release-guide).
-- [ ] A conda package
-    - Required packages have been added to `setup.py`, for instance,
-      ```
-      requirements = [
-          # Add your project's requirements here, e.g.,
-          # 'astra-toolbox',
-          # 'sacred>=0.7.2',
-          # 'tables==3.4.4',
-      ]
-      ```
-      has been replaced by
-      ```
-      requirements = [
-          'astra-toolbox',
-          'sacred>=0.7.2',
-          'tables==3.4.4',
-      ]
-      ```
-    - All "conda channels" that are required for building and
-      installing the package have been added to the
-      `Makefile`. Specifically, replace
-      ```
-      conda_package:
-        conda install conda-build -y
-        conda build conda/
-      ```
-      by
-      ```
-      conda_package:
-        conda install conda-build -y
-        conda build conda/ -c some-channel -c some-other-channel
-      ```
-    - Conda packages have been built successfully with `make conda_package`.
-    - These conda packages have been uploaded to
-      [Anaconda](https://anaconda.org). [This](http://docs.anaconda.com/anaconda-cloud/user-guide/getting-started/#cloud-getting-started-build-upload)
-      is a good getting started guide.
-    - The installation instructions (below) have been updated. Do not
-      forget to add the required channels, e.g., `-c some-channel -c
-      some-other-channel`, and your own channel, e.g., `-c mjlagerwerf`.
-
-
 ## Getting Started
 
 It takes a few steps to setup Neural Network FDK algorithm on your
@@ -73,12 +17,6 @@ machine. We recommend installing
 [Anaconda package manager](https://www.anaconda.com/download/) for
 Python 3.
 
-### Installing with conda
-
-Simply install with:
-```
-conda install -c cicwi nn_fdk
-```
 
 ### Installing from source
 
@@ -87,7 +25,42 @@ project. Go to the cloned directory and run PIP installer:
 ```
 git clone https://github.com/mjlagerwerf/nn_fdk.git
 cd nn_fdk
-pip install -e .
+make install
+
+git clone https://github.com/mjlagerwerf/nn_fdk.git
+cd nn_fdk
+make install
+```
+Instal it as editable 
+```
+git clone https://github.com/mjlagerwerf/nn_fdk.git
+cd nn_fdk
+make install
+
+git clone https://github.com/mjlagerwerf/nn_fdk.git
+cd nn_fdk
+make install
+```
+
+If you want to make use of the U-net and MSD-net functionalities follow the following instructions.
+
+Create a conda environment with the following packages. Note that the cudatoolkit should coincide with the version on your machine.
+
+```
+conda create -n nnfdk -c conda-forge -c aahendriksen -c pytorch msd_pytorch torchvision msdnet cudatoolkit=10.1 -y
+```
+Activate the new environment and install the ddf_fdk and nn_fdk packages
+
+```
+conda activate nnfdk
+
+git clone https://github.com/mjlagerwerf/nn_fdk.git
+cd nn_fdk
+make install
+
+git clone https://github.com/mjlagerwerf/nn_fdk.git
+cd nn_fdk
+make install
 ```
 
 ### Running the examples

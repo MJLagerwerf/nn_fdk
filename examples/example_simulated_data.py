@@ -35,8 +35,8 @@ Exp_bin = 'linear'
 bin_param = 2
 
 # Set a path where you want to store your data
-bpath = '/bigstore/lagerwer/data/NNFDK/'
-
+# bpath = '/bigstore/lagerwer/data/NNFDK/'
+bpath = '/export/scratch2/lagerwer/data/NNFDK/'
 
 # %%
 t1 = time.time()
