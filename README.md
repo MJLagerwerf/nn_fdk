@@ -35,11 +35,11 @@ Instal it as editable
 ```
 git clone https://github.com/mjlagerwerf/nn_fdk.git
 cd nn_fdk
-make install
+make install_dev
 
 git clone https://github.com/mjlagerwerf/nn_fdk.git
 cd nn_fdk
-make install
+make install_dev
 ```
 
 If you want to make use of the U-net and MSD-net functionalities follow the following instructions.
