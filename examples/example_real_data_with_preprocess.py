@@ -8,10 +8,7 @@ Created on Mon Oct 19 12:44:35 2020
 
 import numpy as np
 import ddf_fdk as ddf
-ddf.import_astra_GPU()
 import nn_fdk as nn
-from sacred import Experiment
-from sacred.observers import FileStorageObserver
 import gc
 import pylab
 import os
@@ -21,7 +18,7 @@ import scipy.io as sp
 import os
 
 # %%
-sc = 1
+sc = 2
 ang_freq = 1
 pix = 768 // sc
 it_i = 0
@@ -61,7 +58,7 @@ Exp_bin = 'linear'
 bin_param = 2
 
 # bpath = '/home/budabp/projects/Walnut/datasets/Walnuts/nn_fdk/experiments/data_new/NNFDK/'
-bpath = '/bigstore/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/processed_data/'
+bpath = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/processed_data/'
 
 # %% We need to compute the preprocessed training data (see eq 11 paper)
 # We do not want to train on the same data that we want to reconstruct
@@ -74,9 +71,9 @@ else:
     # dataset_w2 = {'g' : 'Walnut2_proj.npy',
     #            'ground_truth' : 'walnut2_rec.npy',
     #            'mask': 'mask.npy'}
-    dataset_w2 = {'g': f'{bpath}g_noisy.npy',
-                  'ground_truth' : f'{bpath}ground_truth.npy',
-                  'mask': f'{bpath}mask.npy'}
+    dataset_w2 = {'g': f'{bpath}g_noisy_sc2.npy',
+                  'ground_truth' : f'{bpath}ground_truth_sc2.npy',
+                  'mask': f'{bpath}mask_sc2.npy'}
     
     # dataset_w3 = {'g' : 'Walnut3_proj.npy',
     #            'ground_truth' : 'walnut3_rec.npy',
@@ -110,13 +107,13 @@ print('Finished preprocessing')
 # dataset = {'g' : 'Walnut1_proj.npy',
 #            'ground_truth' : 'walnut1_rec.npy',
 #            'mask': 'mask.npy'}
-dataset = {'g': f'{bpath}g_noisy.npy',
-              'ground_truth' : f'{bpath}ground_truth.npy',
-              'mask': f'{bpath}mask.npy'}
+dataset = {'g': f'{bpath}g_noisy_sc2.npy',
+                  'ground_truth' : f'{bpath}ground_truth_sc2.npy',
+                  'mask': f'{bpath}mask_sc2.npy'}
 
 # I found this details by myself in .txt file which came with dataset
 # This is correct, but my code assumes cm's and these are mm's --> /10
-pix_size = 0.149600 / 10 
+pix_size = 0.149600 / 10  * sc 
 src_rad = 66.001404 / 10
 det_rad = (199.006195-66.001404) / 10
 
@@ -146,13 +143,13 @@ case.rec_methods += [case.NNFDK]
 
 
 # %%
-# case.FDK.do('Hann')
-# case.FDK.show()
+case.FDK.do('Hann')
+case.FDK.show()
 
 # %%
-case.NNFDK.train(4, retrain=True)
-case.NNFDK.do()
-case.NNFDK.show()
+# case.NNFDK.train(4, retrain=True)
+# case.NNFDK.do()
+# case.NNFDK.show()
 
 # %%
 case.table()
