@@ -63,9 +63,9 @@ def make_data_path(pix, phantom, angles, src_rad, noise, Exp_bin, bin_param,
 def make_data_path_RD(dset, ang_freq,
     base_path='/export/scratch2/lagerwer/data/FlexRay/'):
     if dset == 'good':
-        data_path = f'{base_path}walnuts_10MAY/NNFDK/{dset}_ang_freq{ang_freq}/'
+        data_path = f'{base_path}NNFDK/{dset}_ang_freq{ang_freq}/'
     elif dset == 'noisy':
-        data_path = f'{base_path}walnuts_10MAY/NNFDK/{dset}/'
+        data_path = f'{base_path}NNFDK/{dset}/'
     elif dset == 'tubeV2':
         data_path = f'{base_path}Walnuts/NNFDK/{dset}/'
     else:

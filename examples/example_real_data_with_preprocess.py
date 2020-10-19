@@ -18,7 +18,7 @@ import scipy.io as sp
 import os
 
 # %%
-sc = 2
+sc = 1
 ang_freq = 1
 pix = 768 // sc
 it_i = 0
@@ -58,7 +58,7 @@ Exp_bin = 'linear'
 bin_param = 2
 
 # bpath = '/home/budabp/projects/Walnut/datasets/Walnuts/nn_fdk/experiments/data_new/NNFDK/'
-bpath = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/processed_data/'
+bpath = '/bigstore/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/processed_data/'
 
 # %% We need to compute the preprocessed training data (see eq 11 paper)
 # We do not want to train on the same data that we want to reconstruct
@@ -71,9 +71,9 @@ else:
     # dataset_w2 = {'g' : 'Walnut2_proj.npy',
     #            'ground_truth' : 'walnut2_rec.npy',
     #            'mask': 'mask.npy'}
-    dataset_w2 = {'g': f'{bpath}g_noisy_sc2.npy',
-                  'ground_truth' : f'{bpath}ground_truth_sc2.npy',
-                  'mask': f'{bpath}mask_sc2.npy'}
+    dataset_w2 = {'g': f'{bpath}g_noisy.npy',
+                  'ground_truth' : f'{bpath}ground_truth.npy',
+                  'mask': f'{bpath}mask.npy'}
     
     # dataset_w3 = {'g' : 'Walnut3_proj.npy',
     #            'ground_truth' : 'walnut3_rec.npy',
@@ -94,7 +94,7 @@ else:
         os.makedirs(save_path)
     np.save(f'{save_path}/Dataset0', B)
     
-print('Finished preprocessing')
+# print('Finished preprocessing')
 # # Create Dataset1.npy from walnut3
 # B = nn.Create_dataset_ASTRA_real(dataset_w3, pix_size, src_rad, det_rad, 
 #                               ang_freq, Exp_bin, bin_param, vox=pix)
@@ -107,15 +107,18 @@ print('Finished preprocessing')
 # dataset = {'g' : 'Walnut1_proj.npy',
 #            'ground_truth' : 'walnut1_rec.npy',
 #            'mask': 'mask.npy'}
-dataset = {'g': f'{bpath}g_noisy_sc2.npy',
-                  'ground_truth' : f'{bpath}ground_truth_sc2.npy',
-                  'mask': f'{bpath}mask_sc2.npy'}
+dataset = {'g': f'{bpath}g_noisy.npy',
+                  'ground_truth' : f'{bpath}ground_truth.npy',
+                  'mask': f'{bpath}mask.npy'}
 
 # I found this details by myself in .txt file which came with dataset
 # This is correct, but my code assumes cm's and these are mm's --> /10
+
 pix_size = 0.149600 / 10  * sc 
-src_rad = 66.001404 / 10
-det_rad = (199.006195-66.001404) / 10
+
+# These were incorrect. Fixed now:
+src_rad = 46.3
+det_rad = 37.6
 
 
 # We do not have to defien the vox here, this will be automatically 768 // sc
@@ -143,8 +146,8 @@ case.rec_methods += [case.NNFDK]
 
 
 # %%
-# case.FDK.do('Hann')
-# case.FDK.show()
+case.FDK.do('Hann')
+case.FDK.show()
 
 # %%
 case.NNFDK.train(4, retrain=True)
