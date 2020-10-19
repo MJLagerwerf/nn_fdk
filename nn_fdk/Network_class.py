@@ -185,6 +185,7 @@ class Network(object):
 
 
     def train(self, save_model_pb=False):
+        print('hoi')
         '''Train the network using the Levenberg-Marquardt method.'''
         self.__inittrain()
         epoch = 0
@@ -200,6 +201,7 @@ class Network(object):
         curTime = time.time()
         self.allls = []
         self.__setJac2()
+        print('hoi2')
         for i in range(100000):
             self.__setJac2()
             print('curr_loss:', tse)

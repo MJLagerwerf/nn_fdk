@@ -104,6 +104,7 @@ def train_network(nHiddenNodes, nTD, nVD, full_path, name='', retrain=False,
         f.create_group(nNetworks)
         nNWs = 1
 
+    
     # Put everything a the correct classes
     trainData = TDC.MATTrainingData(TD_fls, dataname=TD_dn)
     valData = TDC.MATTrainingData(VD_fls, dataname=VD_dn)

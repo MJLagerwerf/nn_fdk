@@ -58,7 +58,7 @@ Exp_bin = 'linear'
 bin_param = 2
 
 # bpath = '/home/budabp/projects/Walnut/datasets/Walnuts/nn_fdk/experiments/data_new/NNFDK/'
-bpath = '/bigstore/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/processed_data/'
+bpath = '/export/scratch2/lagerwer/data/FleXray/walnuts_10MAY/walnut_01/processed_data/'
 
 # %% We need to compute the preprocessed training data (see eq 11 paper)
 # We do not want to train on the same data that we want to reconstruct
@@ -143,13 +143,13 @@ case.rec_methods += [case.NNFDK]
 
 
 # %%
-case.FDK.do('Hann')
-case.FDK.show()
+# case.FDK.do('Hann')
+# case.FDK.show()
 
 # %%
-# case.NNFDK.train(4, retrain=True)
-# case.NNFDK.do()
-# case.NNFDK.show()
+case.NNFDK.train(4, retrain=True)
+case.NNFDK.do()
+case.NNFDK.show()
 
 # %%
 case.table()
