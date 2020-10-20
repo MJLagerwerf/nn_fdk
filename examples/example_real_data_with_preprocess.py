@@ -69,8 +69,8 @@ if os.path.exists(f'{bpath}NNFDK/{dset}/Dataset0.npy'):
 else:
     print('Starting preprocessing')
     # dataset_w2 = {'g' : 'Walnut2_proj.npy',
-    #            'ground_truth' : 'walnut2_rec.npy',
-    #            'mask': 'mask.npy'}
+    #             'ground_truth' : 'walnut2_rec.npy',
+    #             'mask': 'mask.npy'}
     dataset_w2 = {'g': f'{bpath}g_noisy.npy',
                   'ground_truth' : f'{bpath}ground_truth.npy',
                   'mask': f'{bpath}mask.npy'}
@@ -82,9 +82,9 @@ else:
     # I found this details by myself in .txt file which came with dataset
     # This is correct, but my code assumes cm's and these are mm's --> /10
     pix_size = 0.149600 / 10 
-    src_rad = 66.001404 / 10
-    det_rad = (199.006195-66.001404) / 10
-    
+    src_rad = 46.3
+    det_rad = 37.6
+
     # Create Dataset0.npy from walnut2
     B = nn.Create_dataset_ASTRA_real(dataset_w2, pix_size, src_rad, det_rad, 
                                   ang_freq, Exp_bin, bin_param, vox=pix)
@@ -105,12 +105,12 @@ else:
 # %%
 # This is the walnut that we want to reconstruct
 # dataset = {'g' : 'Walnut1_proj.npy',
-#            'ground_truth' : 'walnut1_rec.npy',
-#            'mask': 'mask.npy'}
+#             'ground_truth' : 'walnut1_rec.npy',
+#             'mask': 'mask.npy'}
+
 dataset = {'g': f'{bpath}g_noisy.npy',
                   'ground_truth' : f'{bpath}ground_truth.npy',
                   'mask': f'{bpath}mask.npy'}
-
 # I found this details by myself in .txt file which came with dataset
 # This is correct, but my code assumes cm's and these are mm's --> /10
 
